@@ -1,0 +1,14 @@
+[Unit]
+Description=Floodgate
+
+[Service]
+User=content-api
+Group=content-api
+Restart=on-failure
+Environment='HOME=/home/content-api'
+Environment='JAVA_OPTS=-Xms1024m -Xmx1024m -XX:+UseConcMarkSweepGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:/home/content-api/logs/gc.log -XX:ReservedCodeCacheSize=256m'
+WorkingDirectory=/home/content-api
+ExecStart=/home/content-api/floodgate/bin/content-api-floodgate
+
+[Install]
+WantedBy=multi-user.target
