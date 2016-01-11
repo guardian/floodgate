@@ -1,0 +1,22 @@
+{
+  "defaultStacks": [ "content-api-floodgate", "content-api-floodgate-preview"],
+  "packages": {
+    "content-api-floodgate": {
+      "type": "autoscaling",
+      "data": {
+        "bucket": "content-api-dist"
+      }
+    }
+  },
+  "recipes": {
+    "default": {
+      "depends": [ "artifactUploadOnly", "deployOnly" ]
+    },
+    "artifactUploadOnly": {
+      "actions": [ "content-api-floodgate.uploadArtifacts" ]
+    },
+    "deployOnly": {
+      "actions": [ "content-api-floodgate.deploy" ]
+    }
+  }
+}
