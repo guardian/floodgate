@@ -13,6 +13,11 @@
             "Type": "String",
             "Default": "CODE"
         },
+        "Region": {
+            "Description": "AWS region",
+            "Type": "String",
+            "Default": "eu-west-1"
+        },
         "VPC": {
             "Description": "Virtual Private Cloud to run EC2 instances within",
             "Type": "AWS::EC2::VPC::Id"
@@ -145,16 +150,19 @@
                             "#!/bin/bash -ev",
 
                             "adduser --disabled-password content-api",
-                            "aws --region eu-west-1 s3 cp s3://content-api-dist/authorized_keys /home/ubuntu/.ssh/authorized_keys",
+
+                            { "Fn::Join": [ "", [ "aws configure set region ", {"Ref": "Region"} ] ] },
+
+                            "aws s3 cp s3://content-api-dist/authorized_keys /home/ubuntu/.ssh/authorized_keys",
                             "cd /home/content-api",
                             
                             "mkdir -p /etc/gu",
                             "mkdir logs",
 
                             { "Fn::Join": [ "", [ "echo 'STAGE=", { "Ref": "Stage" }, "' > /etc/gu/install_vars" ] ] },
-                            { "Fn::Join": [ "", [ "aws --region eu-west-1 s3 cp s3://content-api-dist/", { "Ref": "Stack" }, "/",{ "Ref": "Stage" }, "/content-api-floodgate/content-api-floodgate.service", "/etc/systemd/system/floodgate.service" ] ] },
-                            
-                            { "Fn::Join": [ "", [ "aws --region eu-west-1 s3 cp s3://content-api-dist/", { "Ref": "Stack" }, "/",{ "Ref": "Stage" }, "/content-api-floodgate/content-api-floodgate-0.1-SNAPSHOT.tgz ." ] ] },
+                            { "Fn::Join": [ "", [ "aws s3 cp s3://content-api-dist/", { "Ref": "Stack" }, "/",{ "Ref": "Stage" }, "/content-api-floodgate/content-api-floodgate.service /etc/systemd/system/floodgate.service" ] ] },
+                            { "Fn::Join": [ "", [ "aws s3 cp s3://content-api-config/content-api-floodgate/",{ "Ref": "Stage" }, "/floodgate.conf /etc/gu/floodgate.conf" ] ] },
+                            { "Fn::Join": [ "", [ "aws s3 cp s3://content-api-dist/", { "Ref": "Stack" }, "/",{ "Ref": "Stage" }, "/content-api-floodgate/content-api-floodgate-0.1-SNAPSHOT.tgz ." ] ] },
                             "tar xfv content-api-floodgate-0.1-SNAPSHOT.tgz",
                             "mv content-api-floodgate-0.1-SNAPSHOT floodgate",
 
