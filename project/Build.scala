@@ -27,7 +27,8 @@ object FloodgateBuild extends Build {
     .settings(checkJavaVersion)
     .settings(
       libraryDependencies ++= Seq(
-        ws
+        ws,
+        "com.gu" %% "play-googleauth" % "0.3.2"
       ),
       routesGenerator := InjectedRoutesGenerator,
       riffRaffPackageName := "content-api-floodgate",

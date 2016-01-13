@@ -2,8 +2,13 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# healthcheck
-GET        /healthcheck           com.gu.floodgate.Application.healthcheck
+# Healthcheck
+GET        /healthcheck                  com.gu.floodgate.Application.healthcheck
+
+# Auth
+GET         /login                       com.gu.floodgate.Login.login
+GET         /oauth2callback              com.gu.floodgate.Login.oauth2Callback
+GET         /fakeSecureRoute             com.gu.floodgate.Application.fakeSecureRoute
 
 
 # Map static resources from the /public folder to the /assets URL path
