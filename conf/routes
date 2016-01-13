@@ -2,6 +2,9 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+# Handled by client side code
+GET         /                            com.gu.floodgate.Application.index
+
 # Healthcheck
 GET        /healthcheck                  com.gu.floodgate.Application.healthcheck
 
