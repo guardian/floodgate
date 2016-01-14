@@ -1,0 +1,11 @@
+@(title: String)
+
+@layout(title) {
+    <div id="react-mount" class="main">
+        <h1>Loading...</h1>
+    </div>
+
+    <script src="@routes.Assets.versioned("build/app.js")"></script>
+    <script async src="https://apis.google.com/js/client.js?onload=init"></script>
+    @*** <link rel="stylesheet" type="text/css" href="@routes.Assets.versioned("app.bundle.css")"/> ***@
+}

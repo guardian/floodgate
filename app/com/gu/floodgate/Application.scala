@@ -8,6 +8,10 @@ class Application extends Controller with AuthActions {
     Ok("ok")
   }
 
+  def index = Action {
+    Ok(views.html.app("Floodgate"))
+  }
+
   /* Placeholder endpoint for the time being in order to implement auth */
   def fakeSecureRoute = AuthAction {
     Ok("If you're seeing this you managed to login successfully.")

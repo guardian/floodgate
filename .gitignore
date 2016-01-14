@@ -2,3 +2,7 @@ target/
 logs/
 .idea
 .DS_Store
+node_modules/
+jspm_packages/
+npm-debug.log
+public/build
