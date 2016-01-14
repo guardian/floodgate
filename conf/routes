@@ -13,6 +13,19 @@ GET         /login                       com.gu.floodgate.Login.login
 GET         /oauth2callback              com.gu.floodgate.Login.oauth2Callback
 GET         /fakeSecureRoute             com.gu.floodgate.Application.fakeSecureRoute
 
+# Api
+GET         /content-source              com.gu.floodgate.contentsource.ContentSourceApi.getContentSources
+GET         /content-source/:id          com.gu.floodgate.contentsource.ContentSourceApi.getContentSource(id)
+POST        /content-source              com.gu.floodgate.contentsource.ContentSourceApi.createContentSource
+PUT         /content-source/:id          com.gu.floodgate.contentsource.ContentSourceApi.updateContentSource(id)
+DELETE      /content-source/:id          com.gu.floodgate.contentsource.ContentSourceApi.deleteContentSource(id)
+
+GET         /job-history                 com.gu.floodgate.jobhistory.JobHistoryApi.getJobHistories
+GET         /job-history/:id             com.gu.floodgate.jobhistory.JobHistoryApi.getJobHistory(id)
+
+GET         /running-job                 com.gu.floodgate.runningjob.RunningJobApi.getRunningJobs
+GET         /running-job/:id             com.gu.floodgate.runningjob.RunningJobApi.getRunningJob(id)
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET        /assets/*file          controllers.Assets.versioned(path="/public", file: Asset)
