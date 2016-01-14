@@ -1,5 +1,5 @@
 {
-  "defaultStacks": [ "content-api-floodgate", "content-api-floodgate-preview"],
+  "defaultStacks": [ "content-api-floodgate"],
   "packages": {
     "content-api-floodgate": {
       "type": "autoscaling",
