@@ -5,7 +5,7 @@ printf "\n\rInstalling NPM packages... \n\r\n\r"
 
 npm install
 
-printf "\n\Compiling Javascript... \n\r\n\r"
+printf "\n\rCompiling Javascript... \n\r\n\r"
 
 npm run build
 

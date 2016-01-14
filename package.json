@@ -10,7 +10,9 @@
     "babel-preset-react": "^6.0.15",
     "node-sass": "^3.3.3",
     "react": "^0.14.6",
+    "react-bootstrap": "^0.28.2",
     "react-dom": "^0.14.6",
+    "react-router": "^1.0.0",
     "webpack": "^1.12.11"
   },
   "scripts": {
