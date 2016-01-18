@@ -1,7 +1,12 @@
 
-import com.gu.floodgate.contentsource.{ ContentSourceService, ContentSourceApi }
-import com.gu.floodgate.jobhistory.{ JobHistoryService, JobHistoryApi }
-import com.gu.floodgate.runningjob.{ RunningJobService, RunningJobApi }
+import com.amazonaws.ClientConfiguration
+import com.amazonaws.auth.profile.ProfileCredentialsProvider
+import com.amazonaws.auth.{ InstanceProfileCredentialsProvider, SystemPropertiesCredentialsProvider, EnvironmentVariableCredentialsProvider, AWSCredentialsProviderChain }
+import com.amazonaws.regions.{ Regions, Region }
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClient
+import com.gu.floodgate.contentsource.{ ContentSourceTable, ContentSourceService, ContentSourceApi }
+import com.gu.floodgate.jobhistory.{ JobHistoryTable, JobHistoryService, JobHistoryApi }
+import com.gu.floodgate.runningjob.{ RunningJobTable, RunningJobService, RunningJobApi }
 import com.gu.floodgate.{ Login, Application }
 import play.api.ApplicationLoader.Context
 import play.api.libs.ws.ning.NingWSComponents
@@ -12,13 +17,40 @@ import router.Routes
 
 class AppComponents(context: Context) extends BuiltInComponentsFromContext(context) with NingWSComponents {
 
-  val contentSourceService = new ContentSourceService
+  val awsCredsProvider = new AWSCredentialsProviderChain(
+    new EnvironmentVariableCredentialsProvider(),
+    new SystemPropertiesCredentialsProvider(),
+    new ProfileCredentialsProvider("capi"),
+    new ProfileCredentialsProvider(),
+    new InstanceProfileCredentialsProvider()
+  )
+
+  val region = Region getRegion Regions.fromName(configuration.getString("aws.region") getOrElse "eu-west-1")
+  val clientConfiguration = new ClientConfiguration()
+  val dynamoDB = region.createClient(classOf[AmazonDynamoDBAsyncClient], awsCredsProvider, clientConfiguration)
+
+  val contentSourceTable = {
+    val tableName = configuration.getString("aws.table.name.contentsource") getOrElse "content-source-DEV"
+    new ContentSourceTable(dynamoDB, tableName)
+  }
+
+  val jobHistoryTable = {
+    val tableName = configuration.getString("aws.table.name.jobhistory") getOrElse "job-history-DEV"
+    new JobHistoryTable(dynamoDB, tableName)
+  }
+
+  val runningJobTable = {
+    val tableName = configuration.getString("aws.table.name.runningjob") getOrElse "running-job-DEV"
+    new RunningJobTable(dynamoDB, tableName)
+  }
+
+  val contentSourceService = new ContentSourceService(contentSourceTable)
   val contentSourceController = new ContentSourceApi(contentSourceService)
 
-  val jobHistoryService = new JobHistoryService
+  val jobHistoryService = new JobHistoryService(jobHistoryTable)
   val jobHistoryController = new JobHistoryApi(jobHistoryService)
 
-  val runningJobService = new RunningJobService
+  val runningJobService = new RunningJobService(runningJobTable)
   val runningJobController = new RunningJobApi(runningJobService)
 
   val appController = new Application

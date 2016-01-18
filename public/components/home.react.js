@@ -8,9 +8,13 @@ export default class ReactApp extends React.Component {
 
     render () {
         return (
-            <div className="editor">
-                <h2>home display.</h2>
-                {this.props.children}
+            <div id="page-wrapper">
+
+                <div className="container-fluid">
+                    <h2>Home page.</h2>
+                    {this.props.children}
+                </div>
+
             </div>
         );
     }

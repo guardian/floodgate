@@ -1,2 +1,8 @@
 include "application"
 
+
+aws.region=
+aws.table.name.contentsource=
+aws.table.name.jobhistory=
+aws.table.name.runningjob=
+

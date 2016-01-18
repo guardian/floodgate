@@ -26,10 +26,19 @@ object FloodgateBuild extends Build {
     .settings(basicSettings)
     .settings(checkJavaVersion)
     .settings(
-      libraryDependencies ++= Seq(
+        resolvers += "Sonatype releases" at "https://oss.sonatype.org/content/repositories/releases",
+        libraryDependencies ++= Seq(
         ws,
+        "com.amazonaws" % "aws-java-sdk-kinesis" % "1.10.45",
+        "com.amazonaws" % "aws-java-sdk-dynamodb" % "1.10.45",
+        "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
+        "io.megl" % "play-json-extra_2.11" % "2.4.3",
+        "org.scalactic" %% "scalactic" % "2.2.6",
         "com.gu" %% "play-googleauth" % "0.3.2"
       ),
+
+      addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0-M5" cross CrossVersion.full),
+
       routesGenerator := InjectedRoutesGenerator,
       riffRaffPackageName := "content-api-floodgate",
       riffRaffPackageType := (packageZipTarball in Universal).value
