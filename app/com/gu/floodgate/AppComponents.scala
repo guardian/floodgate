@@ -30,17 +30,17 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
   val dynamoDB = region.createClient(classOf[AmazonDynamoDBAsyncClient], awsCredsProvider, clientConfiguration)
 
   val contentSourceTable = {
-    val tableName = configuration.getString("aws.table.name.contentsource") getOrElse "content-source-DEV"
+    val tableName = configuration.getString("aws.table.name.contentsource") getOrElse "floodgate-content-source-DEV"
     new ContentSourceTable(dynamoDB, tableName)
   }
 
   val jobHistoryTable = {
-    val tableName = configuration.getString("aws.table.name.jobhistory") getOrElse "job-history-DEV"
+    val tableName = configuration.getString("aws.table.name.jobhistory") getOrElse "floodgate-job-history-DEV"
     new JobHistoryTable(dynamoDB, tableName)
   }
 
   val runningJobTable = {
-    val tableName = configuration.getString("aws.table.name.runningjob") getOrElse "running-job-DEV"
+    val tableName = configuration.getString("aws.table.name.runningjob") getOrElse "floodgate-running-job-DEV"
     new RunningJobTable(dynamoDB, tableName)
   }
 
