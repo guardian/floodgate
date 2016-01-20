@@ -48,6 +48,6 @@ class ContentSourceApi(contentSourceService: ContentSourceService) extends Contr
     Future.successful(NoContent)
   }
 
-  private def jsonError = Future.successful(BadRequest(Json.toJson(ErrorResponse("Invalid Json"))))
+  private val jsonError = Future.successful(BadRequest(Json.toJson(ErrorResponse("Invalid Json"))))
 
 }
