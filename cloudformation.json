@@ -58,6 +58,24 @@
                 "Roles": [{"Ref": "RootRole" }]
             }
         },
+        "DynamoDBPolicy": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "DynamoDBPolicy",
+                "PolicyDocument": {
+                    "Statement": [{
+                        "Effect": "Allow",
+                        "Action": [ "dynamodb:*" ],
+                        "Resource": [
+                                { "Fn::Join": [ "-", [ "arn:aws:dynamodb:*:308506855511:table/content-source", { "Ref": "Stage" } ] ] },
+                                { "Fn::Join": [ "-", [ "arn:aws:dynamodb:*:308506855511:table/job-history", { "Ref": "Stage" } ] ] },
+                                { "Fn::Join": [ "-", [ "arn:aws:dynamodb:*:308506855511:table/running-job", { "Ref": "Stage" } ] ] }
+                            ]
+                    }]
+                },
+                "Roles": [{"Ref": "RootRole" }]
+            }
+        },
         "InstanceProfile": {
             "Type": "AWS::IAM::InstanceProfile",
             "Properties": {
