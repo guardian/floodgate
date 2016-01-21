@@ -58,6 +58,22 @@
                 "Roles": [{"Ref": "RootRole" }]
             }
         },
+        "DynamoDBPolicy": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+                "PolicyName": "DynamoDBPolicy",
+                "PolicyDocument": {
+                    "Statement": [{
+                        "Effect": "Allow",
+                        "Action": [ "dynamodb:*" ],
+                        "Resource": [
+                                { "Fn::Join": [ "-", [ "arn:aws:dynamodb:*:***REMOVED***:table/floodgate-*", { "Ref": "Stage" } ] ] }
+                            ]
+                    }]
+                },
+                "Roles": [{"Ref": "RootRole" }]
+            }
+        },
         "InstanceProfile": {
             "Type": "AWS::IAM::InstanceProfile",
             "Properties": {
