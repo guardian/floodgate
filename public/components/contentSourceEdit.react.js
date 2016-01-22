@@ -12,10 +12,8 @@ export default class ContentSourceEdit extends React.Component {
             reindexEndpoint: this.props.reindexEndpoint,
             alertStyle: 'success',
             alertMessage: '',
-            alertVisibility: false,
-            editModeOn: true};
-        this.updateContentSource = this.updateContentSource.bind(this);
-        this.changeEditMode = this.changeEditMode.bind(this);
+            alertVisibility: false};
+        this.exitEditMode = this.exitEditMode.bind(this);
         this.handleAppNameChange = this.handleAppNameChange.bind(this);
         this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
         this.handleReindexEndpointChange = this.handleReindexEndpointChange.bind(this);
@@ -34,12 +32,7 @@ export default class ContentSourceEdit extends React.Component {
         this.setState({reindexEndpoint: e.target.value});
     }
 
-    updateContentSource() {
-        this.setState({editModeOn: false});
-    }
-
-    changeEditMode() {
-        this.setState({editModeOn: false});
+    exitEditMode() {
         this.props.callbackParent(false);
     }
 
@@ -59,7 +52,7 @@ export default class ContentSourceEdit extends React.Component {
         ContentSourceService.updateContentSource(id, form).then(response => {
             if(response.status == 200) {
                 this.setState({alertVisibility: false});
-                this.changeEditMode();
+                this.exitEditMode();
             }
         });
     }
