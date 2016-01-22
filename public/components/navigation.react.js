@@ -11,7 +11,7 @@ export default class NavigationComponent extends React.Component {
 
         var contentSourceNodes = this.props.data.map(function(contentSource) {
             return (
-                <li><Link to={"reindex/" + contentSource.id}>{contentSource.appName}</Link></li>
+                <li key={contentSource.id}><Link to={"reindex/" + contentSource.id}>{contentSource.appName}</Link></li>
             );
         });
 

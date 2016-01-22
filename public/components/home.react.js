@@ -1,4 +1,6 @@
 import React from 'react';
+import ContentSourceForm from './contentSourceCreate.react.js';
+import { PageHeader } from 'react-bootstrap';
 
 export default class ReactApp extends React.Component {
 
@@ -11,9 +13,11 @@ export default class ReactApp extends React.Component {
             <div id="page-wrapper">
 
                 <div className="container-fluid">
-                    <h2>Home page.</h2>
+                    <PageHeader>Create content source.</PageHeader>
                     {this.props.children}
                 </div>
+
+                <ContentSourceForm />
 
             </div>
         );

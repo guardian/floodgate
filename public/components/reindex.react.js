@@ -1,5 +1,6 @@
 import React from 'react';
 import ContentSource from './contentSource.react';
+import ContentSourceEdit from './contentSourceEdit.react';
 import JobHistory from './jobHistory.react';
 import ContentSourceService from '../services/contentSourceService';
 import { Label, Row, Col, Panel, ProgressBar } from 'react-bootstrap';
@@ -10,8 +11,12 @@ export default class ReindexComponent extends React.Component {
         super(props);
 
         this.state = {
-            contentSource: {}
-        }
+            contentSource: {},
+            editModeOn: false
+        };
+
+        this.onChildChanged = this.onChildChanged.bind(this);
+        this.loadContentSource = this.loadContentSource.bind(this);
     }
 
     componentDidMount() {
@@ -33,6 +38,11 @@ export default class ReindexComponent extends React.Component {
         });
     }
 
+    onChildChanged(newState) {
+        this.setState({ editModeOn: newState });
+        if(newState == false) this.loadContentSource(this.props.params.id);
+    }
+
     render () {
 
         var jobHistoryStub = [
@@ -44,7 +54,6 @@ export default class ReindexComponent extends React.Component {
 
         return (
             <div id="page-wrapper">
-
                 <div className="container-fluid">
                     <Row>
                         <Col xs={12} md={12}>
@@ -52,11 +61,21 @@ export default class ReindexComponent extends React.Component {
                         </Col>
                         <Col xs={6} md={6}>
                             <Panel header="Details">
-                                <ContentSource key={this.state.contentSource.id}
-                                               id={this.state.contentSource.id}
-                                               description={this.state.contentSource.description}
-                                               appName={this.state.contentSource.appName}
-                                               reindexEndpoint={this.state.contentSource.reindexEndpoint}/>
+                                {this.state.editModeOn ?
+                                    <ContentSourceEdit key={this.state.contentSource.id}
+                                        id={this.state.contentSource.id}
+                                        description={this.state.contentSource.description}
+                                        appName={this.state.contentSource.appName}
+                                        reindexEndpoint={this.state.contentSource.reindexEndpoint}
+                                        callbackParent={this.onChildChanged} />
+                                    :
+                                    <ContentSource key={this.state.contentSource.id}
+                                        id={this.state.contentSource.id}
+                                        description={this.state.contentSource.description}
+                                        appName={this.state.contentSource.appName}
+                                        reindexEndpoint={this.state.contentSource.reindexEndpoint}
+                                        callbackParent={this.onChildChanged} />
+                                }
                             </Panel>
                         </Col>
                         <Col xs={6} md={6}>
