@@ -27,6 +27,7 @@ export default class ReindexComponent extends React.Component {
     componentWillReceiveProps(nextProps) {
         if (this.props.params.id !== nextProps.params.id) {
             this.loadContentSource(nextProps.routeParams.id);
+            this.setState({editModeOn: false});
         }
     }
 
@@ -78,11 +79,13 @@ export default class ReindexComponent extends React.Component {
                                 }
                             </Panel>
                         </Col>
+
                         <Col xs={6} md={6}>
                             <Panel header="Running Jobs">
                                 <ProgressBar now={60} label="%(percent)s%" />
                             </Panel>
                         </Col>
+
                         <Col xs={12} md={12}>
                             <Panel header="Reindex History">
                                 <JobHistory data={jobHistoryStub}/>
@@ -90,7 +93,6 @@ export default class ReindexComponent extends React.Component {
                         </Col>
                     </Row>
                 </div>
-
             </div>
         );
     }
