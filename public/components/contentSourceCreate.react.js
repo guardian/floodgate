@@ -8,19 +8,13 @@ export default class ContentSourceForm extends React.Component {
         super(props);
         this.render = this.render.bind(this);
         this.state = {appName: '', description: '', reindexEndpoint: '', alertStyle: 'success', alertMessage: '', alertVisibility: false};
-        this.handleAppNameChange = this.handleAppNameChange.bind(this);
-        this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
-        this.handleReindexEndpointChange = this.handleReindexEndpointChange.bind(this);
-        this.handleSubmit =  this.handleSubmit.bind(this);
         this.resetFormFields = this.resetFormFields.bind(this);
     }
 
     handleFormSubmit(form) {
         ContentSourceService.createContentSource(form).then(response => {
-            if(response.status == 201) {
-                this.resetFormFields();
-                this.setState({alertVisibility: false});
-            }
+            this.resetFormFields();
+            this.setState({alertVisibility: false});
         });
     }
 
@@ -56,10 +50,10 @@ export default class ContentSourceForm extends React.Component {
         return (
             <div>
                 { this.state.alertVisibility ? <Alert bsStyle={this.state.alertStyle}>{this.state.alertMessage}</Alert> : null }
-                <form className="form-horizontal" onSubmit={this.handleSubmit}>
-                    <Input type="text" label="Application Name*" labelClassName="col-xs-2" wrapperClassName="col-xs-10" value={this.state.appName} onChange={this.handleAppNameChange} />
-                    <Input type="text" label="Description*" labelClassName="col-xs-2" wrapperClassName="col-xs-10" value={this.state.description} onChange={this.handleDescriptionChange} />
-                    <Input type="text" label="Reindex Endpoint*" labelClassName="col-xs-2" wrapperClassName="col-xs-10" value={this.state.reindexEndpoint} onChange={this.handleReindexEndpointChange} />
+                <form className="form-horizontal" onSubmit={this.handleSubmit.bind(this)}>
+                    <Input type="text" label="Application Name*" labelClassName="col-xs-2" wrapperClassName="col-xs-10" value={this.state.appName} onChange={this.handleAppNameChange.bind(this)} />
+                    <Input type="text" label="Description*" labelClassName="col-xs-2" wrapperClassName="col-xs-10" value={this.state.description} onChange={this.handleDescriptionChange.bind(this)} />
+                    <Input type="text" label="Reindex Endpoint*" labelClassName="col-xs-2" wrapperClassName="col-xs-10" value={this.state.reindexEndpoint} onChange={this.handleReindexEndpointChange.bind(this)} />
                     <ButtonToolbar>
                         <Button bsStyle="primary" className="pull-right" type="submit">Submit</Button>
                     </ButtonToolbar>

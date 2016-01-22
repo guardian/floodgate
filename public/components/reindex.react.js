@@ -15,7 +15,7 @@ export default class ReindexComponent extends React.Component {
             editModeOn: false
         };
 
-        this.onChildChanged = this.onChildChanged.bind(this);
+        this.updateEditModeState = this.updateEditModeState.bind(this);
         this.loadContentSource = this.loadContentSource.bind(this);
     }
 
@@ -39,7 +39,7 @@ export default class ReindexComponent extends React.Component {
         });
     }
 
-    onChildChanged(newState) {
+    updateEditModeState(newState) {
         this.setState({ editModeOn: newState });
         if(newState == false) this.loadContentSource(this.props.params.id);
     }
@@ -64,18 +64,12 @@ export default class ReindexComponent extends React.Component {
                             <Panel header="Details">
                                 {this.state.editModeOn ?
                                     <ContentSourceEdit key={this.state.contentSource.id}
-                                        id={this.state.contentSource.id}
-                                        description={this.state.contentSource.description}
-                                        appName={this.state.contentSource.appName}
-                                        reindexEndpoint={this.state.contentSource.reindexEndpoint}
-                                        callbackParent={this.onChildChanged} />
+                                        contentSource={this.state.contentSource}
+                                        callbackParent={this.updateEditModeState} />
                                     :
                                     <ContentSource key={this.state.contentSource.id}
-                                        id={this.state.contentSource.id}
-                                        description={this.state.contentSource.description}
-                                        appName={this.state.contentSource.appName}
-                                        reindexEndpoint={this.state.contentSource.reindexEndpoint}
-                                        callbackParent={this.onChildChanged} />
+                                        contentSource={this.state.contentSource}
+                                        callbackParent={this.updateEditModeState} />
                                 }
                             </Panel>
                         </Col>
