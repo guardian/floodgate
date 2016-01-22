@@ -5,12 +5,10 @@ export default class ContentSource extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {editModeOn: false};
-        this.editContentSource = this.editContentSource.bind(this);
+        this.enterEditMode = this.enterEditMode.bind(this);
     }
 
-    editContentSource() {
-        this.setState({editModeOn: true});
+    enterEditMode() {
         this.props.callbackParent(true);
     }
 
@@ -22,7 +20,7 @@ export default class ContentSource extends React.Component {
                 <p>Description: {this.props.description}</p>
                 <p>Endpoint: {this.props.reindexEndpoint}</p>
                 <ButtonToolbar>
-                    <Button bsStyle="primary" className="pull-right" onClick={this.editContentSource}>Edit Details</Button>
+                    <Button bsStyle="primary" className="pull-right" onClick={this.enterEditMode}>Edit Details</Button>
                     <Button bsStyle="primary" className="pull-right">Reindex</Button>
                 </ButtonToolbar>
             </div>
