@@ -71,7 +71,7 @@ trait DynamoDBTable[T] extends StrictLogging {
   def updateItem(id: String, t: T): Unit = {
     val request = new UpdateItemRequest().withTableName(tableName)
       .withKey(Map("id" -> new AttributeValue(id)))
-      .withAttributeUpdates(toItemUpdate(t).mapValues(_.withAction("update")))
+      .withAttributeUpdates(toItemUpdate(t).mapValues(_.withAction("PUT")))
 
     dynamoDB.updateItemAsync(request)
   }
@@ -82,10 +82,10 @@ trait DynamoDBTable[T] extends StrictLogging {
   }
 
   def getItemAttributeValue(key: String, item: Map[String, AttributeValue]): AttributeValue = {
-    item.get(key).getOrElse {
+    item.getOrElse(key, {
       logger.warn(s"Provided key $key has no value.")
       new AttributeValue("")
-    }
+    })
   }
 
 }

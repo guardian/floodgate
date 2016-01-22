@@ -27,7 +27,6 @@ class RunningJobTable(protected val dynamoDB: AmazonDynamoDBAsyncClient, protect
       fields.StartTime -> new AttributeValue(runningJob.startTime.toString))
 
   override protected def toItemUpdate(runningJob: RunningJob): Map[String, AttributeValueUpdate] =
-    Map(fields.Id -> new AttributeValueUpdate().withValue(new AttributeValue(runningJob.id)),
-      fields.Progress -> new AttributeValueUpdate().withValue(new AttributeValue(runningJob.progress.toString)),
+    Map(fields.Progress -> new AttributeValueUpdate().withValue(new AttributeValue(runningJob.progress.toString)),
       fields.StartTime -> new AttributeValueUpdate().withValue(new AttributeValue(runningJob.startTime.toString)))
 }
