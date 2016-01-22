@@ -16,9 +16,7 @@ export default class NavigationComponent extends React.Component {
         });
 
         return (
-
             <nav className="navbar navbar-inverse" role="navigation">
-
                 <div className="navbar-header">
                     <button type="button" className="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
                         <span className="sr-only">Toggle navigation</span>
