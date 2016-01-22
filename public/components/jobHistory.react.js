@@ -12,7 +12,7 @@ export default class JobHistory extends React.Component {
 
         var jobHistoryNodes = this.props.data.map(function(jobHistory) {
             return (
-                <tr>
+                <tr key={jobHistory.id}>
                     <td>{jobHistory.id}</td>
                     <td>{jobHistory.status}</td>
                     <td>{jobHistory.startTime}</td>

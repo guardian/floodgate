@@ -9,7 +9,9 @@ export default class ReactApp extends React.Component {
 
         this.state = {
             contentSources: []
-        }
+        };
+
+        this.loadContentSources = this.loadContentSources.bind(this);
     }
 
     loadContentSources() {
@@ -22,14 +24,13 @@ export default class ReactApp extends React.Component {
 
     componentDidMount () {
         this.loadContentSources();
+        setInterval(this.loadContentSources, 2000);
     }
 
-
     render () {
-
         return (
             <div id="wrapper">
-                <Navigation data={this.state.contentSources}/>
+                <Navigation data={this.state.contentSources} />
                 {this.props.children}
             </div>
         );

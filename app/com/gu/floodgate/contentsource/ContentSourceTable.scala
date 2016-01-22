@@ -28,8 +28,7 @@ class ContentSourceTable(protected val dynamoDB: AmazonDynamoDBAsyncClient, prot
       fields.ReindexEndpoint -> new AttributeValue(contentSource.reindexEndpoint))
 
   override protected def toItemUpdate(contentSource: ContentSource): Map[String, AttributeValueUpdate] =
-    Map(fields.Id -> new AttributeValueUpdate().withValue(new AttributeValue(contentSource.id)),
-      fields.AppName -> new AttributeValueUpdate().withValue(new AttributeValue(contentSource.appName)),
+    Map(fields.AppName -> new AttributeValueUpdate().withValue(new AttributeValue(contentSource.appName)),
       fields.Description -> new AttributeValueUpdate().withValue(new AttributeValue(contentSource.description)),
       fields.ReindexEndpoint -> new AttributeValueUpdate().withValue(new AttributeValue(contentSource.reindexEndpoint)))
 
