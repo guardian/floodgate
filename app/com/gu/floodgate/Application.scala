@@ -25,5 +25,5 @@ class Application extends Controller with AuthActions with StrictLogging {
     println("Reindex initiated.")
     Ok("")
   }
-
+  
 }
