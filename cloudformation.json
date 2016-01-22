@@ -158,7 +158,7 @@
                 "SecurityGroups": [
                     { "Ref": "ApplicationSecurityGroup" }
                 ],
-                "InstanceType": "t2.medium",
+                "InstanceType": "t2.nano",
                 "IamInstanceProfile": { "Ref": "InstanceProfile" },
                 "UserData": {
                     "Fn::Base64": {
