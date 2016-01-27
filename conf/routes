@@ -19,12 +19,18 @@ GET         /content-source/:id          com.gu.floodgate.contentsource.ContentS
 POST        /content-source              com.gu.floodgate.contentsource.ContentSourceApi.createContentSource
 PUT         /content-source/:id          com.gu.floodgate.contentsource.ContentSourceApi.updateContentSource(id)
 DELETE      /content-source/:id          com.gu.floodgate.contentsource.ContentSourceApi.deleteContentSource(id)
+POST        /content-source/:id/reindex  com.gu.floodgate.contentsource.ContentSourceApi.reindex(id)
+
 
 GET         /job-history                 com.gu.floodgate.jobhistory.JobHistoryApi.getJobHistories
 GET         /job-history/:id             com.gu.floodgate.jobhistory.JobHistoryApi.getJobHistory(id)
 
 GET         /running-job                 com.gu.floodgate.runningjob.RunningJobApi.getRunningJobs
 GET         /running-job/:id             com.gu.floodgate.runningjob.RunningJobApi.getRunningJob(id)
+
+# Fake client reindex endpoints
+
+POST       /reindex                      com.gu.floodgate.Application.fakeReindexRouteInitiate
 
 
 # Map static resources from the /public folder to the /assets URL path
