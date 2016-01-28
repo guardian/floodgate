@@ -37,12 +37,12 @@ trait DynamoDBTable[T] extends StrictLogging {
     promise.future
   }
 
-  def getItem(id: String): Future[Option[T]] = {
+  def getItem(id: String, keyName: String = "id"): Future[Option[T]] = {
     val promise = Promise[Option[T]]()
 
     val request = new QueryRequest().withTableName(tableName)
-      .withKeyConditionExpression("id = :id")
-      .withExpressionAttributeValues(Map(":id" -> new AttributeValue().withS(id)))
+      .withKeyConditionExpression(s"$keyName = :$keyName")
+      .withExpressionAttributeValues(Map(s":$keyName" -> new AttributeValue().withS(id)))
 
     val responseHandler = new AsyncHandler[QueryRequest, QueryResult] {
 
@@ -62,10 +62,23 @@ trait DynamoDBTable[T] extends StrictLogging {
     promise.future
   }
 
-  def saveItem(t: T): Unit = {
-    dynamoDB.putItemAsync {
-      new PutItemRequest().withTableName(tableName).withItem(toItem(t).asJava)
+  def saveItem(t: T): Future[T] = {
+    val request = new PutItemRequest().withTableName(tableName).withItem(toItem(t).asJava)
+    val promise = Promise[T]()
+    val responseHandler = new AsyncHandler[PutItemRequest, PutItemResult] {
+
+      override def onError(e: Exception) = {
+        promise.failure(e)
+      }
+
+      override def onSuccess(request: PutItemRequest, result: PutItemResult) = {
+        promise.success(t)
+      }
+
     }
+
+    dynamoDB.putItemAsync(request, responseHandler)
+    promise.future
   }
 
   def updateItem(id: String, t: T): Unit = {
