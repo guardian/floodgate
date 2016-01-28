@@ -6,6 +6,7 @@ import com.amazonaws.regions.{ Regions, Region }
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClient
 import com.gu.floodgate.contentsource.{ ContentSourceTable, ContentSourceService, ContentSourceApi }
 import com.gu.floodgate.jobhistory.{ JobHistoryTable, JobHistoryService, JobHistoryApi }
+import com.gu.floodgate.reindex.ReindexService
 import com.gu.floodgate.runningjob.{ RunningJobTable, RunningJobService, RunningJobApi }
 import com.gu.floodgate.{ Login, Application }
 import play.api.ApplicationLoader.Context
@@ -44,17 +45,19 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
     new RunningJobTable(dynamoDB, tableName)
   }
 
+  val runningJobService = new RunningJobService(runningJobTable)
   val contentSourceService = new ContentSourceService(contentSourceTable)
-  val contentSourceController = new ContentSourceApi(contentSourceService)
+  val reindexService = new ReindexService(contentSourceService, runningJobService, wsApi)
+
+  val contentSourceController = new ContentSourceApi(contentSourceService, reindexService)
+  val runningJobController = new RunningJobApi(runningJobService)
 
   val jobHistoryService = new JobHistoryService(jobHistoryTable)
   val jobHistoryController = new JobHistoryApi(jobHistoryService)
 
-  val runningJobService = new RunningJobService(runningJobTable)
-  val runningJobController = new RunningJobApi(runningJobService)
-
   val appController = new Application
   val loginController = new Login(wsApi)
+
   val assets = new Assets(httpErrorHandler)
   val router: Router = new Routes(httpErrorHandler, appController, loginController,
     contentSourceController, jobHistoryController, runningJobController, assets)

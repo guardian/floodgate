@@ -1,5 +1,7 @@
 package com.gu.floodgate.runningjob
 
+import com.gu.floodgate.ErrorResponse
+import org.scalactic.{ Bad, Good }
 import play.api.libs.json.Json
 import play.api.mvc.{ Action, Controller }
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -12,11 +14,11 @@ class RunningJobApi(runningJobService: RunningJobService) extends Controller {
     }
   }
 
-  def getRunningJob(id: String) = Action.async { implicit request =>
-    runningJobService.getRunningJob(id) map { maybeRunningJob =>
-      maybeRunningJob match {
-        case Some(runningJob) => Ok(Json.toJson(SingleRunningJobResponse(runningJob)))
-        case None => NotFound
+  def getRunningJob(contentSourceId: String) = Action.async { implicit request =>
+    runningJobService.getRunningJob(contentSourceId) map { runningJobOrError =>
+      runningJobOrError match {
+        case Good(runningJob) => Ok(Json.toJson(SingleRunningJobResponse(runningJob)))
+        case Bad(error) => NotFound(Json.toJson(ErrorResponse(error.message)))
       }
     }
   }
