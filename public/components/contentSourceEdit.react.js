@@ -60,7 +60,8 @@ export default class ContentSourceEdit extends React.Component {
                     <Input type="text" label="Description*" labelClassName="col-xs-2" wrapperClassName="col-xs-10" value={this.state.description} onChange={this.handleDescriptionChange.bind(this)} />
                     <Input type="text" label="Reindex Endpoint*" labelClassName="col-xs-2" wrapperClassName="col-xs-10" value={this.state.reindexEndpoint} onChange={this.handleReindexEndpointChange.bind(this)} />
                     <ButtonToolbar>
-                        <Button bsStyle="primary" className="pull-right" type="submit">Submit</Button>
+                        <Button bsStyle="success" className="pull-right" type="submit">Submit</Button>
+                        <Button bsStyle="danger" className="pull-right" type="button" onClick={this.exitEditMode}>Cancel</Button>
                     </ButtonToolbar>
                 </form>
             </div>
