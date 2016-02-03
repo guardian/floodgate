@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router';
+import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from 'react-bootstrap'
 
 export default class NavigationComponent extends React.Component {
 
@@ -11,28 +12,25 @@ export default class NavigationComponent extends React.Component {
 
         var contentSourceNodes = this.props.data.map(function(contentSource) {
             return (
-                <li key={contentSource.id}><Link to={"reindex/" + contentSource.id}>{contentSource.appName}</Link></li>
+                <MenuItem eventKey={contentSource.id} key={contentSource.id} href={"#/reindex/" + contentSource.id}>{contentSource.appName}</MenuItem>
             );
         });
 
         return (
-            <nav className="navbar navbar-inverse" role="navigation">
-                <div className="navbar-header">
-                    <button type="button" className="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                        <span className="sr-only">Toggle navigation</span>
-                        <span className="icon-bar"></span>
-                        <span className="icon-bar"></span>
-                        <span className="icon-bar"></span>
-                    </button>
-                    <Link className="navbar-brand" to="/">Floodgate</Link>
-                </div>
-
-                <div className="collapse navbar-collapse navbar-ex1-collapse">
-                    <ul className="nav navbar-nav">
-                        {contentSourceNodes}
-                    </ul>
-                </div>
-            </nav>
+            <Navbar inverse>
+                <Navbar.Header>
+                    <Navbar.Brand><Link className="navbar-brand" to="/">Floodgate</Link></Navbar.Brand>
+                    <Navbar.Toggle />
+                </Navbar.Header>
+                <Navbar.Collapse>
+                    <Nav>
+                        <NavItem eventKey={1} href="#/register">Register</NavItem>
+                        <NavDropdown eventKey={2} title="Content sources" id="nav-content-source-dropdown">
+                            {contentSourceNodes}
+                        </NavDropdown>
+                    </Nav>
+                </Navbar.Collapse>
+            </Navbar>
         );
     }
 }
