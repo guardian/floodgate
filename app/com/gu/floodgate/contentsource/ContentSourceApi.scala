@@ -1,7 +1,7 @@
 package com.gu.floodgate.contentsource
 
-import com.gu.floodgate.ErrorResponse
-import com.gu.floodgate.reindex.{ ReindexService }
+import com.gu.floodgate.{ ErrorResponse }
+import com.gu.floodgate.reindex.{ DateParameters, ReindexService }
 import org.scalactic.{ Bad, Good }
 import play.api.libs.json.Json
 import play.api.mvc.{ Action, Controller }
@@ -48,14 +48,20 @@ class ContentSourceApi(contentSourceService: ContentSourceService, reindexServic
   def deleteContentSource(id: String) = Action.async { implicit request =>
     contentSourceService.deleteContentSource(id)
     Future.successful(NoContent)
+
   }
 
-  def reindex(id: String) = Action.async { implicit request =>
-    reindexService.reindex(id) map { runningJobOrError =>
-      runningJobOrError match {
-        case Good(runningJob) => Ok(Json.toJson(runningJob))
-        case Bad(error) => BadRequest(Json.toJson(ErrorResponse(error.message)))
+  def reindex(id: String, from: Option[String], to: Option[String]) = Action.async { implicit request =>
+    DateParameters(from, to) match {
+      case Good(dp: DateParameters) => {
+        reindexService.reindex(id, dp) map { runningJobOrError =>
+          runningJobOrError match {
+            case Good(runningJob) => Ok(Json.toJson(runningJob))
+            case Bad(error) => BadRequest(Json.toJson(ErrorResponse(error.message)))
+          }
+        }
       }
+      case Bad(error) => Future.successful(BadRequest(Json.toJson(ErrorResponse(error.message))))
     }
   }
 
