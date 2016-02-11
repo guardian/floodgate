@@ -6,6 +6,7 @@ sealed trait CustomError {
   val message: String
 }
 
+case class InvalidDateTimeParameter(message: String) extends CustomError
 case class ContentSourceNotFound(message: String) extends CustomError
 case class ReindexAlreadyRunning(message: String) extends CustomError
 case class ReindexCannotBeInitiated(message: String) extends CustomError

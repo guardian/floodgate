@@ -34,7 +34,8 @@ object FloodgateBuild extends Build {
         "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
         "io.megl" % "play-json-extra_2.11" % "2.4.3",
         "org.scalactic" %% "scalactic" % "2.2.6",
-        "com.gu" %% "play-googleauth" % "0.3.3"
+        "com.gu" %% "play-googleauth" % "0.3.3",
+        "org.scalatest" %% "scalatest" % "2.2.5" % "test"
       ),
 
       addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0-M5" cross CrossVersion.full),
