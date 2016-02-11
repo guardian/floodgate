@@ -9,34 +9,34 @@ export default class JobHistory extends React.Component {
     }
 
     render () {
-
         var jobHistoryNodes = this.props.data.map(function(jobHistory) {
             return (
-                <tr key={jobHistory.id}>
-                    <td>{jobHistory.id}</td>
+                <tr key={jobHistory.startTime}>
                     <td>{jobHistory.status}</td>
-                    <td>{jobHistory.startTime}</td>
-                    <td>{jobHistory.finishTime}</td>
+                    <td>{ new Date(jobHistory.startTime).toUTCString() }</td>
+                    <td>{ new Date(jobHistory.finishTime).toUTCString() }</td>
                 </tr>
             );
         });
 
-
         return (
             <div id="job-history">
-                <Table striped hover>
-                    <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Status</th>
-                        <th>Start Time</th>
-                        <th>Finish Time</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        {jobHistoryNodes}
-                    </tbody>
-                </Table>
+                {jobHistoryNodes.length === 0 ?
+                    <p>No reindex history. Have you initiated a reindex for this content via Floodgate before?</p>
+                    :
+                    <Table striped hover>
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Start Time</th>
+                                <th>Finish Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {jobHistoryNodes}
+                        </tbody>
+                    </Table>
+                }
             </div>
         );
     }
