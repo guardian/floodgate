@@ -12,6 +12,7 @@ export default class ReindexComponent extends React.Component {
 
         this.state = {
             contentSource: {},
+            reindexHistory: [],
             editModeOn: false
         };
 
@@ -22,11 +23,13 @@ export default class ReindexComponent extends React.Component {
     componentDidMount() {
         var contentSourceId = this.props.params.id;
         this.loadContentSource(contentSourceId);
+        this.loadReindexHistory(contentSourceId);
     }
 
     componentWillReceiveProps(nextProps) {
         if (this.props.params.id !== nextProps.params.id) {
             this.loadContentSource(nextProps.routeParams.id);
+            this.loadReindexHistory(contentSourceId);
             this.setState({editModeOn: false});
         }
     }
@@ -39,19 +42,20 @@ export default class ReindexComponent extends React.Component {
         });
     }
 
+    loadReindexHistory(contentSourceId) {
+        ContentSourceService.getReindexHistory(contentSourceId).then(response => {
+            this.setState({
+                reindexHistory: response.jobHistories
+            });
+        });
+    }
+
     updateEditModeState(newState) {
         this.setState({ editModeOn: newState });
         if(newState == false) this.loadContentSource(this.props.params.id);
     }
 
     render () {
-
-        var jobHistoryStub = [
-            {id: 1, status: "Completed", startTime: "2016-01-17T15:17:45.152Z", finishTime: "2016-01-17T15:45:45.152Z"},
-            {id: 2, status: "Failed", startTime: "2016-01-10T15:17:45.152Z", finishTime: "2016-01-10T15:45:45.152Z"},
-            {id: 3, status: "Completed", startTime: "2016-01-27T15:14:45.152Z", finishTime: "2016-01-27T15:45:45.152Z"},
-            {id: 4, status: "Completed", startTime: "2016-01-07T15:17:45.152Z", finishTime: "2016-01-07T15:45:45.152Z"}
-        ];
 
         return (
             <div id="page-wrapper">
@@ -76,7 +80,7 @@ export default class ReindexComponent extends React.Component {
 
                         <Col xs={12} md={12}>
                             <Panel header="Reindex History">
-                                <JobHistory data={jobHistoryStub}/>
+                                <JobHistory data={this.state.reindexHistory}/>
                             </Panel>
                         </Col>
                     </Row>
