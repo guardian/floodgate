@@ -47,12 +47,12 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
 
   val runningJobService = new RunningJobService(runningJobTable)
   val contentSourceService = new ContentSourceService(contentSourceTable)
+  val jobHistoryService = new JobHistoryService(jobHistoryTable)
   val reindexService = new ReindexService(contentSourceService, runningJobService, wsApi)
 
-  val contentSourceController = new ContentSourceApi(contentSourceService, reindexService)
+  val contentSourceController = new ContentSourceApi(contentSourceService, reindexService, jobHistoryService)
   val runningJobController = new RunningJobApi(runningJobService)
 
-  val jobHistoryService = new JobHistoryService(jobHistoryTable)
   val jobHistoryController = new JobHistoryApi(jobHistoryService)
 
   val appController = new Application

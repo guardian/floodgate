@@ -1,6 +1,7 @@
 package com.gu.floodgate.contentsource
 
-import com.gu.floodgate.{ ErrorResponse }
+import com.gu.floodgate.ErrorResponse
+import com.gu.floodgate.jobhistory.{ JobHistoriesResponse, JobHistoryService }
 import com.gu.floodgate.reindex.{ DateParameters, ReindexService }
 import org.scalactic.{ Bad, Good }
 import play.api.libs.json.Json
@@ -8,7 +9,7 @@ import play.api.mvc.{ Action, Controller }
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ContentSourceApi(contentSourceService: ContentSourceService, reindexService: ReindexService) extends Controller {
+class ContentSourceApi(contentSourceService: ContentSourceService, reindexService: ReindexService, jobHistoryService: JobHistoryService) extends Controller {
 
   def getContentSources = Action.async { implicit request =>
     contentSourceService.getContentSources() map { contentSources =>
@@ -62,6 +63,12 @@ class ContentSourceApi(contentSourceService: ContentSourceService, reindexServic
         }
       }
       case Bad(error) => Future.successful(BadRequest(Json.toJson(ErrorResponse(error.message))))
+    }
+  }
+
+  def getReindexHistory(id: String) = Action.async { implicit request =>
+    jobHistoryService.getJobHistoryForContentSource(id) map { jobHistories =>
+      Ok(Json.toJson(JobHistoriesResponse(jobHistories)))
     }
   }
 

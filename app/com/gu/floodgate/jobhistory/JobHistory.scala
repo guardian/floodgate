@@ -5,10 +5,7 @@ import play.json.extra.JsonFormat
 
 // TODO make status enum once we have better idea of statuses to represent.
 @JsonFormat
-case class JobHistory(id: String, status: String, startTime: DateTime, finishTime: DateTime)
+case class JobHistory(contentSourceId: String, startTime: DateTime, finishTime: DateTime, status: String)
 
 @JsonFormat
 case class JobHistoriesResponse(jobHistories: Seq[JobHistory])
-
-@JsonFormat
-case class SingleJobHistoryResponse(jonHistory: JobHistory)

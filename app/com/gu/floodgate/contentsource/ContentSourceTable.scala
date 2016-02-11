@@ -14,6 +14,8 @@ class ContentSourceTable(protected val dynamoDB: AmazonDynamoDBAsyncClient, prot
     val ReindexEndpoint = "reindexEndpoint"
   }
 
+  override protected val keyName: String = fields.Id
+
   override protected def fromItem(item: Map[String, AttributeValue]): ContentSource =
     ContentSource(
       getItemAttributeValue(fields.Id, item).getS,
