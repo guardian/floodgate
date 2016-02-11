@@ -21,8 +21,8 @@ class Application extends Controller with AuthActions with StrictLogging {
   }
 
   /* Mock endpoint acting as client for the time being in order to implement reindex */
-  def fakeReindexRouteInitiate = Action {
-    println("Reindex initiated.")
+  def fakeReindexRouteInitiate = Action { implicit request =>
+    println(s"Reindex initiated: ${request.queryString}")
     Ok("")
   }
 
