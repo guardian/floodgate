@@ -12,13 +12,4 @@ class JobHistoryApi(jobHistoryService: JobHistoryService) extends Controller {
     }
   }
 
-  def getJobHistory(id: String) = Action.async { implicit request =>
-    jobHistoryService.getJobHistory(id) map { maybeJobHistory =>
-      maybeJobHistory match {
-        case Some(jobHistory) => Ok(Json.toJson(SingleJobHistoryResponse(jobHistory)))
-        case None => NotFound
-      }
-    }
-  }
-
 }

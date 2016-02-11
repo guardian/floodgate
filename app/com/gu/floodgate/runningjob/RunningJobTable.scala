@@ -14,6 +14,8 @@ class RunningJobTable(protected val dynamoDB: AmazonDynamoDBAsyncClient, protect
     val StartTime = "startTime"
   }
 
+  override protected val keyName = fields.ContentSourceId
+
   override protected def fromItem(item: Map[String, AttributeValue]): RunningJob =
     RunningJob(
       getItemAttributeValue(fields.ContentSourceId, item).getS,

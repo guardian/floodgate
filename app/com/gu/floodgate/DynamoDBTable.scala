@@ -12,6 +12,7 @@ trait DynamoDBTable[T] extends StrictLogging {
 
   protected val dynamoDB: AmazonDynamoDBAsync
   protected val tableName: String
+  protected val keyName: String
   protected def fromItem(item: Map[String, AttributeValue]): T
   protected def toItem(t: T): Map[String, AttributeValue]
   protected def toItemUpdate(t: T): Map[String, AttributeValueUpdate]
@@ -53,6 +54,33 @@ trait DynamoDBTable[T] extends StrictLogging {
 
       override def onSuccess(request: QueryRequest, result: QueryResult) = {
         val item: Option[T] = result.getItems.asScala.headOption.map(f => fromItem(f.toMap))
+        promise.success(item)
+      }
+
+    }
+
+    dynamoDB.queryAsync(request, responseHandler)
+    promise.future
+  }
+
+  def getItems(id: String) = {
+    val promise = Promise[List[T]]()
+
+    val request = new QueryRequest().withTableName(tableName)
+      .withScanIndexForward(false)
+      .withKeyConditionExpression(s"$keyName = :$keyName")
+      .withExpressionAttributeValues(
+        Map(s":$keyName" -> new AttributeValue().withS(id)))
+
+    val responseHandler = new AsyncHandler[QueryRequest, QueryResult] {
+
+      override def onError(e: Exception) = {
+        logger.warn(s"Could not retrieve item with hash key: $id: ${e.getMessage} ")
+        promise.failure(e)
+      }
+
+      override def onSuccess(request: QueryRequest, result: QueryResult) = {
+        val item: List[T] = result.getItems.asScala.toList.map(f => fromItem(f.toMap))
         promise.success(item)
       }
 

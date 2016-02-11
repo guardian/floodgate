@@ -9,29 +9,32 @@ class JobHistoryTable(protected val dynamoDB: AmazonDynamoDBAsyncClient, protect
     extends DynamoDBTable[JobHistory] {
 
   object fields {
-    val Id = "id"
+    val ContentSourceId = "contentSourceId"
     val Status = "status"
     val StartTime = "startTime"
     val FinishTime = "finishTime"
   }
 
+  override protected val keyName: String = fields.ContentSourceId
+
   override protected def fromItem(item: Map[String, AttributeValue]): JobHistory =
     JobHistory(
-      getItemAttributeValue(fields.Id, item).getS,
-      getItemAttributeValue(fields.Status, item).getS,
+      getItemAttributeValue(fields.ContentSourceId, item).getS,
       new DateTime(getItemAttributeValue(fields.StartTime, item).getS),
-      new DateTime(getItemAttributeValue(fields.FinishTime, item).getS)
+      new DateTime(getItemAttributeValue(fields.FinishTime, item).getS),
+      getItemAttributeValue(fields.Status, item).getS
     )
 
   override protected def toItem(jobHistory: JobHistory): Map[String, AttributeValue] =
-    Map(fields.Id -> new AttributeValue(jobHistory.id),
-      fields.Status -> new AttributeValue(jobHistory.status),
+    Map(fields.ContentSourceId -> new AttributeValue(jobHistory.contentSourceId),
       fields.StartTime -> new AttributeValue(jobHistory.startTime.toString),
-      fields.FinishTime -> new AttributeValue(jobHistory.finishTime.toString))
+      fields.FinishTime -> new AttributeValue(jobHistory.finishTime.toString),
+      fields.Status -> new AttributeValue(jobHistory.status))
 
   override protected def toItemUpdate(jobHistory: JobHistory): Map[String, AttributeValueUpdate] =
-    Map(fields.Status -> new AttributeValueUpdate().withValue(new AttributeValue(jobHistory.status.toString)),
+    Map(
       fields.StartTime -> new AttributeValueUpdate().withValue(new AttributeValue(jobHistory.startTime.toString)),
-      fields.FinishTime -> new AttributeValueUpdate().withValue(new AttributeValue(jobHistory.finishTime.toString)))
+      fields.FinishTime -> new AttributeValueUpdate().withValue(new AttributeValue(jobHistory.finishTime.toString)),
+      fields.Status -> new AttributeValueUpdate().withValue(new AttributeValue(jobHistory.status.toString)))
 
 }
