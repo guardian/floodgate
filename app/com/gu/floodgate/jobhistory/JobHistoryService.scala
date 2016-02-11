@@ -7,6 +7,6 @@ import scala.concurrent.Future
 class JobHistoryService(jobHistoryTable: DynamoDBTable[JobHistory]) {
 
   def getJobHistories(): Future[Seq[JobHistory]] = jobHistoryTable.getAll()
-  def getJobHistory(id: String): Future[Option[JobHistory]] = jobHistoryTable.getItem(id)
+  def getJobHistoryForContentSource(contentSourceId: String): Future[List[JobHistory]] = jobHistoryTable.getItems(contentSourceId, "contentSourceId")
 
 }

@@ -34,5 +34,13 @@ export default {
             method: 'put',
             data: JSON.stringify(form)
         })
+    },
+
+    getReindexHistory:(id) => {
+        return Reqwest({
+            url: '/content-source/' + id + '/reindex/history',
+            contentType: 'text/json',
+            method: 'get'
+        })
     }
 }

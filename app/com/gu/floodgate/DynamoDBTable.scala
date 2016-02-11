@@ -62,6 +62,32 @@ trait DynamoDBTable[T] extends StrictLogging {
     promise.future
   }
 
+  def getItems(id: String, keyName: String) = {
+    val promise = Promise[List[T]]()
+
+    val request = new QueryRequest().withTableName(tableName)
+      .withKeyConditionExpression(s"$keyName = :$keyName")
+      .withExpressionAttributeValues(
+        Map(s":$keyName" -> new AttributeValue().withS(id)))
+
+    val responseHandler = new AsyncHandler[QueryRequest, QueryResult] {
+
+      override def onError(e: Exception) = {
+        logger.warn(s"Could not retrieve item with hash key: $id: ${e.getMessage} ")
+        promise.failure(e)
+      }
+
+      override def onSuccess(request: QueryRequest, result: QueryResult) = {
+        val item: List[T] = result.getItems.asScala.toList.map(f => fromItem(f.toMap))
+        promise.success(item)
+      }
+
+    }
+
+    dynamoDB.queryAsync(request, responseHandler)
+    promise.future
+  }
+
   def saveItem(t: T): Future[T] = {
     val request = new PutItemRequest().withTableName(tableName).withItem(toItem(t).asJava)
     val promise = Promise[T]()
