@@ -29,7 +29,7 @@ export default class ReindexComponent extends React.Component {
     componentWillReceiveProps(nextProps) {
         if (this.props.params.id !== nextProps.params.id) {
             this.loadContentSource(nextProps.routeParams.id);
-            this.loadReindexHistory(contentSourceId);
+            this.loadReindexHistory(nextProps.routeParams.id);
             this.setState({editModeOn: false});
         }
     }
