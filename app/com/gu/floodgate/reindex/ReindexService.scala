@@ -1,17 +1,19 @@
 package com.gu.floodgate.reindex
 
-import com.gu.floodgate.{ ReindexCannotBeInitiated, ReindexAlreadyRunning, CustomError }
+import com.gu.floodgate._
 import com.gu.floodgate.contentsource.{ ContentSource, ContentSourceService }
+import com.gu.floodgate.jobhistory.{ JobHistory, JobHistoryService }
 import com.gu.floodgate.runningjob.{ RunningJob, RunningJobService }
+import org.joda.time.DateTime
 import org.scalactic.{ Bad, Good, Or }
 import play.api.libs.ws.WSAPI
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ReindexService(contentSourceService: ContentSourceService, runningJobService: RunningJobService, ws: WSAPI) {
+class ReindexService(contentSourceService: ContentSourceService, runningJobService: RunningJobService, jobHistoryService: JobHistoryService, ws: WSAPI) {
 
   /**
-   * @param id - id of content source to intiate reindex upon.
+   * @param id - id of content source to initiate reindex upon.
    */
   def reindex(id: String, dateParameters: DateParameters): Future[RunningJob Or CustomError] = {
 
@@ -32,17 +34,58 @@ class ReindexService(contentSourceService: ContentSourceService, runningJobServi
 
   }
 
+  /**
+   * @param id - id of content source to initiate reindex upon.
+   */
+  def cancelReindex(id: String): Future[Happy Or CustomError] = {
+
+    val futureContentSourceOrError = contentSourceService.getContentSource(id)
+    futureContentSourceOrError flatMap { contentSourceOrError =>
+      contentSourceOrError match {
+        case Good(cs) => cancelReindex(contentSource = cs)
+        case Bad(error) => Future.successful(Bad(error).asOr)
+      }
+    }
+
+  }
+
   private def initiateReindex(contentSource: ContentSource, dateParameters: DateParameters): Future[RunningJob Or CustomError] = {
     val reindexUrl = buildUrl(contentSource.reindexEndpoint, dateParameters)
     ws.url(reindexUrl).post("") flatMap { response =>
       response.status match {
-        case 200 => {
+        case 200 =>
           runningJobService.createRunningJob(RunningJob(contentSource.id)) map (rj => Good(rj))
-        }
-        case _ => {
+        case _ =>
           val error: CustomError = ReindexCannotBeInitiated(s"Could not initiate a reindex for ${contentSource.appName}")
           Future.successful(Bad(error))
-        }
+
+      }
+    }
+  }
+
+  private def cancelReindex(contentSource: ContentSource): Future[Happy Or CustomError] = {
+    ws.url(contentSource.reindexEndpoint).delete flatMap { response =>
+      response.status match {
+        case 200 =>
+
+          val futureRunningJobOrError = runningJobService.getRunningJob(contentSource.id)
+
+          futureRunningJobOrError map { runningJob =>
+
+            val jobHistoryOrError = runningJob.map(r => JobHistory(r.contentSourceId, r.startTime, new DateTime(), status = "cancelled"))
+
+            jobHistoryOrError map { jobHistory =>
+              runningJobService.removeRunningJob(jobHistory.contentSourceId)
+              jobHistoryService.createJobHistory(jobHistory)
+              Happy()
+            }
+
+          }
+
+        case _ =>
+          val error: CustomError = CancellingReindexFailed(s"Could not cancel the current reindex for ${contentSource.appName}")
+          Future.successful(Bad(error))
+
       }
     }
   }

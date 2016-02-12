@@ -24,7 +24,7 @@ export default class ReactApp extends React.Component {
 
     componentDidMount () {
         this.loadContentSources();
-        setInterval(this.loadContentSources, 2000);
+        setInterval(this.loadContentSources, 30000);
     }
 
     render () {

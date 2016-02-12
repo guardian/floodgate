@@ -3,13 +3,17 @@ package com.gu.floodgate.contentsource
 import com.gu.floodgate.ErrorResponse
 import com.gu.floodgate.jobhistory.{ JobHistoriesResponse, JobHistoryService }
 import com.gu.floodgate.reindex.{ DateParameters, ReindexService }
+import com.gu.floodgate.runningjob.{ RunningJobsResponse, RunningJobService }
 import org.scalactic.{ Bad, Good }
 import play.api.libs.json.Json
 import play.api.mvc.{ Action, Controller }
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ContentSourceApi(contentSourceService: ContentSourceService, reindexService: ReindexService, jobHistoryService: JobHistoryService) extends Controller {
+class ContentSourceApi(contentSourceService: ContentSourceService,
+    reindexService: ReindexService,
+    jobHistoryService: JobHistoryService,
+    runningJobService: RunningJobService) extends Controller {
 
   def getContentSources = Action.async { implicit request =>
     contentSourceService.getContentSources() map { contentSources =>
@@ -66,9 +70,24 @@ class ContentSourceApi(contentSourceService: ContentSourceService, reindexServic
     }
   }
 
+  def cancelReindex(id: String) = Action.async { implicit request =>
+    reindexService.cancelReindex(id) map { happyOrError =>
+      happyOrError match {
+        case Good(_) => Ok
+        case Bad(error) => BadRequest(Json.toJson(ErrorResponse(error.message)))
+      }
+    }
+  }
+
   def getReindexHistory(id: String) = Action.async { implicit request =>
     jobHistoryService.getJobHistoryForContentSource(id) map { jobHistories =>
       Ok(Json.toJson(JobHistoriesResponse(jobHistories)))
+    }
+  }
+
+  def getRunningReindexes(id: String) = Action.async { implicit request =>
+    runningJobService.getRunningJobsForContentSource(id) map { runningJobs =>
+      Ok(Json.toJson(RunningJobsResponse(runningJobs)))
     }
   }
 

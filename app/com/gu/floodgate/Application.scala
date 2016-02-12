@@ -26,4 +26,10 @@ class Application extends Controller with AuthActions with StrictLogging {
     Ok("")
   }
 
+  /* Mock endpoint acting as client for the time being in order to implement reindex */
+  def fakeReindexRouteCancel = Action { implicit request =>
+    println(s"Reindex cancelled.")
+    Ok("")
+  }
+
 }

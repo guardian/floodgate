@@ -1,4 +1,5 @@
 import React from 'react';
+import ContentSourceService from '../services/contentSourceService';
 import { Button, ButtonToolbar } from 'react-bootstrap';
 
 export default class ContentSource extends React.Component {
@@ -6,10 +7,16 @@ export default class ContentSource extends React.Component {
     constructor(props) {
         super(props);
         this.enterEditMode = this.enterEditMode.bind(this);
+        this.initiateReindex = this.initiateReindex.bind(this);
     }
 
     enterEditMode() {
         this.props.callbackParent(true);
+    }
+
+    initiateReindex() {
+        var id = this.props.contentSource.id;
+        this.props.onInitiateReindex(id);
     }
 
     render () {
@@ -20,7 +27,7 @@ export default class ContentSource extends React.Component {
                 <p>Endpoint: {this.props.contentSource.reindexEndpoint}</p>
                 <ButtonToolbar>
                     <Button bsStyle="primary" className="pull-right" onClick={this.enterEditMode}>Edit Details</Button>
-                    <Button bsStyle="primary" className="pull-right">Reindex</Button>
+                    <Button bsStyle="primary" className="pull-right" onClick={this.initiateReindex.bind(this)}>Reindex</Button>
                 </ButtonToolbar>
             </div>
         );
