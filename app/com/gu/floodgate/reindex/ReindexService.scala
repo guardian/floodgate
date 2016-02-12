@@ -95,6 +95,34 @@ class ReindexService(contentSourceService: ContentSourceService,
     }
   }
 
+  private def cancelReindex(contentSource: ContentSource): Future[Happy Or CustomError] = {
+    ws.url(contentSource.reindexEndpoint).delete flatMap { response =>
+      response.status match {
+        case 200 => {
+          /* TODO Remove running job and create job history item. */
+          val runningJobOrError = runningJobService.getRunningJob(contentSource.id)
+
+          runningJobOrError map { runningReindex =>
+
+            val jobHistoryOrError = runningReindex.map(r => JobHistory(r.contentSourceId, r.startTime, new DateTime(), status = "cancelled"))
+
+            jobHistoryOrError map { jobHistory =>
+              runningJobService.removeRunningJob(jobHistory.contentSourceId)
+              jobHistoryService.createJobHistory(jobHistory)
+              Happy()
+            }
+
+          }
+
+        }
+        case _ => {
+          val error: CustomError = CancellingReindexFailed(s"Could not cancel the current reindex for ${contentSource.appName}")
+          Future.successful(Bad(error))
+        }
+      }
+    }
+  }
+
   private def isReindexRunning(contentSourceId: String): Future[Boolean] = runningJobService.getRunningJob(contentSourceId) map (_.isGood)
 
   private def buildUrl(endpoint: String, dateParameters: DateParameters): String = {
