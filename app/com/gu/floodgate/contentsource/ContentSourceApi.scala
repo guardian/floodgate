@@ -73,7 +73,7 @@ class ContentSourceApi(contentSourceService: ContentSourceService,
   def cancelReindex(id: String) = Action.async { implicit request =>
     reindexService.cancelReindex(id) map { happyOrError =>
       happyOrError match {
-        case Good(_) => Ok
+        case Good(runningJob) => Ok
         case Bad(error) => BadRequest(Json.toJson(ErrorResponse(error.message)))
       }
     }

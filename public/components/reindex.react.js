@@ -57,7 +57,6 @@ export default class ReindexComponent extends React.Component {
 
     loadRunningReindexes(contentSourceId) {
         ContentSourceService.getRunningReindexes(contentSourceId).then(response => {
-
             if (response.runningJobs.length === 0) this.loadReindexHistory(contentSourceId);
 
             this.setState({
@@ -79,6 +78,7 @@ export default class ReindexComponent extends React.Component {
         var newReindexHistoryItem = { contentSourceId: currentRunningReindex.contentSourceId, status: 'cancelled', startTime: currentRunningReindex.startTime, finishTime: new Date() };
 
         ContentSourceService.cancelReindex(currentRunningReindex.contentSourceId).then( response => {
+            console.log("Running job cancelled.")
             // Optimistically add job history and delete running job
             this.setState({
                 runningReindex: {},
@@ -86,6 +86,7 @@ export default class ReindexComponent extends React.Component {
             });
         },
         errors => {
+            console.log(errors);
             var indexOfItemToDelete = this.state.reindexHistory.findIndex(r => r.contentSourceId === currentRunningReindex.contentSourceId)
             //delete job history and add running job
             this.setState({
