@@ -44,10 +44,25 @@ export default {
         })
     },
 
+    getRunningReindexes:(id) => {
+        return Reqwest({
+            url: '/content-source/' + id + '/reindex/running',
+            contentType: 'text/json',
+            method: 'get'
+        })
+    },
+
     initiateReindex:(id) => {
         return Reqwest({
             url: '/content-source/' + id + '/reindex',
             method: 'post'
+        })
+    },
+
+    cancelReindex:(id) => {
+        return Reqwest({
+            url: '/content-source/' + id + '/reindex',
+            method: 'delete'
         })
     }
 }

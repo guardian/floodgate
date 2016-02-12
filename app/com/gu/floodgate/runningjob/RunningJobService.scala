@@ -9,6 +9,7 @@ class RunningJobService(runningJobTable: DynamoDBTable[RunningJob]) {
 
   def createRunningJob(runningJob: RunningJob) = runningJobTable.saveItem(runningJob)
   def getRunningJobs(): Future[Seq[RunningJob]] = runningJobTable.getAll()
+  def getRunningJobsForContentSource(contentSourceId: String): Future[List[RunningJob]] = runningJobTable.getItems(contentSourceId)
 
   def getRunningJob(contentSourceId: String): Future[RunningJob Or CustomError] = {
     runningJobTable.getItem(contentSourceId, keyName = "contentSourceId") map { maybeRunningJob =>
@@ -18,5 +19,7 @@ class RunningJobService(runningJobTable: DynamoDBTable[RunningJob]) {
       )
     }
   }
+
+  def removeRunningJob(id: String) = runningJobTable.deleteItem(id)
 
 }

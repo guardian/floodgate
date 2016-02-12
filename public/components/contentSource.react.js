@@ -15,24 +15,19 @@ export default class ContentSource extends React.Component {
     }
 
     initiateReindex() {
-        ContentSourceService.initiateReindex(this.props.contentSource.id).then(response => {
-            console.log(response);
-        },
-        error => {
-            console.log(error.response);
-        })
+        var id = this.props.contentSource.id;
+        this.props.onInitiateReindex(id);
     }
 
     render () {
         return (
             <div id="content-source">
-                <p>ID: {this.props.contentSource.id}</p>
                 <p>Application name: {this.props.contentSource.appName}</p>
                 <p>Description: {this.props.contentSource.description}</p>
                 <p>Endpoint: {this.props.contentSource.reindexEndpoint}</p>
                 <ButtonToolbar>
                     <Button bsStyle="primary" className="pull-right" onClick={this.enterEditMode}>Edit Details</Button>
-                    <Button bsStyle="primary" className="pull-right" onClick={this.initiateReindex}>Reindex</Button>
+                    <Button bsStyle="primary" className="pull-right" onClick={this.initiateReindex.bind(this)}>Reindex</Button>
                 </ButtonToolbar>
             </div>
         );
