@@ -118,7 +118,7 @@ trait DynamoDBTable[T] extends StrictLogging {
   }
 
   def deleteItem(id: String) = {
-    val request = new DeleteItemRequest().withTableName(tableName).withKey(Map("id" -> new AttributeValue(id)))
+    val request = new DeleteItemRequest().withTableName(tableName).withKey(Map(keyName -> new AttributeValue(id)))
     dynamoDB.deleteItemAsync(request)
   }
 

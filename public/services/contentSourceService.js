@@ -5,7 +5,7 @@ export default {
     getContentSources:() => {
         return Reqwest({
             url: '/content-source',
-            contentType: 'application/json',
+            contentType: 'text/json',
             method: 'get'
         })
     },
@@ -13,7 +13,7 @@ export default {
     getContentSource:(id) => {
         return Reqwest({
             url: '/content-source/' + id,
-            contentType: 'application/json',
+            contentType: 'text/json',
             method: 'get'
         })
     },
@@ -41,6 +41,28 @@ export default {
             url: '/content-source/' + id + '/reindex/history',
             contentType: 'text/json',
             method: 'get'
+        })
+    },
+
+    getRunningReindexes:(id) => {
+        return Reqwest({
+            url: '/content-source/' + id + '/reindex/running',
+            contentType: 'text/json',
+            method: 'get'
+        })
+    },
+
+    initiateReindex:(id) => {
+        return Reqwest({
+            url: '/content-source/' + id + '/reindex',
+            method: 'post'
+        })
+    },
+
+    cancelReindex:(id) => {
+        return Reqwest({
+            url: '/content-source/' + id + '/reindex',
+            method: 'delete'
         })
     }
 }
