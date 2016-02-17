@@ -8,6 +8,7 @@ import scala.concurrent.Future
 class RunningJobService(runningJobTable: DynamoDBTable[RunningJob]) {
 
   def createRunningJob(runningJob: RunningJob) = runningJobTable.saveItem(runningJob)
+  def updateRunningJob(id: String, runningJob: RunningJob) = runningJobTable.updateItem(id, runningJob)
   def getRunningJobs(): Future[Seq[RunningJob]] = runningJobTable.getAll()
   def getRunningJobsForContentSource(contentSourceId: String): Future[List[RunningJob]] = runningJobTable.getItems(contentSourceId)
 
