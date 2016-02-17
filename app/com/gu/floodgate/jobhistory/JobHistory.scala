@@ -1,11 +1,11 @@
 package com.gu.floodgate.jobhistory
 
+import com.gu.floodgate.reindex.ReindexStatus
 import org.joda.time.DateTime
 import play.json.extra.JsonFormat
 
-// TODO make status enum once we have better idea of statuses to represent.
 @JsonFormat
-case class JobHistory(contentSourceId: String, startTime: DateTime, finishTime: DateTime, status: String)
+case class JobHistory(contentSourceId: String, startTime: DateTime, finishTime: DateTime, status: ReindexStatus)
 
 @JsonFormat
 case class JobHistoriesResponse(jobHistories: Seq[JobHistory])

@@ -1,8 +1,10 @@
 package com.gu.floodgate.reindex
 
+import akka.actor.ActorRef
 import com.gu.floodgate._
 import com.gu.floodgate.contentsource.{ ContentSource, ContentSourceService }
 import com.gu.floodgate.jobhistory.{ JobHistory, JobHistoryService }
+import com.gu.floodgate.reindex.ProgressTrackerController.{ RemoveTracker, LaunchTracker }
 import com.gu.floodgate.runningjob.{ RunningJob, RunningJobService }
 import org.joda.time.DateTime
 import org.scalactic.{ Bad, Good, Or }
@@ -10,7 +12,11 @@ import play.api.libs.ws.WSAPI
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ReindexService(contentSourceService: ContentSourceService, runningJobService: RunningJobService, jobHistoryService: JobHistoryService, ws: WSAPI) {
+class ReindexService(contentSourceService: ContentSourceService,
+    runningJobService: RunningJobService,
+    jobHistoryService: JobHistoryService,
+    reindexProgressMonitor: ActorRef,
+    ws: WSAPI) {
 
   /**
    * @param id - id of content source to initiate reindex upon.
@@ -54,7 +60,11 @@ class ReindexService(contentSourceService: ContentSourceService, runningJobServi
     ws.url(reindexUrl).post("") flatMap { response =>
       response.status match {
         case 200 =>
-          runningJobService.createRunningJob(RunningJob(contentSource.id)) map (rj => Good(rj))
+          // TODO move the interaction with RunningJobService into actor?
+          val runningJob = RunningJob(contentSource.id)
+          reindexProgressMonitor ! LaunchTracker(contentSource, runningJob)
+          runningJobService.createRunningJob(runningJob) map (rj => Good(rj))
+
         case _ =>
           val error: CustomError = ReindexCannotBeInitiated(s"Could not initiate a reindex for ${contentSource.appName}")
           Future.successful(Bad(error))
@@ -67,19 +77,14 @@ class ReindexService(contentSourceService: ContentSourceService, runningJobServi
     ws.url(contentSource.reindexEndpoint).delete flatMap { response =>
       response.status match {
         case 200 =>
-
+          // TODO move the interaction with RunningJobService into actor?
           val futureRunningJobOrError = runningJobService.getRunningJob(contentSource.id)
 
-          futureRunningJobOrError map { runningJob =>
-
-            val jobHistoryOrError = runningJob.map(r => JobHistory(r.contentSourceId, r.startTime, new DateTime(), status = "cancelled"))
-
-            jobHistoryOrError map { jobHistory =>
-              runningJobService.removeRunningJob(jobHistory.contentSourceId)
-              jobHistoryService.createJobHistory(jobHistory)
+          futureRunningJobOrError map { runningJobOrError =>
+            runningJobOrError map { runningJob =>
+              reindexProgressMonitor ! RemoveTracker(contentSource, runningJob)
               Happy()
             }
-
           }
 
         case _ =>

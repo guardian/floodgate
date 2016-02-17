@@ -32,6 +32,7 @@ GET         /running-job/:id                        com.gu.floodgate.runningjob.
 
 # Fake client reindex endpoints
 
+GET         /reindex                                com.gu.floodgate.Application.fakeReindexRouteProgress
 POST        /reindex                                com.gu.floodgate.Application.fakeReindexRouteInitiate
 DELETE      /reindex                                com.gu.floodgate.Application.fakeReindexRouteCancel
 

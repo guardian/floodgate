@@ -6,7 +6,7 @@ import com.amazonaws.regions.{ Regions, Region }
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClient
 import com.gu.floodgate.contentsource.{ ContentSourceTable, ContentSourceService, ContentSourceApi }
 import com.gu.floodgate.jobhistory.{ JobHistoryTable, JobHistoryService, JobHistoryApi }
-import com.gu.floodgate.reindex.ReindexService
+import com.gu.floodgate.reindex.{ ProgressTrackerController, ReindexService }
 import com.gu.floodgate.runningjob.{ RunningJobTable, RunningJobService, RunningJobApi }
 import com.gu.floodgate.{ Login, Application }
 import play.api.ApplicationLoader.Context
@@ -48,7 +48,11 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
   val runningJobService = new RunningJobService(runningJobTable)
   val contentSourceService = new ContentSourceService(contentSourceTable)
   val jobHistoryService = new JobHistoryService(jobHistoryTable)
-  val reindexService = new ReindexService(contentSourceService, runningJobService, jobHistoryService, wsApi)
+
+  val progressTrackerControllerActor = actorSystem.actorOf(
+    ProgressTrackerController.props(wsApi, runningJobService, jobHistoryService), "progress-tracker-controller")
+
+  val reindexService = new ReindexService(contentSourceService, runningJobService, jobHistoryService, progressTrackerControllerActor, wsApi)
 
   val contentSourceController = new ContentSourceApi(contentSourceService, reindexService, jobHistoryService, runningJobService)
   val runningJobController = new RunningJobApi(runningJobService)
