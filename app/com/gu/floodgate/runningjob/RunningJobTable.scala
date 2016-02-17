@@ -10,7 +10,8 @@ class RunningJobTable(protected val dynamoDB: AmazonDynamoDBAsyncClient, protect
 
   object fields {
     val ContentSourceId = "contentSourceId"
-    val Progress = "progress"
+    val DocumentsIndexed = "documentsIndexed"
+    val DocumentsExpected = "documentsExpected"
     val StartTime = "startTime"
   }
 
@@ -19,17 +20,19 @@ class RunningJobTable(protected val dynamoDB: AmazonDynamoDBAsyncClient, protect
   override protected def fromItem(item: Map[String, AttributeValue]): RunningJob =
     RunningJob(
       getItemAttributeValue(fields.ContentSourceId, item).getS,
-      getItemAttributeValue(fields.Progress, item).getN.asInstanceOf[Int], // why does toInt not work?
-      new DateTime(getItemAttributeValue(fields.StartTime, item).getS)
-    )
+      BigDecimal(getItemAttributeValue(fields.DocumentsIndexed, item).getN).toInt,
+      BigDecimal(getItemAttributeValue(fields.DocumentsExpected, item).getN).toInt,
+      new DateTime(getItemAttributeValue(fields.StartTime, item).getS))
 
   override protected def toItem(runningJob: RunningJob): Map[String, AttributeValue] =
-    Map(fields.ContentSourceId -> new AttributeValue(runningJob.contentSourceId.toString),
-      fields.Progress -> new AttributeValue(runningJob.progress.toString),
+    Map(fields.ContentSourceId -> new AttributeValue(runningJob.contentSourceId),
+      fields.DocumentsIndexed -> new AttributeValue().withN(runningJob.documentsIndexed.toString),
+      fields.DocumentsExpected -> new AttributeValue().withN(runningJob.documentsExpected.toString),
       fields.StartTime -> new AttributeValue(runningJob.startTime.toString))
 
   override protected def toItemUpdate(runningJob: RunningJob): Map[String, AttributeValueUpdate] =
-    Map(fields.Progress -> new AttributeValueUpdate().withValue(new AttributeValue(runningJob.progress.toString)),
+    Map(fields.DocumentsIndexed -> new AttributeValueUpdate().withValue(new AttributeValue().withN(runningJob.documentsIndexed.toString)),
+      fields.DocumentsExpected -> new AttributeValueUpdate().withValue(new AttributeValue().withN(runningJob.documentsExpected.toString)),
       fields.StartTime -> new AttributeValueUpdate().withValue(new AttributeValue(runningJob.startTime.toString)))
 
 }

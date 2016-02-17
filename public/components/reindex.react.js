@@ -57,6 +57,9 @@ export default class ReindexComponent extends React.Component {
 
     loadRunningReindexes(contentSourceId) {
         ContentSourceService.getRunningReindexes(contentSourceId).then(response => {
+
+            if (response.runningJobs.length === 0) this.loadReindexHistory(contentSourceId);
+
             this.setState({
                 runningReindex: response.runningJobs[0]
             });
@@ -128,7 +131,8 @@ export default class ReindexComponent extends React.Component {
                                     <p>There are no reindexes currently in progress.</p>
                                     :
                                     <RunningReindex data={this.state.runningReindex}
-                                                    onCancelReindex={this.cancelReindex.bind(this)}/>
+                                                    onCancelReindex={this.cancelReindex.bind(this)}
+                                                    onReloadRunningReindexes={this.loadRunningReindexes.bind(this)}/>
                                 }
                             </Panel>
                         </Col>
