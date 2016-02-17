@@ -1,9 +1,10 @@
 package com.gu.floodgate
 
+import com.gu.floodgate.reindex.ReindexStatus.{ Completed, InProgress }
+import com.gu.floodgate.reindex.{ ReindexStatus, Progress }
 import com.typesafe.scalalogging.StrictLogging
 import play.api.libs.json.Json
 import play.api.mvc._
-import play.json.extra.JsonFormat
 
 class Application extends Controller with AuthActions with StrictLogging {
 
@@ -30,6 +31,20 @@ class Application extends Controller with AuthActions with StrictLogging {
   def fakeReindexRouteCancel = Action { implicit request =>
     println(s"Reindex cancelled.")
     Ok("")
+  }
+
+  var progress = 0
+
+  /* Mock endpoint acting as client for the time being in order to implement reindex */
+  def fakeReindexRouteProgress = Action { implicit request =>
+    println(s"Reindex progress.")
+    progress = progress + 10
+    if (progress == 100) {
+      progress = 0
+      Ok(Json.toJson(Progress(Completed, 100, 100)))
+    } else {
+      Ok(Json.toJson(Progress(InProgress, progress, 100)))
+    }
   }
 
 }

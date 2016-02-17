@@ -24,6 +24,7 @@ trait DynamoDBTable[T] extends StrictLogging {
     val responseHandler = new AsyncHandler[ScanRequest, ScanResult] {
 
       override def onError(e: Exception) = {
+        logger.error(e.getMessage)
         promise.failure(e)
       }
 
@@ -96,6 +97,7 @@ trait DynamoDBTable[T] extends StrictLogging {
     val responseHandler = new AsyncHandler[PutItemRequest, PutItemResult] {
 
       override def onError(e: Exception) = {
+        logger.error(e.getMessage)
         promise.failure(e)
       }
 
@@ -111,15 +113,30 @@ trait DynamoDBTable[T] extends StrictLogging {
 
   def updateItem(id: String, t: T): Unit = {
     val request = new UpdateItemRequest().withTableName(tableName)
-      .withKey(Map("id" -> new AttributeValue(id)))
+      .withKey(Map(keyName -> new AttributeValue(id)))
       .withAttributeUpdates(toItemUpdate(t).mapValues(_.withAction("PUT")))
 
     dynamoDB.updateItemAsync(request)
   }
 
-  def deleteItem(id: String) = {
+  def deleteItem(id: String): Future[DeleteItemResult] = {
     val request = new DeleteItemRequest().withTableName(tableName).withKey(Map(keyName -> new AttributeValue(id)))
-    dynamoDB.deleteItemAsync(request)
+    val promise = Promise[DeleteItemResult]()
+    val responseHandler = new AsyncHandler[DeleteItemRequest, DeleteItemResult] {
+
+      override def onError(e: Exception) = {
+        logger.error(e.getMessage)
+        promise.failure(e)
+      }
+
+      override def onSuccess(request: DeleteItemRequest, result: DeleteItemResult) = {
+        promise.success(result)
+      }
+
+    }
+
+    dynamoDB.deleteItemAsync(request, responseHandler)
+    promise.future
   }
 
   def getItemAttributeValue(key: String, item: Map[String, AttributeValue]): AttributeValue = {
