@@ -19,7 +19,7 @@ GET         /content-source/:id                     com.gu.floodgate.contentsour
 POST        /content-source                         com.gu.floodgate.contentsource.ContentSourceApi.createContentSource
 PUT         /content-source/:id                     com.gu.floodgate.contentsource.ContentSourceApi.updateContentSource(id)
 DELETE      /content-source/:id                     com.gu.floodgate.contentsource.ContentSourceApi.deleteContentSource(id)
-POST        /content-source/:id/reindex             com.gu.floodgate.contentsource.ContentSourceApi.reindex(id, from: Option[String], to: Option[String])
+POST        /content-source/:id/reindex             com.gu.floodgate.contentsource.ContentSourceApi.reindex(id, from: Option[String] ?= None, to: Option[String] ?= None)
 DELETE      /content-source/:id/reindex             com.gu.floodgate.contentsource.ContentSourceApi.cancelReindex(id)
 GET         /content-source/:id/reindex/history     com.gu.floodgate.contentsource.ContentSourceApi.getReindexHistory(id)
 GET         /content-source/:id/reindex/running     com.gu.floodgate.contentsource.ContentSourceApi.getRunningReindexes(id)

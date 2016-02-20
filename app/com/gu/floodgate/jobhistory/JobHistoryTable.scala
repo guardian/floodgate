@@ -31,7 +31,7 @@ class JobHistoryTable(protected val dynamoDB: AmazonDynamoDBAsyncClient, protect
     Map(fields.ContentSourceId -> new AttributeValue(jobHistory.contentSourceId),
       fields.StartTime -> new AttributeValue(jobHistory.startTime.toString),
       fields.FinishTime -> new AttributeValue(jobHistory.finishTime.toString),
-      fields.Status -> new AttributeValue(jobHistory.status.toString))
+      fields.Status -> new AttributeValue(jobHistory.status.toString.toLowerCase))
 
   override protected def toItemUpdate(jobHistory: JobHistory): Map[String, AttributeValueUpdate] =
     Map(
