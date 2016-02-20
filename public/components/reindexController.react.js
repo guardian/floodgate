@@ -2,11 +2,12 @@ import React from 'react';
 import ContentSource from './contentSource.react';
 import ContentSourceEdit from './contentSourceEdit.react';
 import JobHistory from './jobHistory.react';
-import RunningReindex from './runningReindex.react.js';
+import RunningReindex from './runningReindex.react';
+import ReindexForm from './reindexForm.react';
 import ContentSourceService from '../services/contentSourceService';
 import { Label, Row, Col, Panel, ProgressBar } from 'react-bootstrap';
 
-export default class ReindexComponent extends React.Component {
+export default class ReindexControllerComponent extends React.Component {
 
     constructor(props) {
         super(props);
@@ -65,8 +66,8 @@ export default class ReindexComponent extends React.Component {
         });
     }
 
-    initiateReindex(contentSourceId) {
-        ContentSourceService.initiateReindex(contentSourceId).then(response => {
+    initiateReindex(contentSourceId, startDate, endDate) {
+        ContentSourceService.initiateReindex(contentSourceId, startDate, endDate).then(response => {
             this.loadRunningReindexes(contentSourceId);
         },
         error => {
@@ -78,7 +79,6 @@ export default class ReindexComponent extends React.Component {
         var newReindexHistoryItem = { contentSourceId: currentRunningReindex.contentSourceId, status: 'cancelled', startTime: currentRunningReindex.startTime, finishTime: new Date() };
 
         ContentSourceService.cancelReindex(currentRunningReindex.contentSourceId).then( response => {
-            console.log("Running job cancelled.")
             // Optimistically add job history and delete running job
             this.setState({
                 runningReindex: {},
@@ -86,7 +86,6 @@ export default class ReindexComponent extends React.Component {
             });
         },
         errors => {
-            console.log(errors);
             var indexOfItemToDelete = this.state.reindexHistory.findIndex(r => r.contentSourceId === currentRunningReindex.contentSourceId)
             //delete job history and add running job
             this.setState({
@@ -111,7 +110,7 @@ export default class ReindexComponent extends React.Component {
                         <Col xs={12} md={12}>
                             <h3><Label>{this.state.contentSource.appName} Reindexer</Label></h3>
                         </Col>
-                        <Col xs={6} md={6}>
+                        <Col xs={5} md={5}>
                             <Panel header="Details">
                                 {this.state.editModeOn ?
                                     <ContentSourceEdit key={this.state.contentSource.id}
@@ -120,13 +119,18 @@ export default class ReindexComponent extends React.Component {
                                     :
                                     <ContentSource key={this.state.contentSource.id}
                                         contentSource={this.state.contentSource}
-                                        callbackParent={this.updateEditModeState}
-                                        onInitiateReindex={this.initiateReindex.bind(this)}/>
+                                        callbackParent={this.updateEditModeState}/>
                                 }
+                            </Panel>
+
+                            <Panel header="Start Reindex">
+                                <ReindexForm key={this.state.contentSource.id}
+                                             contentSource={this.state.contentSource}
+                                             onInitiateReindex={this.initiateReindex.bind(this)}/>
                             </Panel>
                         </Col>
 
-                        <Col xs={6} md={6}>
+                        <Col xs={7} md={7}>
                             <Panel header="Running Reindexes">
                                 {this.state.runningReindex === undefined || Object.keys(this.state.runningReindex).length === 0 ?
                                     <p>There are no reindexes currently in progress.</p>
@@ -138,7 +142,7 @@ export default class ReindexComponent extends React.Component {
                             </Panel>
                         </Col>
 
-                        <Col xs={12} md={12}>
+                        <Col xs={7} md={7}>
                             <Panel header="Reindex History">
                                 <JobHistory data={this.state.reindexHistory}/>
                             </Panel>

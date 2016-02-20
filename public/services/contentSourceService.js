@@ -52,9 +52,14 @@ export default {
         })
     },
 
-    initiateReindex:(id) => {
+    initiateReindex:(id, startDate, endDate) => {
+        var url = '/content-source/' + id + '/reindex';
+        if(startDate != '' && endDate === '') url += '?from=' + startDate;
+        else if(startDate === '' && endDate != '') url += '?to=' + endDate;
+        else if(startDate != '' && endDate != '') url += '?from=' + startDate + "&to=" + endDate;
+
         return Reqwest({
-            url: '/content-source/' + id + '/reindex',
+            url: url,
             method: 'post'
         })
     },
