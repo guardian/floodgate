@@ -18,7 +18,7 @@ object ProgressTrackerController {
 
 class ProgressTrackerController(ws: WSAPI, runningJobService: RunningJobService, jobHistoryService: JobHistoryService) extends Actor with ActorLogging with StrictLogging {
 
-  private var runningTrackers: Map[String, ActorRef] = Map.empty[String, ActorRef]
+  private var runningTrackers: Map[ContentSource, ActorRef] = Map.empty[ContentSource, ActorRef]
 
   def receive = {
     case LaunchTracker(contentSource, runningJob) => add(contentSource, runningJob)

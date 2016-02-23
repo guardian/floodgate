@@ -30,7 +30,11 @@ case class ContentSource(id: String,
  * the DB.
  */
 @JsonFormat
-case class ContentWithoutIdAndEnvironment(appName: String, description: String, reindexEndpoint: String)
+case class ContentWithoutIdAndEnvironment(
+  appName: String,
+  description: String,
+  reindexEndpoint: String,
+  environment: String)
 
 object ContentSource {
 
@@ -40,9 +44,9 @@ object ContentSource {
       contentSourceWithoutId.reindexEndpoint, contentSourceWithoutId.environment)
   }
 
-  def apply(id: String, environment: String, contentSourceForUpdates: ContentWithoutIdAndEnvironment): ContentSource = {
+  def apply(id: String, environment: String, contentSource: ContentWithoutIdAndEnvironment): ContentSource = {
     val id = UUID.randomUUID().toString
-    ContentSource(id, contentSourceForUpdates.appName, contentSourceForUpdates.description,
-      contentSourceForUpdates.reindexEndpoint, environment)
+    ContentSource(id, contentSource.appName, contentSource.description,
+      contentSource.reindexEndpoint, environment)
   }
 }
