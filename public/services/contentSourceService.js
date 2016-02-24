@@ -10,9 +10,9 @@ export default {
         })
     },
 
-    getContentSource:(id) => {
+    getContentSource:(id, environment) => {
         return Reqwest({
-            url: '/content-source/' + id,
+            url: '/content-source/' + id + '/' + environment,
             contentType: 'text/json',
             method: 'get'
         })
@@ -27,33 +27,33 @@ export default {
         })
     },
 
-    updateContentSource:(id, form) => {
+    updateContentSource:(id, environment, form) => {
         return Reqwest({
-            url: '/content-source/' + id,
+            url: '/content-source/' + id + '/' + environment,
             contentType: 'text/json',
             method: 'put',
             data: JSON.stringify(form)
         })
     },
 
-    getReindexHistory:(id) => {
+    getReindexHistory:(id, environment) => {
         return Reqwest({
-            url: '/content-source/' + id + '/reindex/history',
+            url: '/content-source/' + id + '/' + environment + '/reindex/history',
             contentType: 'text/json',
             method: 'get'
         })
     },
 
-    getRunningReindexes:(id) => {
+    getRunningReindex:(id, environment) => {
         return Reqwest({
-            url: '/content-source/' + id + '/reindex/running',
+            url: '/content-source/' + id + '/' + environment + '/reindex/running',
             contentType: 'text/json',
             method: 'get'
         })
     },
 
-    initiateReindex:(id, startDate, endDate) => {
-        var url = '/content-source/' + id + '/reindex';
+    initiateReindex:(id, environment, startDate, endDate) => {
+        var url = '/content-source/' + id + '/' + environment + '/reindex';
         if(startDate != '' && endDate === '') url += '?from=' + startDate;
         else if(startDate === '' && endDate != '') url += '?to=' + endDate;
         else if(startDate != '' && endDate != '') url += '?from=' + startDate + "&to=" + endDate;
@@ -64,9 +64,9 @@ export default {
         })
     },
 
-    cancelReindex:(id) => {
+    cancelReindex:(id, environment) => {
         return Reqwest({
-            url: '/content-source/' + id + '/reindex',
+            url: '/content-source/' + id + '/' + environment + '/reindex',
             method: 'delete'
         })
     }

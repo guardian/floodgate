@@ -21,54 +21,60 @@ export default class ReindexControllerComponent extends React.Component {
 
         this.updateEditModeState = this.updateEditModeState.bind(this);
         this.loadContentSource = this.loadContentSource.bind(this);
-        this.loadRunningReindexes = this.loadRunningReindexes.bind(this);
+        this.loadRunningReindex = this.loadRunningReindex.bind(this);
     }
 
     componentDidMount() {
         var contentSourceId = this.props.params.id;
-        this.loadContentSource(contentSourceId);
-        this.loadReindexHistory(contentSourceId);
-        this.loadRunningReindexes(contentSourceId);
+        var environment = this.props.params.environment;
+        this.loadContentSource(contentSourceId, environment);
+        this.loadReindexHistory(contentSourceId, environment);
+        this.loadRunningReindex(contentSourceId, environment);
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.params.id !== nextProps.params.id) {
-            this.loadContentSource(nextProps.routeParams.id);
-            this.loadReindexHistory(nextProps.routeParams.id);
-            this.loadRunningReindexes(nextProps.routeParams.id);
+        if (this.props.params.id !== nextProps.params.id || this.props.params.environment !== nextProps.params.environment) {
+            this.loadContentSource(nextProps.routeParams.id, nextProps.routeParams.environment);
+            this.loadReindexHistory(nextProps.routeParams.id, nextProps.routeParams.environment);
+            this.loadRunningReindex(nextProps.routeParams.id, nextProps.routeParams.environment);
             this.setState({editModeOn: false});
         }
     }
 
-    loadContentSource(id) {
-        ContentSourceService.getContentSource(id).then(response => {
+    loadContentSource(id, environment) {
+        ContentSourceService.getContentSource(id, environment).then(response => {
             this.setState({
                 contentSource: response.contentSource
             });
         });
     }
 
-    loadReindexHistory(contentSourceId) {
-        ContentSourceService.getReindexHistory(contentSourceId).then(response => {
+    loadReindexHistory(contentSourceId, environment) {
+        ContentSourceService.getReindexHistory(contentSourceId, environment).then(response => {
             this.setState({
                 reindexHistory: response.jobHistories
             });
         });
     }
 
-    loadRunningReindexes(contentSourceId) {
-        ContentSourceService.getRunningReindexes(contentSourceId).then(response => {
-            if (response.runningJobs.length === 0) this.loadReindexHistory(contentSourceId);
+    loadRunningReindex(contentSourceId, environment) {
+        ContentSourceService.getRunningReindex(contentSourceId, environment).then(response => {
 
             this.setState({
-                runningReindex: response.runningJobs[0]
+                runningReindex: response.runningJob
+            });
+        },
+        error => {
+            this.loadReindexHistory(contentSourceId, environment);
+            this.setState({
+                runningReindex: {}
             });
         });
     }
 
-    initiateReindex(contentSourceId, startDate, endDate) {
-        ContentSourceService.initiateReindex(contentSourceId, startDate, endDate).then(response => {
-            this.loadRunningReindexes(contentSourceId);
+    initiateReindex(contentSourceId, environment, startDate, endDate) {
+        ContentSourceService.initiateReindex(contentSourceId, environment, startDate, endDate).then( response => {
+            this.loadRunningReindex(contentSourceId, environment);
         },
         error => {
             console.log(error.response);
@@ -76,9 +82,11 @@ export default class ReindexControllerComponent extends React.Component {
     }
 
     cancelReindex(currentRunningReindex) {
-        var newReindexHistoryItem = { contentSourceId: currentRunningReindex.contentSourceId, status: 'cancelled', startTime: currentRunningReindex.startTime, finishTime: new Date() };
+        var newReindexHistoryItem = { contentSourceId: currentRunningReindex.contentSourceId,
+            environment: currentRunningReindex.contentSourceEnvironment, status: 'cancelled',
+            startTime: currentRunningReindex.startTime, finishTime: new Date() };
 
-        ContentSourceService.cancelReindex(currentRunningReindex.contentSourceId).then( response => {
+        ContentSourceService.cancelReindex(currentRunningReindex.contentSourceId, currentRunningReindex.contentSourceEnvironment).then( response => {
             // Optimistically add job history and delete running job
             this.setState({
                 runningReindex: {},
@@ -98,7 +106,7 @@ export default class ReindexControllerComponent extends React.Component {
 
     updateEditModeState(newState) {
         this.setState({ editModeOn: newState });
-        if(newState == false) this.loadContentSource(this.props.params.id);
+        if(newState == false) this.loadContentSource(this.props.params.id, this.props.params.environment);
     }
 
     render () {
@@ -137,7 +145,7 @@ export default class ReindexControllerComponent extends React.Component {
                                     :
                                     <RunningReindex data={this.state.runningReindex}
                                                     onCancelReindex={this.cancelReindex.bind(this)}
-                                                    onReloadRunningReindexes={this.loadRunningReindexes.bind(this)}/>
+                                                    onReloadRunningReindex={this.loadRunningReindex.bind(this)}/>
                                 }
                             </Panel>
                         </Col>
