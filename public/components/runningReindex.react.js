@@ -32,9 +32,10 @@ export default class RunningReindex extends React.Component {
         });
     }
 
-    updateRunningReindexes() {
+    updateRunningReindex() {
         var contentSourceId = this.props.data.contentSourceId;
-        this.props.onReloadRunningReindexes(contentSourceId);
+        var environment = this.props.data.contentSourceEnvironment;
+        this.props.onReloadRunningReindex(contentSourceId, environment);
     }
 
     computeProgress(documentsIndexed, documentsExpected) {
@@ -57,7 +58,7 @@ export default class RunningReindex extends React.Component {
         return (
             <div key={this.props.data.startTime}>
                 <ReactInterval timeout={this.state.timeout} enabled={this.state.progressUpdatesEnabled}
-                               callback={ this.updateRunningReindexes.bind(this) } />
+                               callback={ this.updateRunningReindex.bind(this) } />
                 <ProgressBar striped active now={this.state.progress} label="%(percent)s%"/>
                 <Button bsStyle="danger" className="pull-right" type="button" onClick={this.cancelReindex.bind(this)}>Cancel</Button>
             </div>

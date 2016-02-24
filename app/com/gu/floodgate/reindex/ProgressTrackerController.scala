@@ -26,17 +26,17 @@ class ProgressTrackerController(ws: WSAPI, runningJobService: RunningJobService,
   }
 
   private def remove(contentSource: ContentSource, runningJob: RunningJob): Unit = {
-    runningTrackers.get(contentSource.id).foreach {
+    runningTrackers.get(contentSource.uniqueId).foreach {
       case tracker =>
         tracker ! Cancel(contentSource, runningJob)
-        runningTrackers = runningTrackers - contentSource.id
+        runningTrackers = runningTrackers - contentSource.uniqueId
     }
   }
 
   private def add(contentSource: ContentSource, runningJob: RunningJob): Unit = {
-    val tracker = context.system.actorOf(ProgressTracker.props(ws, runningJobService, jobHistoryService), s"progress-tracker-${contentSource.id}-${runningJob.startTime}")
+    val tracker = context.system.actorOf(ProgressTracker.props(ws, runningJobService, jobHistoryService), s"progress-tracker-${contentSource.uniqueId}")
     tracker ! TrackProgress(contentSource, runningJob)
-    runningTrackers = runningTrackers + (runningJob.contentSourceId -> tracker)
+    runningTrackers = runningTrackers + (contentSource.uniqueId -> tracker)
   }
 
 }

@@ -41,11 +41,11 @@ export default class ContentSourceEdit extends React.Component {
             this.setState({alertStyle: 'danger', alertMessage: 'Invalid form. Correct the fields and try again.', alertVisibility: true});
             return;
         }
-        this.handleFormSubmit(this.props.contentSource.id, {appName: appName, description: description, reindexEndpoint: reindexEndpoint});
+        this.handleFormSubmit(this.props.contentSource.id, this.props.contentSource.environment, {appName: appName, description: description, reindexEndpoint: reindexEndpoint});
     }
 
-    handleFormSubmit(id, form) {
-        ContentSourceService.updateContentSource(id, form).then(response => {
+    handleFormSubmit(id, environment, form) {
+        ContentSourceService.updateContentSource(id, environment, form).then(response => {
             this.setState({alertVisibility: false});
             this.exitEditMode();
         });

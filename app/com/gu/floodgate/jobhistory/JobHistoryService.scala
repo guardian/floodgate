@@ -9,6 +9,7 @@ class JobHistoryService(jobHistoryTable: DynamoDBTable[JobHistory]) {
 
   def createJobHistory(jobHistory: JobHistory) = jobHistoryTable.saveItem(jobHistory)
   def getJobHistories(): Future[Seq[JobHistory]] = jobHistoryTable.getAll()
-  def getJobHistoryForContentSource(contentSourceId: String): Future[List[JobHistory]] = jobHistoryTable.getItems(contentSourceId)
+  def getJobHistoryForContentSource(contentSourceId: String, environment: String): Future[List[JobHistory]] =
+    jobHistoryTable.getItemsWithFilter(contentSourceId, filterKeyName = "environment", filterValue = environment)
 
 }

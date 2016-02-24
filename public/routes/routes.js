@@ -8,7 +8,7 @@ import Home from '../components/home.react';
 
 export default [
     <Route path="/" component={ReactApp}>
-        <Route name="reindex" path="/reindex/:id" component={ReindexController} />
+        <Route name="reindex" path="/reindex/:id/environment/:environment" component={ReindexController} />
         <Route name="register" path="/register" component={Register} />
         <IndexRoute component={Home}/>
     </Route>
