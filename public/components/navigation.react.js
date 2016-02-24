@@ -11,8 +11,11 @@ export default class NavigationComponent extends React.Component {
     render () {
 
         var contentSourceNodes = this.props.data.map(function(contentSource) {
+            var itemKey = contentSource.id + '-' + contentSource.environment;
+            var route = '#/reindex/' + contentSource.id + '/environment/' + contentSource.environment
+            var title = contentSource.appName + ' [' + contentSource.environment + ']'
             return (
-                <MenuItem eventKey={contentSource.id} key={contentSource.id} href={"#/reindex/" + contentSource.id}>{contentSource.appName}</MenuItem>
+                <MenuItem eventKey={itemKey} key={itemKey} href={route}>{title}</MenuItem>
             );
         });
 

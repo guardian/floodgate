@@ -18,6 +18,7 @@ export default class ContentSource extends React.Component {
             <div id="content-source">
                 <p><strong>Application name:</strong> {this.props.contentSource.appName}</p>
                 <p><strong>Description:</strong> {this.props.contentSource.description}</p>
+                <p><strong>Environment:</strong> {this.props.contentSource.environment}</p>
                 <p><strong>Endpoint:</strong> {this.props.contentSource.reindexEndpoint}</p>
 
                 <ButtonToolbar>

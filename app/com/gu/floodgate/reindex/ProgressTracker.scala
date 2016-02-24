@@ -91,14 +91,14 @@ class ProgressTracker(ws: WSAPI, runningJobService: RunningJobService, jobHistor
   private def actOnProgress(progress: Progress, contentSource: ContentSource, runningJob: RunningJob) = {
     progress.status match {
       case Completed =>
-        val runningJobUpdate = RunningJob(runningJob.contentSourceId, progress.documentsIndexed, progress.documentsExpected, runningJob.startTime)
+        val runningJobUpdate = RunningJob(runningJob.contentSourceId, runningJob.contentSourceEnvironment, progress.documentsIndexed, progress.documentsExpected, runningJob.startTime)
         completeProgressTracking(Completed, contentSource, runningJobUpdate)
 
       case Failed => completeProgressTracking(Failed, contentSource, runningJob)
 
       case InProgress =>
-        val runningJobUpdate = RunningJob(runningJob.contentSourceId, progress.documentsIndexed, progress.documentsExpected, runningJob.startTime)
-        runningJobService.updateRunningJob(runningJob.contentSourceId, runningJobUpdate)
+        val runningJobUpdate = RunningJob(runningJob.contentSourceId, runningJob.contentSourceEnvironment, progress.documentsIndexed, progress.documentsExpected, runningJob.startTime)
+        runningJobService.updateRunningJob(runningJob.contentSourceId, runningJob.contentSourceEnvironment, runningJobUpdate)
         scheduleNextUpdate(contentSource, runningJob)
 
       case _ => logger.warn(s"Incorrect status sent from client: ${progress.status.toString} for content source: ${contentSource.id}")
@@ -112,8 +112,8 @@ class ProgressTracker(ws: WSAPI, runningJobService: RunningJobService, jobHistor
       context.stop(self)
     }
 
-    val jobHistory = JobHistory(runningJob.contentSourceId, runningJob.startTime, new DateTime(), status)
-    runningJobService.removeRunningJob(runningJob.contentSourceId)
+    val jobHistory = JobHistory(runningJob.contentSourceId, runningJob.startTime, new DateTime(), status, runningJob.contentSourceEnvironment)
+    runningJobService.removeRunningJob(runningJob.contentSourceId, runningJob.contentSourceEnvironment)
     jobHistoryService.createJobHistory(jobHistory)
 
     cleanupAndStop()

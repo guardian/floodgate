@@ -21,11 +21,10 @@ class ReindexService(contentSourceService: ContentSourceService,
   /**
    * @param id - id of content source to initiate reindex upon.
    */
-  def reindex(id: String, dateParameters: DateParameters): Future[RunningJob Or CustomError] = {
+  def reindex(id: String, environment: String, dateParameters: DateParameters): Future[RunningJob Or CustomError] = {
+    val futureContentSourceOrError = contentSourceService.getContentSource(id, environment)
 
-    val futureContentSourceOrError = contentSourceService.getContentSource(id)
-
-    isReindexRunning(id) flatMap { isRunning =>
+    isReindexRunning(id, environment) flatMap { isRunning =>
       if (isRunning) {
         Future.successful(Bad(ReindexAlreadyRunning("A reindex is already running for this content source. Please try again once it has completed.")))
       } else {
@@ -43,9 +42,9 @@ class ReindexService(contentSourceService: ContentSourceService,
   /**
    * @param id - id of content source to initiate reindex upon.
    */
-  def cancelReindex(id: String): Future[Happy Or CustomError] = {
+  def cancelReindex(id: String, environment: String): Future[Happy Or CustomError] = {
 
-    val futureContentSourceOrError = contentSourceService.getContentSource(id)
+    val futureContentSourceOrError = contentSourceService.getContentSource(id, environment)
     futureContentSourceOrError flatMap { contentSourceOrError =>
       contentSourceOrError match {
         case Good(cs) => cancelReindex(contentSource = cs)
@@ -61,7 +60,7 @@ class ReindexService(contentSourceService: ContentSourceService,
       response.status match {
         case 200 =>
           // TODO move the interaction with RunningJobService into actor?
-          val runningJob = RunningJob(contentSource.id)
+          val runningJob = RunningJob(contentSource.id, contentSource.environment)
           reindexProgressMonitor ! LaunchTracker(contentSource, runningJob)
           runningJobService.createRunningJob(runningJob) map (rj => Good(rj))
 
@@ -78,7 +77,7 @@ class ReindexService(contentSourceService: ContentSourceService,
       response.status match {
         case 200 =>
           // TODO move the interaction with RunningJobService into actor?
-          val futureRunningJobOrError = runningJobService.getRunningJob(contentSource.id)
+          val futureRunningJobOrError = runningJobService.getRunningJob(contentSource.id, contentSource.environment)
 
           futureRunningJobOrError map { runningJobOrError =>
             runningJobOrError map { runningJob =>
@@ -95,7 +94,9 @@ class ReindexService(contentSourceService: ContentSourceService,
     }
   }
 
-  private def isReindexRunning(contentSourceId: String): Future[Boolean] = runningJobService.getRunningJob(contentSourceId) map (_.isGood)
+  private def isReindexRunning(contentSourceId: String, contentSourceEnvironment: String): Future[Boolean] = {
+    runningJobService.getRunningJob(contentSourceId, contentSourceEnvironment) map (_.isGood)
+  }
 
   private def buildUrl(endpoint: String, dateParameters: DateParameters): String = {
     (dateParameters.from, dateParameters.to) match {
