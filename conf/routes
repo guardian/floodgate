@@ -3,38 +3,40 @@
 # ~~~~
 
 # Handled by client side code
-GET         /                                       com.gu.floodgate.Application.index
+GET         /                                                             com.gu.floodgate.Application.index
 
 # Healthcheck
-GET        /healthcheck                             com.gu.floodgate.Application.healthcheck
+GET        /healthcheck                                                   com.gu.floodgate.Application.healthcheck
 
 # Auth
-GET         /login                                  com.gu.floodgate.Login.login
-GET         /oauth2callback                         com.gu.floodgate.Login.oauth2Callback
-GET         /fakeSecureRoute                        com.gu.floodgate.Application.fakeSecureRoute
+GET         /login                                                        com.gu.floodgate.Login.login
+GET         /oauth2callback                                               com.gu.floodgate.Login.oauth2Callback
+GET         /fakeSecureRoute                                              com.gu.floodgate.Application.fakeSecureRoute
 
 # Api
-GET         /content-source                         com.gu.floodgate.contentsource.ContentSourceApi.getContentSources
-GET         /content-source/:id                     com.gu.floodgate.contentsource.ContentSourceApi.getContentSource(id)
-POST        /content-source                         com.gu.floodgate.contentsource.ContentSourceApi.createContentSource
-PUT         /content-source/:id                     com.gu.floodgate.contentsource.ContentSourceApi.updateContentSource(id)
-DELETE      /content-source/:id                     com.gu.floodgate.contentsource.ContentSourceApi.deleteContentSource(id)
-POST        /content-source/:id/reindex             com.gu.floodgate.contentsource.ContentSourceApi.reindex(id, from: Option[String] ?= None, to: Option[String] ?= None)
-DELETE      /content-source/:id/reindex             com.gu.floodgate.contentsource.ContentSourceApi.cancelReindex(id)
-GET         /content-source/:id/reindex/history     com.gu.floodgate.contentsource.ContentSourceApi.getReindexHistory(id)
-GET         /content-source/:id/reindex/running     com.gu.floodgate.contentsource.ContentSourceApi.getRunningReindexes(id)
+GET         /content-source                                               com.gu.floodgate.contentsource.ContentSourceApi.getAllContentSources
+GET         /content-source/:id                                           com.gu.floodgate.contentsource.ContentSourceApi.getContentSources(id)
+GET         /content-source/:id/:environment                               com.gu.floodgate.contentsource.ContentSourceApi.getContentSource(id, environment)
+POST        /content-source                                               com.gu.floodgate.contentsource.ContentSourceApi.createContentSource
+PUT         /content-source/:id/:environment                               com.gu.floodgate.contentsource.ContentSourceApi.updateContentSource(id, environment)
+DELETE      /content-source/:id                                           com.gu.floodgate.contentsource.ContentSourceApi.deleteContentSource(id)
+POST        /content-source/:id/:environment/reindex                       com.gu.floodgate.contentsource.ContentSourceApi.reindex(id, environment, from: Option[String] ?= None, to: Option[String] ?= None)
+DELETE      /content-source/:id/:environment/reindex                       com.gu.floodgate.contentsource.ContentSourceApi.cancelReindex(id, environment)
+GET         /content-source/:id/:environment/reindex/history               com.gu.floodgate.contentsource.ContentSourceApi.getReindexHistory(id, environment)
+GET         /content-source/:id/:environment/reindex/running               com.gu.floodgate.contentsource.ContentSourceApi.getRunningReindex(id, environment)
 
 
-GET         /job-history                            com.gu.floodgate.jobhistory.JobHistoryApi.getJobHistories
+GET         /job-history                                                  com.gu.floodgate.jobhistory.JobHistoryApi.getJobHistories
 
-GET         /running-job                            com.gu.floodgate.runningjob.RunningJobApi.getRunningJobs
-GET         /running-job/:id                        com.gu.floodgate.runningjob.RunningJobApi.getRunningJob(id)
+GET         /running-job                                                  com.gu.floodgate.runningjob.RunningJobApi.getAllRunningJobs
+GET         /running-job/:id                                              com.gu.floodgate.runningjob.RunningJobApi.getRunningJobs(id)
+GET         /running-job/:id/:environment                                  com.gu.floodgate.runningjob.RunningJobApi.getRunningJob(id, environment)
 
 # Fake client reindex endpoints
 
-GET         /reindex                                com.gu.floodgate.Application.fakeReindexRouteProgress
-POST        /reindex                                com.gu.floodgate.Application.fakeReindexRouteInitiate
-DELETE      /reindex                                com.gu.floodgate.Application.fakeReindexRouteCancel
+GET         /reindex                                                      com.gu.floodgate.Application.fakeReindexRouteProgress
+POST        /reindex                                                      com.gu.floodgate.Application.fakeReindexRouteInitiate
+DELETE      /reindex                                                      com.gu.floodgate.Application.fakeReindexRouteCancel
 
 # Map static resources from the /public folder to the /assets URL path
-GET        /assets/*file          controllers.Assets.versioned(path="/public", file: Asset)
+GET        /assets/*file                                                  controllers.Assets.versioned(path="/public", file: Asset)

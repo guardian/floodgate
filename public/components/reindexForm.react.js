@@ -16,6 +16,7 @@ export default class ReindexForm extends React.Component {
 
     initiateReindex() {
         var id = this.props.contentSource.id;
+        var environment = this.props.contentSource.environment;
         var startDate = this.state.startDate === '' ? '' : Moment(this.state.startDate).toISOString();
         var endDate = this.state.endDate === '' ? '' : Moment(this.state.endDate).endOf('day').toISOString();
 
@@ -26,7 +27,7 @@ export default class ReindexForm extends React.Component {
                 alertVisibility: true});
         else {
             this.setState({alertVisibility: false});
-            this.props.onInitiateReindex(id, startDate, endDate);
+            this.props.onInitiateReindex(id, environment, startDate, endDate);
         }
     }
 
