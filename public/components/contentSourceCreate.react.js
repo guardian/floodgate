@@ -7,7 +7,16 @@ export default class ContentSourceForm extends React.Component {
     constructor(props) {
         super(props);
         this.render = this.render.bind(this);
-        this.state = {appName: '', description: '', reindexEndpoint: '', environment: '', alertStyle: 'success', alertMessage: '', alertVisibility: false};
+        this.state = {
+            appName: '',
+            description: '',
+            reindexEndpoint: '',
+            environment: '',
+            authType: '',
+            alertStyle: 'success',
+            alertMessage: '',
+            alertVisibility: false
+        };
         this.resetFormFields = this.resetFormFields.bind(this);
     }
 
@@ -19,7 +28,7 @@ export default class ContentSourceForm extends React.Component {
     }
 
     resetFormFields() {
-        this.setState({appName: '', description: '', reindexEndpoint: ''});
+        this.setState({appName: '', description: '', reindexEndpoint: '', environment: '', authType: ''});
     }
 
     handleAppNameChange(e) {
@@ -35,8 +44,11 @@ export default class ContentSourceForm extends React.Component {
     }
 
     handleEnvironmentChange(e) {
-        console.log(e.target.value);
         this.setState({environment: e.target.value});
+    }
+
+    handleAuthTypeChange(e) {
+        this.setState({authType: e.target.value});
     }
 
     handleSubmit(e) {
@@ -45,11 +57,20 @@ export default class ContentSourceForm extends React.Component {
         var description = this.state.description.trim();
         var reindexEndpoint = this.state.reindexEndpoint.trim();
         var environment = this.state.environment.trim();
-        if(!appName || !description || !reindexEndpoint || !environment) {
+        var authType = this.state.authType.trim();
+
+        if(appName && description && reindexEndpoint && environment && authType ) {
+            this.handleFormSubmit({
+                appName: appName,
+                description: description,
+                reindexEndpoint: reindexEndpoint,
+                environment: environment,
+                authType: authType
+            });
+        } else {
             this.setState({alertStyle: 'danger', alertMessage: 'Invalid form. Correct the fields and try again.', alertVisibility: true});
             return;
         }
-        this.handleFormSubmit({appName: appName, description: description, reindexEndpoint: reindexEndpoint, environment: environment});
     }
 
     render () {
@@ -63,7 +84,7 @@ export default class ContentSourceForm extends React.Component {
                     <Input label="Endpoint*" labelClassName="col-xs-2" wrapperClassName="wrapper">
                             <Col xs={4}>
                                 <Input type="select" onChange={this.handleEnvironmentChange.bind(this)} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select>
-                                    <option value="" selected disabled>Please select environment... </option>
+                                    <option value="" selected disabled>Select environment ... </option>
                                     <option value="live-code">Code [live]</option>
                                     <option value="draft-code">Code [draft]</option>
                                     <option value="live-prod">Prod [live]</option>
@@ -71,8 +92,18 @@ export default class ContentSourceForm extends React.Component {
                                 </Input>
                             </Col>
                             <Col xs={6}>
-                                <input type="text" value={this.state.reindexEndpoint} onChange={this.handleReindexEndpointChange.bind(this)} placeholder="URL to initiate reindex for content source ..." wrapperClassName="col-xs-4" className="form-control" />
+                                <input type="text" value={this.state.reindexEndpoint} onChange={this.handleReindexEndpointChange.bind(this)} placeholder="URL for reindex (include api key parameter if required) ..." wrapperClassName="col-xs-4" className="form-control" />
                             </Col>
+                    </Input>
+
+                    <Input label="Authentication*" labelClassName="col-xs-2" wrapperClassName="wrapper">
+                        <Col xs={4}>
+                            <Input type="select" onChange={this.handleAuthTypeChange.bind(this)} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select>
+                                <option value="" selected disabled>Select authentication type ... </option>
+                                <option value="api-key">Api key</option>
+                                <option value="vpc-peered">VPC peered</option>
+                            </Input>
+                        </Col>
                     </Input>
 
                     <ButtonToolbar>

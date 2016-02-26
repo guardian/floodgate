@@ -20,6 +20,8 @@ export default class ContentSource extends React.Component {
                 <p><strong>Description:</strong> {this.props.contentSource.description}</p>
                 <p><strong>Environment:</strong> {this.props.contentSource.environment}</p>
                 <p><strong>Endpoint:</strong> {this.props.contentSource.reindexEndpoint}</p>
+                <p><strong>Auth type:</strong> {this.props.contentSource.authType}</p>
+
 
                 <ButtonToolbar>
                     <Button bsStyle="primary" className="pull-right" onClick={this.enterEditMode}> Edit Details</Button>

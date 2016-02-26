@@ -10,9 +10,11 @@ export default class ContentSourceEdit extends React.Component {
             appName: this.props.contentSource.appName,
             description: this.props.contentSource.description,
             reindexEndpoint: this.props.contentSource.reindexEndpoint,
+            authType: this.props.contentSource.authType,
             alertStyle: 'success',
             alertMessage: '',
-            alertVisibility: false};
+            alertVisibility: false
+        };
         this.exitEditMode = this.exitEditMode.bind(this);
     }
 
@@ -28,6 +30,10 @@ export default class ContentSourceEdit extends React.Component {
         this.setState({reindexEndpoint: e.target.value});
     }
 
+    handleAuthTypeChange(e) {
+        this.setState({authType: e.target.value});
+    }
+
     exitEditMode() {
         this.props.callbackParent(false);
     }
@@ -37,11 +43,15 @@ export default class ContentSourceEdit extends React.Component {
         var appName = this.state.appName.trim();
         var description = this.state.description.trim();
         var reindexEndpoint = this.state.reindexEndpoint.trim();
-        if(!appName || !description || !reindexEndpoint) {
+        var authType = this.state.authType.trim();
+
+        if(appName && description && reindexEndpoint && authType) {
+            this.handleFormSubmit(this.props.contentSource.id, this.props.contentSource.environment,
+                {appName: appName, description: description, reindexEndpoint: reindexEndpoint, authType: authType});
+        } else {
             this.setState({alertStyle: 'danger', alertMessage: 'Invalid form. Correct the fields and try again.', alertVisibility: true});
             return;
         }
-        this.handleFormSubmit(this.props.contentSource.id, this.props.contentSource.environment, {appName: appName, description: description, reindexEndpoint: reindexEndpoint});
     }
 
     handleFormSubmit(id, environment, form) {
@@ -59,6 +69,13 @@ export default class ContentSourceEdit extends React.Component {
                     <Input type="text" label="Application Name*" labelClassName="col-xs-2" wrapperClassName="col-xs-10" value={this.state.appName} onChange={this.handleAppNameChange.bind(this)} />
                     <Input type="text" label="Description*" labelClassName="col-xs-2" wrapperClassName="col-xs-10" value={this.state.description} onChange={this.handleDescriptionChange.bind(this)} />
                     <Input type="text" label="Reindex Endpoint*" labelClassName="col-xs-2" wrapperClassName="col-xs-10" value={this.state.reindexEndpoint} onChange={this.handleReindexEndpointChange.bind(this)} />
+
+                    <Input type="select" value={this.state.authType} label="Auth Type*" onChange={this.handleAuthTypeChange.bind(this)} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select>
+                        <option value="" selected disabled>Select authentication type ... </option>
+                        <option value="api-key">Api key</option>
+                        <option value="vpc-peered">VPC peered</option>
+                    </Input>
+
                     <ButtonToolbar>
                         <Button bsStyle="success" className="pull-right" type="submit">Submit</Button>
                         <Button bsStyle="danger" className="pull-right" type="button" onClick={this.exitEditMode}>Cancel</Button>

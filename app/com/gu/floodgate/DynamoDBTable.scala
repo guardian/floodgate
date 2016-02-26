@@ -106,9 +106,9 @@ trait DynamoDBTable[T] extends StrictLogging {
   def updateItem(id: String, t: T): Unit = {
     val request = new UpdateItemRequest().withTableName(tableName)
       .withKey(Map(keyName -> new AttributeValue(id)))
-      .withAttributeUpdates(toItemUpdate(t).mapValues(_.withAction("PUT")))
+      .withAttributeUpdates(toItemUpdate(t).mapValues(_.withAction(AttributeAction.PUT)))
 
-    dynamoDB.updateItemAsync(request)
+    updateThisItem(request)
   }
 
   def updateItem(hashKey: String, sortKey: String, t: T): Unit = {
@@ -118,10 +118,10 @@ trait DynamoDBTable[T] extends StrictLogging {
           keyName -> new AttributeValue(hashKey),
           sortKeyName -> new AttributeValue(sortKey)
         ))
-        .withAttributeUpdates(toItemUpdate(t).mapValues(_.withAction("PUT")))
+        .withAttributeUpdates(toItemUpdate(t).mapValues(_.withAction(AttributeAction.PUT)))
     }
 
-    maybeRequest foreach (dynamoDB.updateItemAsync(_))
+    maybeRequest foreach (updateThisItem(_))
   }
 
   def deleteItem(hashKey: String): Unit = {
@@ -210,6 +210,25 @@ trait DynamoDBTable[T] extends StrictLogging {
     }
 
     dynamoDB.deleteItemAsync(request, responseHandler)
+    promise.future
+  }
+
+  private def updateThisItem(request: UpdateItemRequest) = {
+    val promise = Promise[UpdateItemResult]()
+    val responseHandler = new AsyncHandler[UpdateItemRequest, UpdateItemResult] {
+
+      override def onError(e: Exception) = {
+        logger.error(e.getMessage)
+        promise.failure(e)
+      }
+
+      override def onSuccess(request: UpdateItemRequest, result: UpdateItemResult) = {
+        promise.success(result)
+      }
+
+    }
+
+    dynamoDB.updateItemAsync(request, responseHandler)
     promise.future
   }
 
