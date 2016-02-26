@@ -1,7 +1,7 @@
 package com.gu.floodgate.jobhistory
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClient
-import com.amazonaws.services.dynamodbv2.model.{ AttributeValueUpdate, AttributeValue }
+import com.amazonaws.services.dynamodbv2.model.{ AttributeAction, AttributeValueUpdate, AttributeValue }
 import com.gu.floodgate.DynamoDBTable
 import com.gu.floodgate.reindex.ReindexStatus
 import com.gu.floodgate.reindex.ReindexStatus.{ Unknown }
