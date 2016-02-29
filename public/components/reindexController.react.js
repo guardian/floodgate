@@ -120,30 +120,39 @@ export default class ReindexControllerComponent extends React.Component {
                         </Col>
                         <Col xs={5} md={5}>
                             <Panel header="Details">
-                                {this.state.editModeOn ?
+                                {this.state.editModeOn  ?
                                     <ContentSourceEdit key={this.state.contentSource.id}
                                         contentSource={this.state.contentSource}
                                         callbackParent={this.updateEditModeState} />
                                     :
-                                    <ContentSource key={this.state.contentSource.id}
-                                        contentSource={this.state.contentSource}
-                                        callbackParent={this.updateEditModeState}/>
+                                    this.state.contentSource.contentSourceSettings != undefined ?
+                                        <ContentSource key={this.state.contentSource.id}
+                                            contentSource={this.state.contentSource}
+                                            callbackParent={this.updateEditModeState}/>
+                                        : null
                                 }
                             </Panel>
 
                             <Panel header="Start Reindex">
-                                <ReindexForm key={this.state.contentSource.id}
-                                             contentSource={this.state.contentSource}
-                                             onInitiateReindex={this.initiateReindex.bind(this)}/>
+                                {this.state.contentSource.contentSourceSettings != undefined ?
+                                    <ReindexForm key={this.state.contentSource.id}
+                                        contentSource={this.state.contentSource}
+                                        onInitiateReindex={this.initiateReindex.bind(this)}/>
+                                    : null
+                                }
                             </Panel>
                         </Col>
 
                         <Col xs={7} md={7}>
                             <Panel header="Running Reindexes">
-                                {this.state.runningReindex === undefined || Object.keys(this.state.runningReindex).length === 0 ?
+                                {this.state.runningReindex === undefined ||
+                                 Object.keys(this.state.runningReindex).length === 0 ||
+                                 this.state.contentSource.contentSourceSettings === undefined ||
+                                 Object.keys(this.state.contentSource).length === 0 ?
                                     <p>There are no reindexes currently in progress.</p>
                                     :
                                     <RunningReindex data={this.state.runningReindex}
+                                                    isCancelSupported={this.state.contentSource.contentSourceSettings.supportsCancelReindex}
                                                     onCancelReindex={this.cancelReindex.bind(this)}
                                                     onReloadRunningReindex={this.loadRunningReindex.bind(this)}/>
                                 }
