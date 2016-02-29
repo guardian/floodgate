@@ -13,6 +13,8 @@ export default class ContentSourceForm extends React.Component {
             reindexEndpoint: '',
             environment: '',
             authType: '',
+            supportsToFromParams: true,
+            supportsCancelReindex: true,
             alertStyle: 'success',
             alertMessage: '',
             alertVisibility: false
@@ -28,7 +30,7 @@ export default class ContentSourceForm extends React.Component {
     }
 
     resetFormFields() {
-        this.setState({appName: '', description: '', reindexEndpoint: '', environment: '', authType: ''});
+        this.setState({appName: '', description: '', reindexEndpoint: '', environment: '', authType: '', supportsToFromParams: true, supportsCancelReindex: true});
     }
 
     handleAppNameChange(e) {
@@ -51,6 +53,14 @@ export default class ContentSourceForm extends React.Component {
         this.setState({authType: e.target.value});
     }
 
+    handleSupportsToFromParams(e) {
+        this.setState({supportsToFromParams: e.target.checked});
+    }
+
+    handleSupportsCancelReindex(e) {
+        this.setState({supportsCancelReindex: e.target.checked});
+    }
+
     handleSubmit(e) {
         e.preventDefault();
         var appName = this.state.appName.trim();
@@ -58,6 +68,8 @@ export default class ContentSourceForm extends React.Component {
         var reindexEndpoint = this.state.reindexEndpoint.trim();
         var environment = this.state.environment.trim();
         var authType = this.state.authType.trim();
+        var supportsToFromParams = this.state.supportsToFromParams;
+        var supportsCancelReindex = this.state.supportsCancelReindex;
 
         if(appName && description && reindexEndpoint && environment && authType ) {
             this.handleFormSubmit({
@@ -65,7 +77,11 @@ export default class ContentSourceForm extends React.Component {
                 description: description,
                 reindexEndpoint: reindexEndpoint,
                 environment: environment,
-                authType: authType
+                authType: authType,
+                contentSourceSettings: {
+                    supportsToFromParams: supportsToFromParams,
+                    supportsCancelReindex: supportsCancelReindex
+                }
             });
         } else {
             this.setState({alertStyle: 'danger', alertMessage: 'Invalid form. Correct the fields and try again.', alertVisibility: true});
@@ -103,6 +119,15 @@ export default class ContentSourceForm extends React.Component {
                                 <option value="api-key">Api key</option>
                                 <option value="vpc-peered">VPC peered</option>
                             </Input>
+                        </Col>
+                    </Input>
+
+                    <Input label="Settings" labelClassName="col-xs-2" wrapperClassName="wrapper">
+                        <Col xs={4}>
+                            <Input type="checkbox" defaultChecked={this.state.supportsToFromParams} onChange={this.handleSupportsToFromParams.bind(this)} label="Supports to/from reindex parameters" />
+                        </Col>
+                        <Col xs={4}>
+                            <Input type="checkbox" defaultChecked={this.state.supportsCancelReindex} onChange={this.handleSupportsCancelReindex.bind(this)} label="Supports cancelling of a reindex" />
                         </Col>
                     </Input>
 
