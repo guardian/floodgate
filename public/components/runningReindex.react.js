@@ -60,7 +60,11 @@ export default class RunningReindex extends React.Component {
                 <ReactInterval timeout={this.state.timeout} enabled={this.state.progressUpdatesEnabled}
                                callback={ this.updateRunningReindex.bind(this) } />
                 <ProgressBar striped active now={this.state.progress} label="%(percent)s%"/>
-                <Button bsStyle="danger" className="pull-right" type="button" onClick={this.cancelReindex.bind(this)}>Cancel</Button>
+
+                {this.props.isCancelSupported ?
+                    <Button bsStyle="danger" className="pull-right" type="button" onClick={this.cancelReindex.bind(this)}>Cancel</Button>
+                    : null
+                }
             </div>
         );
     }

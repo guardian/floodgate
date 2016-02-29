@@ -6,6 +6,7 @@ export default class ReindexForm extends React.Component {
 
     constructor(props) {
         super(props);
+
         this.state = {
             startDate: Moment().format('YYYY-MM-DD'),
             endDate: Moment().format('YYYY-MM-DD'),
@@ -15,10 +16,11 @@ export default class ReindexForm extends React.Component {
     }
 
     initiateReindex() {
+        var isToFromSupported = this.props.contentSource.contentSourceSettings.supportsToFromParams;
         var id = this.props.contentSource.id;
         var environment = this.props.contentSource.environment;
-        var startDate = this.state.startDate === '' ? '' : Moment(this.state.startDate).toISOString();
-        var endDate = this.state.endDate === '' ? '' : Moment(this.state.endDate).endOf('day').toISOString();
+        var startDate = this.state.startDate === '' || !isToFromSupported ? '' : Moment(this.state.startDate).toISOString();
+        var endDate = this.state.endDate === '' || !isToFromSupported ? '' : Moment(this.state.endDate).endOf('day').toISOString();
 
         if(Moment(endDate).isBefore(startDate))
             this.setState({
@@ -60,14 +62,19 @@ export default class ReindexForm extends React.Component {
             <div>
                 { this.state.alertVisibility ? <Alert bsStyle={this.state.alertStyle} onDismiss={this.handleAlertDismiss.bind(this)}>{this.state.alertMessage}</Alert> : null }
                 <form>
-                    <Row>
-                        <Col xs={6}>
-                            <Input type="date" label="Start date" value={this.state.startDate} onChange={this.handleStartDate.bind(this)} />
-                        </Col>
-                        <Col xs={6}>
-                            <Input type="date" label="End Date" value={this.state.endDate} onChange={this.handleEndDate.bind(this)} />
-                        </Col>
-                    </Row>
+
+                    {this.props.contentSource.contentSourceSettings.supportsToFromParams ?
+                        <Row>
+                            <Col xs={6}>
+                                <Input type="date" label="Start date" value={this.state.startDate} onChange={this.handleStartDate.bind(this)} />
+                            </Col>
+                            <Col xs={6}>
+                                <Input type="date" label="End Date" value={this.state.endDate} onChange={this.handleEndDate.bind(this)} />
+                            </Col>
+                        </Row>
+                        :
+                        <Alert bsStyle="info">Reindexing for a specific period of time is not supported with this content source. You may only reindex <strong>all</strong>.</Alert>
+                    }
                     <Button bsStyle="primary" className="pull-right" onClick={this.initiateReindex.bind(this)}>Reindex</Button>
                 </form>
             </div>
