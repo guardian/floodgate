@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ButtonToolbar, Input, Alert } from 'react-bootstrap';
+import { Button, ButtonToolbar, Input, Alert, Col } from 'react-bootstrap';
 import ContentSourceService from '../services/contentSourceService';
 
 export default class ContentSourceEdit extends React.Component {
@@ -11,6 +11,8 @@ export default class ContentSourceEdit extends React.Component {
             description: this.props.contentSource.description,
             reindexEndpoint: this.props.contentSource.reindexEndpoint,
             authType: this.props.contentSource.authType,
+            supportsToFromParams: this.props.contentSource.contentSourceSettings.supportsToFromParams,
+            supportsCancelReindex: this.props.contentSource.contentSourceSettings.supportsCancelReindex,
             alertStyle: 'success',
             alertMessage: '',
             alertVisibility: false
@@ -34,6 +36,15 @@ export default class ContentSourceEdit extends React.Component {
         this.setState({authType: e.target.value});
     }
 
+    handleSupportsToFromParams(e) {
+        this.setState({supportsToFromParams: e.target.checked});
+
+    }
+
+    handleSupportsCancelReindex(e) {
+        this.setState({supportsCancelReindex: e.target.checked});
+    }
+
     exitEditMode() {
         this.props.callbackParent(false);
     }
@@ -44,10 +55,19 @@ export default class ContentSourceEdit extends React.Component {
         var description = this.state.description.trim();
         var reindexEndpoint = this.state.reindexEndpoint.trim();
         var authType = this.state.authType.trim();
+        var supportsToFromParams = this.state.supportsToFromParams;
+        var supportsCancelReindex = this.state.supportsCancelReindex;
 
-        if(appName && description && reindexEndpoint && authType) {
+        if(appName && description && reindexEndpoint && authType && supportsToFromParams != undefined && supportsCancelReindex != undefined) {
             this.handleFormSubmit(this.props.contentSource.id, this.props.contentSource.environment,
-                {appName: appName, description: description, reindexEndpoint: reindexEndpoint, authType: authType});
+                {appName: appName,
+                 description: description,
+                 reindexEndpoint: reindexEndpoint,
+                 authType: authType,
+                 contentSourceSettings: {
+                     supportsToFromParams: supportsToFromParams,
+                     supportsCancelReindex: supportsCancelReindex
+                 }});
         } else {
             this.setState({alertStyle: 'danger', alertMessage: 'Invalid form. Correct the fields and try again.', alertVisibility: true});
             return;
@@ -74,6 +94,15 @@ export default class ContentSourceEdit extends React.Component {
                         <option value="" selected disabled>Select authentication type ... </option>
                         <option value="api-key">Api key</option>
                         <option value="vpc-peered">VPC peered</option>
+                    </Input>
+
+                    <Input label="Settings" labelClassName="col-xs-2" wrapperClassName="wrapper">
+                        <Col xs={4}>
+                            <Input type="checkbox" defaultChecked={this.state.supportsToFromParams} onChange={this.handleSupportsToFromParams.bind(this)} label="Supports to/from reindex parameters" />
+                        </Col>
+                        <Col xs={4}>
+                            <Input type="checkbox" defaultChecked={this.state.supportsCancelReindex} onChange={this.handleSupportsCancelReindex.bind(this)} label="Supports cancelling of a reindex" />
+                        </Col>
                     </Input>
 
                     <ButtonToolbar>
