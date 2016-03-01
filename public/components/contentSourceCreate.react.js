@@ -171,7 +171,7 @@ export default class ContentSourceForm extends React.Component {
 
                     {this.state.environments.map(function(e, id){
                         return (
-                            <div className="panel panel-default" key={id}>
+                            <div className="environment-panel panel panel-default" key={id}>
                                 <div className="panel-heading">Environment <Button className="remove-btn pull-right btn btn-link btn-sm" onClick={this.deleteEnvironmentItem.bind(this, id)}><Glyphicon glyph="glyphicon glyphicon-minus" /> Remove</Button></div>
                                 <div className="panel-body">
 
