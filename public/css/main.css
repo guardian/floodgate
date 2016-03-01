@@ -28,3 +28,19 @@ table tbody tr .navbar-brand {
     cursor: pointer;
     padding: 0;
 }
+
+.margin-bottom-10 {
+    margin-bottom: 10px;
+}
+
+.no-margin-bottom .form-group {
+    margin-bottom: 0;
+}
+
+.btn-link {
+    padding: 10px 0 10px 0;
+}
+
+.btn-link:focus {
+    outline: 0;
+}

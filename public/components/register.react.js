@@ -16,7 +16,7 @@ export default class ReactApp extends React.Component {
                         <Col xs={12} md={12}>
                             <h3><Label>Register</Label></h3>
                         </Col>
-                        <Col xs={6} md={6}>
+                        <Col xs={12} md={8}>
                             <Panel header="Create Content Source">
                                 <div className="container-fluid">
                                     {this.props.children}
