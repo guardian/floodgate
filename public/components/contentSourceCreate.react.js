@@ -220,7 +220,7 @@ export default class ContentSourceForm extends React.Component {
                     }, this)}
 
                     { this.state.environmentCount < 4
-                        ? <Row><Col xs={10} xsOffset={2}><Button type="button" className="col-xs-12 margin-bottom-10" onClick={this.handleAddEnvironmentClick.bind(this)}><Glyphicon glyph="glyphicon glyphicon-plus" /> Add another environment</Button></Col></Row>
+                        ? <Row><Col xs={10} xsOffset={2}><Button type="button" className="btn-link" onClick={this.handleAddEnvironmentClick.bind(this)}><Glyphicon glyph="glyphicon glyphicon-plus" /> Add another environment</Button></Col></Row>
                         : null
                     }
 
