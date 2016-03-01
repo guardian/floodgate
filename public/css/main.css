@@ -28,3 +28,7 @@ table tbody tr .navbar-brand {
     cursor: pointer;
     padding: 0;
 }
+
+.remove-btn {
+    padding: 0;
+}

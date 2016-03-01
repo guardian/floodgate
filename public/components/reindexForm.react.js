@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, ButtonToolbar, Glyphicon, Alert, Input, Row, Col } from 'react-bootstrap';
+import { Button, ButtonToolbar, Alert, Input, Row, Col } from 'react-bootstrap';
 import Moment from 'moment';
 
 export default class ReindexForm extends React.Component {

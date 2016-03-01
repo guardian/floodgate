@@ -26,7 +26,6 @@ export default class ContentSource extends React.Component {
                 <ButtonToolbar>
                     <Button bsStyle="primary" className="pull-right" onClick={this.enterEditMode}> Edit Details</Button>
                 </ButtonToolbar>
-
             </div>
         );
     }
