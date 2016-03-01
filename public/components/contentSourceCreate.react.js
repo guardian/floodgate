@@ -40,7 +40,6 @@ export default class ContentSourceForm extends React.Component {
         });
     }
 
-
     deleteEnvironmentItem(id, e) {
         if(this.state.environmentCount == 1) {
             this.setState({alertStyle: 'danger', alertMessage: 'You need at least one environment to submit the content source.', alertVisibility: true});
@@ -137,8 +136,8 @@ export default class ContentSourceForm extends React.Component {
         var supportsCancelReindex = this.state.supportsCancelReindex;
 
         if( appName && description && environments ) {
-            environments.map( function(obj, id){
-                this.handleFormSubmit({
+            var toAdd = environments.map( function(obj, id){
+                return {
                     appName: appName,
                     description: description,
                     reindexEndpoint: obj.reindexEndpoint,
@@ -148,8 +147,10 @@ export default class ContentSourceForm extends React.Component {
                         supportsToFromParams: supportsToFromParams,
                         supportsCancelReindex: supportsCancelReindex
                     }
-                });
+                };
             }, this);
+
+            this.handleFormSubmit(toAdd);
             this.resetEnvironments();
         } else {
             this.setState({alertStyle: 'danger', alertMessage: 'Invalid form. Correct the fields and try again.', alertVisibility: true});

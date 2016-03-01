@@ -1,5 +1,7 @@
 package com.gu.floodgate.contentsource
 
+import java.util.UUID
+
 import com.gu.floodgate.ErrorResponse
 import com.gu.floodgate.jobhistory.{ JobHistoriesResponse, JobHistoryService }
 import com.gu.floodgate.reindex.{ DateParameters, ReindexService }
@@ -44,6 +46,18 @@ class ContentSourceApi(contentSourceService: ContentSourceService,
       error => jsonError,
       contentSourceWithoutId => {
         contentSourceService.createContentSource(ContentSource(contentSourceWithoutId))
+        Future.successful(Created)
+      }
+    )
+  }
+
+  def createContentSources = Action.async(parse.json) { implicit request =>
+    request.body.validate[List[ContentSourceWithoutId]].fold(
+      error => jsonError,
+      contentSourcesWithoutId => {
+        val id = UUID.randomUUID().toString
+        val contentSourcesWithId = contentSourcesWithoutId.map(ContentSource(id, _))
+        contentSourcesWithId.foreach(contentSourceService.createContentSource)
         Future.successful(Created)
       }
     )
