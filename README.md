@@ -24,3 +24,7 @@ To run the tests you will need to do the following:
 ```
 $ sbt test
 ```
+
+## Integrating with Floodgate
+
+If you are implementing a new content source and you want to reindex your content using Floodgate, please refer to [this doc](docs/implementing-a-content-source.md)
