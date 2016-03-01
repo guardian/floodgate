@@ -1,5 +1,6 @@
 import React from 'react';
-import { Input, Button, ButtonToolbar, Alert, Col } from 'react-bootstrap';
+import update from 'react-addons-update';
+import { Input, Button, ButtonToolbar, Alert, Col, Glyphicon } from 'react-bootstrap';
 import ContentSourceService from '../services/contentSourceService';
 
 export default class ContentSourceForm extends React.Component {
@@ -10,16 +11,49 @@ export default class ContentSourceForm extends React.Component {
         this.state = {
             appName: '',
             description: '',
-            reindexEndpoint: '',
-            environment: '',
-            authType: '',
             supportsToFromParams: true,
             supportsCancelReindex: true,
+            environments: [],
             alertStyle: 'success',
             alertMessage: '',
-            alertVisibility: false
+            alertVisibility: false,
+            environmentCount: 1
         };
         this.resetFormFields = this.resetFormFields.bind(this);
+        this.resetEnvironments = this.resetEnvironments.bind(this);
+        this.addEnvironmentItem = this.addEnvironmentItem.bind(this);
+        this.handleFormSubmit = this.handleFormSubmit.bind(this);
+    }
+
+    componentDidMount() {
+        this.addEnvironmentItem();
+    }
+
+    addEnvironmentItem() {
+        var newItem = {
+            reindexEndpoint: '',
+            environment: '',
+            authType: ''
+        };
+        this.setState({
+            environments: this.state.environments.concat([newItem])
+        });
+    }
+
+
+    deleteEnvironmentItem(id, e) {
+        if(this.state.environmentCount == 1) {
+            this.setState({alertStyle: 'danger', alertMessage: 'You need at least one environment to submit the content source.', alertVisibility: true});
+        }
+        else {
+            var newState = update(this.state,
+                {
+                    environments: {$splice: [[id, 1]]}
+                }
+            );
+            this.setState(newState);
+            this.setState({environmentCount: this.state.environmentCount - 1});
+        }
     }
 
     handleFormSubmit(form) {
@@ -33,6 +67,12 @@ export default class ContentSourceForm extends React.Component {
         this.setState({appName: '', description: '', reindexEndpoint: '', environment: '', authType: '', supportsToFromParams: true, supportsCancelReindex: true});
     }
 
+    resetEnvironments() {
+        this.setState({environments: [], environmentCount: 1}, function(){
+            this.addEnvironmentItem();
+        });
+    }
+
     handleAppNameChange(e) {
         this.setState({appName: e.target.value});
     }
@@ -41,16 +81,43 @@ export default class ContentSourceForm extends React.Component {
         this.setState({description: e.target.value});
     }
 
-    handleReindexEndpointChange(e) {
-        this.setState({reindexEndpoint: e.target.value});
+    handleReindexEndpointChange(id, e) {
+        var newState = update(this.state,
+            {
+                environments: {
+                    [id]: {
+                        reindexEndpoint: {$set: e.target.value}
+                    }
+                }
+            }
+        );
+        this.setState(newState);
     }
 
-    handleEnvironmentChange(e) {
-        this.setState({environment: e.target.value});
+    handleEnvironmentChange(id, e) {
+        var newState = update(this.state,
+            {
+                environments: {
+                    [id]: {
+                        environment: {$set: e.target.value}
+                    }
+                }
+            }
+        );
+        this.setState(newState);
     }
 
-    handleAuthTypeChange(e) {
-        this.setState({authType: e.target.value});
+    handleAuthTypeChange(id, e) {
+        var newState = update(this.state,
+            {
+                environments: {
+                    [id]: {
+                        authType: {$set: e.target.value}
+                    }
+                }
+            }
+        );
+        this.setState(newState);
     }
 
     handleSupportsToFromParams(e) {
@@ -65,28 +132,33 @@ export default class ContentSourceForm extends React.Component {
         e.preventDefault();
         var appName = this.state.appName.trim();
         var description = this.state.description.trim();
-        var reindexEndpoint = this.state.reindexEndpoint.trim();
-        var environment = this.state.environment.trim();
-        var authType = this.state.authType.trim();
+        var environments = this.state.environments;
         var supportsToFromParams = this.state.supportsToFromParams;
         var supportsCancelReindex = this.state.supportsCancelReindex;
 
-        if(appName && description && reindexEndpoint && environment && authType ) {
-            this.handleFormSubmit({
-                appName: appName,
-                description: description,
-                reindexEndpoint: reindexEndpoint,
-                environment: environment,
-                authType: authType,
-                contentSourceSettings: {
-                    supportsToFromParams: supportsToFromParams,
-                    supportsCancelReindex: supportsCancelReindex
-                }
-            });
+        if( appName && description && environments ) {
+            environments.map( function(obj, id){
+                this.handleFormSubmit({
+                    appName: appName,
+                    description: description,
+                    reindexEndpoint: obj.reindexEndpoint,
+                    environment: obj.environment,
+                    authType: obj.authType,
+                    contentSourceSettings: {
+                        supportsToFromParams: supportsToFromParams,
+                        supportsCancelReindex: supportsCancelReindex
+                    }
+                });
+            }, this);
+            this.resetEnvironments();
         } else {
             this.setState({alertStyle: 'danger', alertMessage: 'Invalid form. Correct the fields and try again.', alertVisibility: true});
-            return;
         }
+    }
+
+    handleAddEnvironmentClick(e) {
+        this.addEnvironmentItem();
+        this.setState({environmentCount: this.state.environmentCount + 1})
     }
 
     render () {
@@ -97,30 +169,46 @@ export default class ContentSourceForm extends React.Component {
                     <Input type="text" label="Application Name*" labelClassName="col-xs-2" wrapperClassName="col-xs-10" value={this.state.appName} onChange={this.handleAppNameChange.bind(this)} />
                     <Input type="text" label="Description*" labelClassName="col-xs-2" wrapperClassName="col-xs-10" value={this.state.description} onChange={this.handleDescriptionChange.bind(this)} />
 
-                    <Input label="Endpoint*" labelClassName="col-xs-2" wrapperClassName="wrapper">
-                            <Col xs={4}>
-                                <Input type="select" onChange={this.handleEnvironmentChange.bind(this)} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select>
-                                    <option value="" selected disabled>Select environment ... </option>
-                                    <option value="live-code">Code [live]</option>
-                                    <option value="draft-code">Code [draft]</option>
-                                    <option value="live-prod">Prod [live]</option>
-                                    <option value="draft-prod">Prod [draft]</option>
-                                </Input>
-                            </Col>
-                            <Col xs={6}>
-                                <input type="text" value={this.state.reindexEndpoint} onChange={this.handleReindexEndpointChange.bind(this)} placeholder="URL for reindex (include api key parameter if required) ..." wrapperClassName="col-xs-4" className="form-control" />
-                            </Col>
-                    </Input>
+                    {this.state.environments.map(function(e, id){
+                        return (
+                            <div className="panel panel-default" key={id}>
+                                <div className="panel-heading">Environment <Button className="remove-btn pull-right btn btn-link btn-sm" onClick={this.deleteEnvironmentItem.bind(this, id)}><Glyphicon glyph="glyphicon glyphicon-minus" /> Remove</Button></div>
+                                <div className="panel-body">
 
-                    <Input label="Authentication*" labelClassName="col-xs-2" wrapperClassName="wrapper">
-                        <Col xs={4}>
-                            <Input type="select" onChange={this.handleAuthTypeChange.bind(this)} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select>
-                                <option value="" selected disabled>Select authentication type ... </option>
-                                <option value="api-key">Api key</option>
-                                <option value="vpc-peered">VPC peered</option>
-                            </Input>
-                        </Col>
-                    </Input>
+                                    <Input label="Endpoint*" labelClassName="col-xs-2" wrapperClassName="wrapper">
+                                        <Col xs={4}>
+                                            <Input type="select" onChange={this.handleEnvironmentChange.bind(this, id)} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select value={e.environment}>
+                                                <option value="" disabled>Select environment ... </option>
+                                                <option value="live-code">Code [live]</option>
+                                                <option value="draft-code">Code [draft]</option>
+                                                <option value="live-prod">Prod [live]</option>
+                                                <option value="draft-prod">Prod [draft]</option>
+                                            </Input>
+                                        </Col>
+                                        <Col xs={6}>
+                                            <input type="text" value={e.reindexEndpoint} onChange={this.handleReindexEndpointChange.bind(this, id)} placeholder="URL for reindex (include api key parameter if required) ..." wrapperClassName="col-xs-4" className="form-control" />
+                                        </Col>
+                                    </Input>
+
+                                    <Input label="Authentication*" labelClassName="col-xs-2" wrapperClassName="wrapper">
+                                        <Col xs={4}>
+                                            <Input type="select" onChange={this.handleAuthTypeChange.bind(this, id)} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select value={e.authType}>
+                                                <option value="" disabled>Select authentication type ... </option>
+                                                <option value="api-key">Api key</option>
+                                                <option value="vpc-peered">VPC peered</option>
+                                            </Input>
+                                        </Col>
+                                    </Input>
+
+                                </div>
+                            </div>
+                        );
+                    }, this)}
+
+                    { this.state.environmentCount < 4
+                        ? <Button type="button" className="btn-link" onClick={this.handleAddEnvironmentClick.bind(this)}><Glyphicon glyph="glyphicon glyphicon-plus" /> Add another environment</Button>
+                        : null
+                    }
 
                     <Input label="Settings" labelClassName="col-xs-2" wrapperClassName="wrapper">
                         <Col xs={4}>
