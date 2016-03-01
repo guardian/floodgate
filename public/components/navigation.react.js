@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router';
-import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from 'react-bootstrap'
+import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Label } from 'react-bootstrap'
 
 export default class NavigationComponent extends React.Component {
 
@@ -13,9 +13,8 @@ export default class NavigationComponent extends React.Component {
         var contentSourceNodes = this.props.data.map(function(contentSource) {
             var itemKey = contentSource.id + '-' + contentSource.environment;
             var route = '#/reindex/' + contentSource.id + '/environment/' + contentSource.environment
-            var title = contentSource.appName + ' [' + contentSource.environment + ']'
             return (
-                <MenuItem eventKey={itemKey} key={itemKey} href={route}>{title}</MenuItem>
+                <MenuItem eventKey={itemKey} key={itemKey} href={route}>{contentSource.appName} <Label bsStyle="default">{contentSource.environment}</Label></MenuItem>
             );
         });
 
