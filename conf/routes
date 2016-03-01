@@ -16,21 +16,21 @@ GET         /fakeSecureRoute                                              com.gu
 # Api
 GET         /content-source                                               com.gu.floodgate.contentsource.ContentSourceApi.getAllContentSources
 GET         /content-source/:id                                           com.gu.floodgate.contentsource.ContentSourceApi.getContentSources(id)
-GET         /content-source/:id/:environment                               com.gu.floodgate.contentsource.ContentSourceApi.getContentSource(id, environment)
-POST        /content-source                                               com.gu.floodgate.contentsource.ContentSourceApi.createContentSource
-PUT         /content-source/:id/:environment                               com.gu.floodgate.contentsource.ContentSourceApi.updateContentSource(id, environment)
+GET         /content-source/:id/:environment                              com.gu.floodgate.contentsource.ContentSourceApi.getContentSource(id, environment)
+POST        /content-source                                               com.gu.floodgate.contentsource.ContentSourceApi.createContentSources
+PUT         /content-source/:id/:environment                              com.gu.floodgate.contentsource.ContentSourceApi.updateContentSource(id, environment)
 DELETE      /content-source/:id                                           com.gu.floodgate.contentsource.ContentSourceApi.deleteContentSource(id)
-POST        /content-source/:id/:environment/reindex                       com.gu.floodgate.contentsource.ContentSourceApi.reindex(id, environment, from: Option[String] ?= None, to: Option[String] ?= None)
-DELETE      /content-source/:id/:environment/reindex                       com.gu.floodgate.contentsource.ContentSourceApi.cancelReindex(id, environment)
-GET         /content-source/:id/:environment/reindex/history               com.gu.floodgate.contentsource.ContentSourceApi.getReindexHistory(id, environment)
-GET         /content-source/:id/:environment/reindex/running               com.gu.floodgate.contentsource.ContentSourceApi.getRunningReindex(id, environment)
+POST        /content-source/:id/:environment/reindex                      com.gu.floodgate.contentsource.ContentSourceApi.reindex(id, environment, from: Option[String] ?= None, to: Option[String] ?= None)
+DELETE      /content-source/:id/:environment/reindex                      com.gu.floodgate.contentsource.ContentSourceApi.cancelReindex(id, environment)
+GET         /content-source/:id/:environment/reindex/history              com.gu.floodgate.contentsource.ContentSourceApi.getReindexHistory(id, environment)
+GET         /content-source/:id/:environment/reindex/running              com.gu.floodgate.contentsource.ContentSourceApi.getRunningReindex(id, environment)
 
 
 GET         /job-history                                                  com.gu.floodgate.jobhistory.JobHistoryApi.getJobHistories
 
 GET         /running-job                                                  com.gu.floodgate.runningjob.RunningJobApi.getAllRunningJobs
 GET         /running-job/:id                                              com.gu.floodgate.runningjob.RunningJobApi.getRunningJobs(id)
-GET         /running-job/:id/:environment                                  com.gu.floodgate.runningjob.RunningJobApi.getRunningJob(id, environment)
+GET         /running-job/:id/:environment                                 com.gu.floodgate.runningjob.RunningJobApi.getRunningJob(id, environment)
 
 # Fake client reindex endpoints
 
