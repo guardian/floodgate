@@ -80,38 +80,12 @@ export default class ContentSourceForm extends React.Component {
         this.setState({description: e.target.value});
     }
 
-    handleReindexEndpointChange(id, e) {
+    handleEnvironmentsChange(id, field, e) {
         var newState = update(this.state,
             {
                 environments: {
                     [id]: {
-                        reindexEndpoint: {$set: e.target.value}
-                    }
-                }
-            }
-        );
-        this.setState(newState);
-    }
-
-    handleEnvironmentChange(id, e) {
-        var newState = update(this.state,
-            {
-                environments: {
-                    [id]: {
-                        environment: {$set: e.target.value}
-                    }
-                }
-            }
-        );
-        this.setState(newState);
-    }
-
-    handleAuthTypeChange(id, e) {
-        var newState = update(this.state,
-            {
-                environments: {
-                    [id]: {
-                        authType: {$set: e.target.value}
+                        [field]: {$set: e.target.value}
                     }
                 }
             }
@@ -181,7 +155,7 @@ export default class ContentSourceForm extends React.Component {
                                                 <Col xs={12}>
                                                     <Input label="Endpoint*" labelClassName="col-xs-2" wrapperClassName="wrapper">
                                                         <Col xs={4}>
-                                                            <Input type="select" onChange={this.handleEnvironmentChange.bind(this, id)} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select value={e.environment}>
+                                                            <Input type="select" onChange={this.handleEnvironmentsChange.bind(this, id, "environment")} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select value={e.environment}>
                                                                 <option value="" disabled>Select environment ... </option>
                                                                 <option value="live-code">Code [live]</option>
                                                                 <option value="draft-code">Code [draft]</option>
@@ -190,7 +164,7 @@ export default class ContentSourceForm extends React.Component {
                                                             </Input>
                                                         </Col>
                                                         <Col xs={6}>
-                                                            <input type="text" value={e.reindexEndpoint} onChange={this.handleReindexEndpointChange.bind(this, id)} placeholder="URL for reindex (include api key parameter if required) ..." wrapperClassName="col-xs-4" className="form-control" />
+                                                            <input type="text" value={e.reindexEndpoint} onChange={this.handleEnvironmentsChange.bind(this, id, "reindexEndpoint")} placeholder="URL for reindex (include api key parameter if required) ..." wrapperClassName="col-xs-4" className="form-control" />
                                                         </Col>
                                                     </Input>
                                                 </Col>
@@ -200,7 +174,7 @@ export default class ContentSourceForm extends React.Component {
                                                 <Col xs={12}>
                                                     <Input label="Authentication*" labelClassName="col-xs-2" wrapperClassName="wrapper">
                                                         <Col xs={4} className="no-margin-bottom">
-                                                            <Input type="select" onChange={this.handleAuthTypeChange.bind(this, id)} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select value={e.authType}>
+                                                            <Input type="select" onChange={this.handleEnvironmentsChange.bind(this, id, "authType")} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select value={e.authType}>
                                                                 <option value="" disabled>Select authentication type ... </option>
                                                                 <option value="api-key">Api key</option>
                                                                 <option value="vpc-peered">VPC peered</option>
