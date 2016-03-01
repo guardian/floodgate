@@ -93,6 +93,11 @@ object ContentSource {
       contentSourceWithoutId.reindexEndpoint, contentSourceWithoutId.environment, contentSourceWithoutId.authType, contentSourceWithoutId.contentSourceSettings)
   }
 
+  def apply(id: String, contentSourceWithoutId: ContentSourceWithoutId): ContentSource = {
+    ContentSource(id, contentSourceWithoutId.appName, contentSourceWithoutId.description,
+      contentSourceWithoutId.reindexEndpoint, contentSourceWithoutId.environment, contentSourceWithoutId.authType, contentSourceWithoutId.contentSourceSettings)
+  }
+
   def apply(id: String, environment: String, contentSource: ContentWithoutIdAndEnvironment): ContentSource = {
     val id = UUID.randomUUID().toString
     ContentSource(id, contentSource.appName, contentSource.description, contentSource.reindexEndpoint, environment, contentSource.authType, contentSource.contentSourceSettings)
