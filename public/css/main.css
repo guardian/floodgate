@@ -29,10 +29,11 @@ table tbody tr .navbar-brand {
     padding: 0;
 }
 
-.remove-btn {
-    padding: 0;
-}
-
-.environment-panel {
+.margin-bottom-10 {
     margin-bottom: 10px;
 }
+
+.no-margin-bottom .form-group {
+    margin-bottom: 0;
+}
+
