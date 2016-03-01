@@ -41,16 +41,6 @@ class ContentSourceApi(contentSourceService: ContentSourceService,
     }
   }
 
-  def createContentSource = Action.async(parse.json) { implicit request =>
-    request.body.validate[ContentSourceWithoutId].fold(
-      error => jsonError,
-      contentSourceWithoutId => {
-        contentSourceService.createContentSource(ContentSource(contentSourceWithoutId))
-        Future.successful(Created)
-      }
-    )
-  }
-
   def createContentSources = Action.async(parse.json) { implicit request =>
     request.body.validate[List[ContentSourceWithoutId]].fold(
       error => jsonError,

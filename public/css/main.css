@@ -37,3 +37,10 @@ table tbody tr .navbar-brand {
     margin-bottom: 0;
 }
 
+.btn-link {
+    padding: 10px 0 10px 0;
+}
+
+.btn-link:focus {
+    outline: 0;
+}
