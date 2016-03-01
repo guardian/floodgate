@@ -21,21 +21,18 @@ class Application extends Controller with AuthActions with StrictLogging {
     Ok("If you're seeing this you managed to login successfully.")
   }
 
-  /* Mock endpoint acting as client for the time being in order to implement reindex */
-  def fakeReindexRouteInitiate = Action { implicit request =>
-    println(s"Reindex initiated: ${request.queryString}")
-    Ok("")
-  }
+  /*
+   * The below endpoints are provided to demonstrate the expected behavior of the endpoints implemented
+   * on a content source. Tests against these, for the benefit of anyone implementing them in a new content source,
+   * are provided in order to aid them.
+   *
+   */
 
-  /* Mock endpoint acting as client for the time being in order to implement reindex */
-  def fakeReindexRouteCancel = Action { implicit request =>
-    println(s"Reindex cancelled.")
-    Ok("")
-  }
+  def fakeReindexRouteInitiate = Action { Ok("") }
+  def fakeReindexRouteInitiateButInProgress = Action { Forbidden }
+  def fakeReindexRouteCancel = Action { Ok("") }
 
   var progress = 0
-
-  /* Mock endpoint acting as client for the time being in order to implement reindex */
   def fakeReindexRouteProgress = Action { implicit request =>
     println(s"Reindex progress.")
     progress = progress + 10
@@ -46,5 +43,8 @@ class Application extends Controller with AuthActions with StrictLogging {
       Ok(Json.toJson(Progress(InProgress, progress, 100)))
     }
   }
+
+  def fakeReindexRouteProgressShowingCompleted = Action { Ok(Json.toJson(Progress(Completed, 100, 100))) }
+  def fakeReindexRouteProgressButNeverRunBefore = Action { NotFound }
 
 }
