@@ -1,6 +1,6 @@
 import React from 'react';
 import update from 'react-addons-update';
-import { Input, Button, ButtonToolbar, Alert, Col, Glyphicon } from 'react-bootstrap';
+import { Input, Button, ButtonToolbar, Alert, Col, Glyphicon, Row } from 'react-bootstrap';
 import ContentSourceService from '../services/contentSourceService';
 
 export default class ContentSourceForm extends React.Component {
@@ -172,42 +172,55 @@ export default class ContentSourceForm extends React.Component {
 
                     {this.state.environments.map(function(e, id){
                         return (
-                            <div className="environment-panel panel panel-default" key={id}>
-                                <div className="panel-heading">Environment <Button className="remove-btn pull-right btn btn-link btn-sm" onClick={this.deleteEnvironmentItem.bind(this, id)}><Glyphicon glyph="glyphicon glyphicon-minus" /> Remove</Button></div>
-                                <div className="panel-body">
+                            <Row key={id}>
+                                <label className="control-label col-xs-2">Environment*</label>
+                                <Col xs={10}>
+                                    <div className="margin-bottom-10 panel panel-default">
+                                        <div className="panel-body">
+                                            <Row>
+                                                <Col xs={12}>
+                                                    <Input label="Endpoint*" labelClassName="col-xs-2" wrapperClassName="wrapper">
+                                                        <Col xs={4}>
+                                                            <Input type="select" onChange={this.handleEnvironmentChange.bind(this, id)} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select value={e.environment}>
+                                                                <option value="" disabled>Select environment ... </option>
+                                                                <option value="live-code">Code [live]</option>
+                                                                <option value="draft-code">Code [draft]</option>
+                                                                <option value="live-prod">Prod [live]</option>
+                                                                <option value="draft-prod">Prod [draft]</option>
+                                                            </Input>
+                                                        </Col>
+                                                        <Col xs={6}>
+                                                            <input type="text" value={e.reindexEndpoint} onChange={this.handleReindexEndpointChange.bind(this, id)} placeholder="URL for reindex (include api key parameter if required) ..." wrapperClassName="col-xs-4" className="form-control" />
+                                                        </Col>
+                                                    </Input>
+                                                </Col>
+                                            </Row>
 
-                                    <Input label="Endpoint*" labelClassName="col-xs-2" wrapperClassName="wrapper">
-                                        <Col xs={4}>
-                                            <Input type="select" onChange={this.handleEnvironmentChange.bind(this, id)} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select value={e.environment}>
-                                                <option value="" disabled>Select environment ... </option>
-                                                <option value="live-code">Code [live]</option>
-                                                <option value="draft-code">Code [draft]</option>
-                                                <option value="live-prod">Prod [live]</option>
-                                                <option value="draft-prod">Prod [draft]</option>
-                                            </Input>
-                                        </Col>
-                                        <Col xs={6}>
-                                            <input type="text" value={e.reindexEndpoint} onChange={this.handleReindexEndpointChange.bind(this, id)} placeholder="URL for reindex (include api key parameter if required) ..." wrapperClassName="col-xs-4" className="form-control" />
-                                        </Col>
-                                    </Input>
-
-                                    <Input label="Authentication*" labelClassName="col-xs-2" wrapperClassName="wrapper">
-                                        <Col xs={4}>
-                                            <Input type="select" onChange={this.handleAuthTypeChange.bind(this, id)} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select value={e.authType}>
-                                                <option value="" disabled>Select authentication type ... </option>
-                                                <option value="api-key">Api key</option>
-                                                <option value="vpc-peered">VPC peered</option>
-                                            </Input>
-                                        </Col>
-                                    </Input>
-
-                                </div>
-                            </div>
+                                            <Row>
+                                                <Col xs={12}>
+                                                    <Input label="Authentication*" labelClassName="col-xs-2" wrapperClassName="wrapper">
+                                                        <Col xs={4} className="no-margin-bottom">
+                                                            <Input type="select" onChange={this.handleAuthTypeChange.bind(this, id)} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select value={e.authType}>
+                                                                <option value="" disabled>Select authentication type ... </option>
+                                                                <option value="api-key">Api key</option>
+                                                                <option value="vpc-peered">VPC peered</option>
+                                                            </Input>
+                                                        </Col>
+                                                        <Col xs={6}>
+                                                            <Button className="remove-btn pull-right btn btn-link btn-sm" onClick={this.deleteEnvironmentItem.bind(this, id)}><Glyphicon glyph="glyphicon glyphicon-minus" /> Remove</Button>
+                                                        </Col>
+                                                    </Input>
+                                                </Col>
+                                            </Row>
+                                        </div>
+                                    </div>
+                                </Col>
+                            </Row>
                         );
                     }, this)}
 
                     { this.state.environmentCount < 4
-                        ? <Button type="button" className="btn-link" onClick={this.handleAddEnvironmentClick.bind(this)}><Glyphicon glyph="glyphicon glyphicon-plus" /> Add another environment</Button>
+                        ? <Row><Col xs={10} xsOffset={2}><Button type="button" className="col-xs-12 margin-bottom-10" onClick={this.handleAddEnvironmentClick.bind(this)}><Glyphicon glyph="glyphicon glyphicon-plus" /> Add another environment</Button></Col></Row>
                         : null
                     }
 
