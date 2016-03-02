@@ -35,6 +35,7 @@ object FloodgateBuild extends Build {
         "io.megl" % "play-json-extra_2.11" % "2.4.3",
         "org.scalactic" %% "scalactic" % "2.2.6",
         "com.gu" %% "play-googleauth" % "0.3.3",
+        "com.gu" %% "scanamo" % "0.1.0",
         "org.scalatest" %% "scalatest" % "2.2.5" % "test"
       ),
 

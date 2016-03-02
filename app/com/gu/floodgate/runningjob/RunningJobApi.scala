@@ -20,12 +20,10 @@ class RunningJobApi(runningJobService: RunningJobService) extends Controller {
     }
   }
 
-  def getRunningJob(contentSourceId: String, environment: String) = Action.async { implicit request =>
-    runningJobService.getRunningJob(contentSourceId, environment) map { runningJobOrError =>
-      runningJobOrError match {
-        case Good(runningJob) => Ok(Json.toJson(SingleRunningJobResponse(runningJob)))
-        case Bad(error) => NotFound(Json.toJson(ErrorResponse(error.message)))
-      }
+  def getRunningJob(contentSourceId: String, environment: String) = Action { implicit request =>
+    runningJobService.getRunningJob(contentSourceId, environment) match {
+      case Good(runningJob) => Ok(Json.toJson(SingleRunningJobResponse(runningJob)))
+      case Bad(error) => NotFound(Json.toJson(ErrorResponse(error.message)))
     }
   }
 

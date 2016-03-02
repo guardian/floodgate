@@ -32,12 +32,10 @@ class ContentSourceApi(contentSourceService: ContentSourceService,
     }
   }
 
-  def getContentSource(id: String, environment: String) = Action.async { implicit request =>
-    contentSourceService.getContentSource(id, environment) map { contentSourceOrError =>
-      contentSourceOrError match {
-        case Good(cs) => Ok(Json.toJson(SingleContentSourceResponse(cs)))
-        case Bad(error) => NotFound(Json.toJson(ErrorResponse(error.message)))
-      }
+  def getContentSource(id: String, environment: String) = Action { implicit request =>
+    contentSourceService.getContentSource(id, environment) match {
+      case Good(cs) => Ok(Json.toJson(SingleContentSourceResponse(cs)))
+      case Bad(error) => NotFound(Json.toJson(ErrorResponse(error.message)))
     }
   }
 
@@ -99,12 +97,10 @@ class ContentSourceApi(contentSourceService: ContentSourceService,
     }
   }
 
-  def getRunningReindex(id: String, environment: String) = Action.async { implicit request =>
-    runningJobService.getRunningJob(id, environment) map { runningJobOrError =>
-      runningJobOrError match {
-        case Good(rj) => Ok(Json.toJson(SingleRunningJobResponse(rj)))
-        case Bad(error) => NotFound(Json.toJson(ErrorResponse(error.message)))
-      }
+  def getRunningReindex(id: String, environment: String) = Action { implicit request =>
+    runningJobService.getRunningJob(id, environment) match {
+      case Good(rj) => Ok(Json.toJson(SingleRunningJobResponse(rj)))
+      case Bad(error) => NotFound(Json.toJson(ErrorResponse(error.message)))
     }
   }
 
