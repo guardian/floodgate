@@ -40,6 +40,7 @@ export default class ReindexControllerComponent extends React.Component {
             this.loadContentSource(nextProps.routeParams.id, nextProps.routeParams.environment);
             this.loadReindexHistory(nextProps.routeParams.id, nextProps.routeParams.environment);
             this.loadRunningReindex(nextProps.routeParams.id, nextProps.routeParams.environment);
+            this.loadContentSourceWithId(nextProps.routeParams.id);
             this.setState({editModeOn: false});
         }
     }
@@ -140,7 +141,7 @@ export default class ReindexControllerComponent extends React.Component {
                         </Col>
                         <Col xs={12} md={12}>
                             <Panel>
-                                <Nav bsStyle="pills" activekey={this.props.params.environment}>
+                                <Nav bsStyle="pills" activeKey={this.props.params.environment}>
                                     {environmentNodes}
                                 </Nav>
                             </Panel>
