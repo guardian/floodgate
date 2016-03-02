@@ -25,6 +25,11 @@
         "Subnets": {
             "Description": "Subnets to run load balancer within",
             "Type": "List<AWS::EC2::Subnet::Id>"
+        },
+        "SSLCertificate": {
+            "Description": "The ARN of the SSL certificate to use for the ELB",
+            "Type": "String",
+            "Default": "arn:aws:iam::308506855511:server-certificate/star.capi.gutools.co.uk-exp2018-01-27"
         }
     },
     "Resources": {
@@ -90,9 +95,10 @@
                 "CrossZone": true,
                 "Listeners": [
                     {
-                        "Protocol": "HTTP",
-                        "LoadBalancerPort": "80",
-                        "InstancePort": "9000"
+                        "Protocol": "HTTPS",
+                        "LoadBalancerPort": "443",
+                        "InstancePort": "9000",
+                        "SSLCertificateId": { "Ref": "SSLCertificate" }
                     }
                 ],
                 "HealthCheck": {
@@ -199,8 +205,8 @@
                 "SecurityGroupIngress": [
                     {
                         "IpProtocol": "tcp",
-                        "FromPort": "80",
-                        "ToPort": "80",
+                        "FromPort": "443",
+                        "ToPort": "443",
                         "CidrIp": "77.91.248.0/21"
                     }
                 ],
