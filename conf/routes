@@ -11,7 +11,6 @@ GET        /healthcheck                                                   com.gu
 # Auth
 GET         /login                                                        com.gu.floodgate.Login.login
 GET         /oauth2callback                                               com.gu.floodgate.Login.oauth2Callback
-GET         /fakeSecureRoute                                              com.gu.floodgate.Application.fakeSecureRoute
 
 # Api
 GET         /content-source                                               com.gu.floodgate.contentsource.ContentSourceApi.getAllContentSources
