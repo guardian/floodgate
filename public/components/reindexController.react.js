@@ -5,7 +5,7 @@ import JobHistory from './jobHistory.react';
 import RunningReindex from './runningReindex.react';
 import ReindexForm from './reindexForm.react';
 import ContentSourceService from '../services/contentSourceService';
-import { Label, Row, Col, Panel, ProgressBar } from 'react-bootstrap';
+import { Label, Row, Col, Panel, ProgressBar, Nav, NavItem } from 'react-bootstrap';
 
 export default class ReindexControllerComponent extends React.Component {
 
@@ -14,6 +14,7 @@ export default class ReindexControllerComponent extends React.Component {
 
         this.state = {
             contentSource: {},
+            contentSourcesForEnvironments: [],
             reindexHistory: [],
             runningReindex: {},
             editModeOn: false
@@ -22,6 +23,7 @@ export default class ReindexControllerComponent extends React.Component {
         this.updateEditModeState = this.updateEditModeState.bind(this);
         this.loadContentSource = this.loadContentSource.bind(this);
         this.loadRunningReindex = this.loadRunningReindex.bind(this);
+        this.loadContentSourceWithId = this.loadContentSourceWithId.bind(this);
     }
 
     componentDidMount() {
@@ -30,6 +32,7 @@ export default class ReindexControllerComponent extends React.Component {
         this.loadContentSource(contentSourceId, environment);
         this.loadReindexHistory(contentSourceId, environment);
         this.loadRunningReindex(contentSourceId, environment);
+        this.loadContentSourceWithId(contentSourceId);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -39,6 +42,14 @@ export default class ReindexControllerComponent extends React.Component {
             this.loadRunningReindex(nextProps.routeParams.id, nextProps.routeParams.environment);
             this.setState({editModeOn: false});
         }
+    }
+
+    loadContentSourceWithId(id) {
+        ContentSourceService.getContentSourcesWithId(id).then(response => {
+            this.setState({
+                contentSourcesForEnvironments: response.contentSources
+            });
+        });
     }
 
     loadContentSource(id, environment) {
@@ -111,12 +122,28 @@ export default class ReindexControllerComponent extends React.Component {
 
     render () {
 
+        var environmentNodes = this.state.contentSourcesForEnvironments.map(function(contentSource){
+            var itemEnvironment = contentSource.environment;
+            var itemKey = contentSource.id;
+            var route = '#/reindex/' + itemKey + '/environment/' + itemEnvironment;
+            return(
+                <NavItem key={itemKey + '-' + itemEnvironment} eventKey={itemEnvironment} href={route}>{itemEnvironment}</NavItem>
+            )
+        });
+
         return (
             <div id="page-wrapper">
                 <div className="container-fluid">
                     <Row>
                         <Col xs={12} md={12}>
                             <h3><Label>{this.state.contentSource.appName} Reindexer</Label></h3>
+                        </Col>
+                        <Col xs={12} md={12}>
+                            <Panel>
+                                <Nav bsStyle="pills" activekey={this.props.params.environment}>
+                                    {environmentNodes}
+                                </Nav>
+                            </Panel>
                         </Col>
                         <Col xs={5} md={5}>
                             <Panel header="Details">

@@ -10,6 +10,14 @@ export default {
         })
     },
 
+    getContentSourcesWithId:(id) => {
+        return Reqwest({
+            url: '/content-source/' + id,
+            contentType: 'text/json',
+            method: 'get'
+        })
+    },
+
     getContentSource:(id, environment) => {
         return Reqwest({
             url: '/content-source/' + id + '/' + environment,
