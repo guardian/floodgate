@@ -105,7 +105,7 @@ class ProgressTracker(ws: WSAPI, runningJobService: RunningJobService, jobHistor
     }
   }
 
-  private def completeProgressTracking(status: ReindexStatus, contentSource: ContentSource, runningJob: RunningJob) = {
+  private def completeProgressTracking(status: ReindexStatus, contentSource: ContentSource, runningJob: RunningJob): Unit = {
 
     def cleanupAndStop(): Unit = {
       nextPollSchedule foreach { _.cancel() } // cancel any schedule that we might have set up

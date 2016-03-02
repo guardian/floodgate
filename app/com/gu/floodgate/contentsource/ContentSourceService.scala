@@ -17,17 +17,15 @@ class ContentSourceService(contentSourceTable: DynamoDBTable[ContentSource]) {
     }
   }
 
-  def getContentSource(id: String, environment: String): Future[ContentSource Or CustomError] = {
-    contentSourceTable.getItem(id, environment) map { maybeContentSource =>
-      Or.from(
-        option = maybeContentSource,
-        orElse = ContentSourceNotFound(s"A content source with id: $id does not exist.")
-      )
-    }
+  def getContentSource(id: String, environment: String): ContentSource Or CustomError = {
+    Or.from(
+      option = contentSourceTable.getItem[ContentSource](id, environment).flatMap(_.toOption),
+      orElse = ContentSourceNotFound(s"A content source with id: $id does not exist.")
+    )
   }
 
   def createContentSource(contentSource: ContentSource) = contentSourceTable.saveItem(contentSource)
   def updateContentSource(id: String, environment: String, contentSource: ContentSource) = contentSourceTable.updateItem(id, environment, contentSource)
-  def deleteContentSource(id: String) = contentSourceTable.deleteItem(id)
+  def deleteContentSource(id: String) = contentSourceTable.deleteItem[ContentSource](id)
 
 }
