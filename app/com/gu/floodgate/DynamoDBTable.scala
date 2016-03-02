@@ -1,8 +1,10 @@
 package com.gu.floodgate
 
+import cats.data.ValidatedNel
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsync
 import com.amazonaws.services.dynamodbv2.model._
 import com.amazonaws.handlers.AsyncHandler
+import com.gu.scanamo.{ DynamoReadError, DynamoFormat, Scanamo }
 import com.typesafe.scalalogging.StrictLogging
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
@@ -15,7 +17,6 @@ trait DynamoDBTable[T] extends StrictLogging {
   protected val keyName: String
   protected val maybeSortKeyName: Option[String] = None
   protected def fromItem(item: Map[String, AttributeValue]): T
-  protected def toItem(t: T): Map[String, AttributeValue]
   protected def toItemUpdate(t: T): Map[String, AttributeValueUpdate]
 
   def getAll(): Future[Seq[T]] = {
@@ -40,28 +41,13 @@ trait DynamoDBTable[T] extends StrictLogging {
     promise.future
   }
 
-  def getItem(id: String): Future[Option[T]] = {
-    val request = new QueryRequest().withTableName(tableName)
-      .withKeyConditionExpression(s"$keyName = :$keyName")
-      .withExpressionAttributeValues(Map(s":$keyName" -> new AttributeValue().withS(id)))
-
-    getThisItem(request)
+  def getItem[T: DynamoFormat](hashKey: String, sortKey: String): Option[ValidatedNel[DynamoReadError, T]] = {
+    maybeSortKeyName flatMap { sortKeyName =>
+      Scanamo.get[String, T](dynamoDB)(tableName)(keyName -> hashKey, sortKeyName -> sortKey)
+    } orElse None
   }
 
-  def getItem(hashKey: String, sortKey: String): Future[Option[T]] = {
-    val maybeRequest = maybeSortKeyName map { sortKeyName =>
-      new QueryRequest().withTableName(tableName)
-        .withKeyConditionExpression(s"$keyName = :$keyName AND $sortKeyName = :$sortKeyName")
-        .withExpressionAttributeValues(Map(
-          s":$keyName" -> new AttributeValue().withS(hashKey),
-          s":$sortKeyName" -> new AttributeValue().withS(sortKey)
-        ))
-    }
-
-    maybeRequest.map(getThisItem(_)) getOrElse Future.successful(None)
-  }
-
-  def getItems(id: String) = {
+  def getItems(id: String): Future[List[T]] = {
     val request = new QueryRequest().withTableName(tableName)
       .withScanIndexForward(false)
       .withKeyConditionExpression(s"$keyName = :$keyName")
@@ -70,7 +56,7 @@ trait DynamoDBTable[T] extends StrictLogging {
     getListOfItems(request)
   }
 
-  def getItemsWithFilter(id: String, filterKeyName: String, filterValue: String) = {
+  def getItemsWithFilter(id: String, filterKeyName: String, filterValue: String): Future[List[T]] = {
     val request = new QueryRequest().withTableName(tableName)
       .withScanIndexForward(false)
       .withKeyConditionExpression(s"$keyName = :$keyName")
@@ -83,24 +69,8 @@ trait DynamoDBTable[T] extends StrictLogging {
     getListOfItems(request)
   }
 
-  def saveItem(t: T): Future[T] = {
-    val request = new PutItemRequest().withTableName(tableName).withItem(toItem(t).asJava)
-    val promise = Promise[T]()
-    val responseHandler = new AsyncHandler[PutItemRequest, PutItemResult] {
-
-      override def onError(e: Exception) = {
-        logger.error(e.getMessage)
-        promise.failure(e)
-      }
-
-      override def onSuccess(request: PutItemRequest, result: PutItemResult) = {
-        promise.success(t)
-      }
-
-    }
-
-    dynamoDB.putItemAsync(request, responseHandler)
-    promise.future
+  def saveItem[T: DynamoFormat](t: T): PutItemResult = {
+    Scanamo.put(dynamoDB)(tableName)(t)
   }
 
   def updateItem(id: String, t: T): Unit = {
@@ -124,22 +94,14 @@ trait DynamoDBTable[T] extends StrictLogging {
     maybeRequest foreach (updateThisItem(_))
   }
 
-  def deleteItem(hashKey: String): Unit = {
-    val request = new DeleteItemRequest().withTableName(tableName).withKey(Map(keyName -> new AttributeValue(hashKey)))
-    deleteThisItem(request)
+  def deleteItem[T: DynamoFormat](hashKey: String): Unit = {
+    Scanamo.delete[String, T](dynamoDB)(tableName)(keyName -> hashKey)
   }
 
-  def deleteItem(hashKey: String, sortKey: String): Unit = {
-    val maybeRequest = maybeSortKeyName map { sortKeyName =>
-      new DeleteItemRequest().withTableName(tableName)
-        .withKey(Map(
-          keyName -> new AttributeValue(hashKey),
-          sortKeyName -> new AttributeValue(sortKey))
-        )
+  def deleteItem[T: DynamoFormat](hashKey: String, sortKey: String): Unit = {
+    maybeSortKeyName map { sortKeyName =>
+      Scanamo.delete[String, T](dynamoDB)(tableName)(keyName -> hashKey, sortKeyName -> sortKey)
     }
-
-    maybeRequest foreach (deleteThisItem(_))
-
   }
 
   def getItemAttributeValue(key: String, item: Map[String, AttributeValue]): AttributeValue = {
@@ -147,28 +109,6 @@ trait DynamoDBTable[T] extends StrictLogging {
       logger.warn(s"Provided key $key has no value.")
       new AttributeValue("")
     })
-  }
-
-  private def getThisItem(request: QueryRequest) = {
-
-    val promise = Promise[Option[T]]()
-    val responseHandler = new AsyncHandler[QueryRequest, QueryResult] {
-
-      override def onError(e: Exception) = {
-        logger.warn(s"Could not retrieve item: ${e.getMessage}")
-        promise.failure(e)
-      }
-
-      override def onSuccess(request: QueryRequest, result: QueryResult) = {
-        val item: Option[T] = result.getItems.asScala.headOption.map(f => fromItem(f.toMap))
-        promise.success(item)
-      }
-
-    }
-
-    dynamoDB.queryAsync(request, responseHandler)
-    promise.future
-
   }
 
   private def getListOfItems(request: QueryRequest) = {
@@ -192,25 +132,6 @@ trait DynamoDBTable[T] extends StrictLogging {
     dynamoDB.queryAsync(request, responseHandler)
     promise.future
 
-  }
-
-  private def deleteThisItem(request: DeleteItemRequest) = {
-    val promise = Promise[DeleteItemResult]()
-    val responseHandler = new AsyncHandler[DeleteItemRequest, DeleteItemResult] {
-
-      override def onError(e: Exception) = {
-        logger.error(e.getMessage)
-        promise.failure(e)
-      }
-
-      override def onSuccess(request: DeleteItemRequest, result: DeleteItemResult) = {
-        promise.success(result)
-      }
-
-    }
-
-    dynamoDB.deleteItemAsync(request, responseHandler)
-    promise.future
   }
 
   private def updateThisItem(request: UpdateItemRequest) = {

@@ -1,7 +1,7 @@
 package com.gu.floodgate.jobhistory
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClient
-import com.amazonaws.services.dynamodbv2.model.{ AttributeAction, AttributeValueUpdate, AttributeValue }
+import com.amazonaws.services.dynamodbv2.model.{ AttributeValueUpdate, AttributeValue }
 import com.gu.floodgate.DynamoDBTable
 import com.gu.floodgate.reindex.ReindexStatus
 import com.gu.floodgate.reindex.ReindexStatus.{ Unknown }
@@ -29,13 +29,6 @@ class JobHistoryTable(protected val dynamoDB: AmazonDynamoDBAsyncClient, protect
       ReindexStatus.fromString(getItemAttributeValue(fields.Status, item).getS).getOrElse(Unknown),
       getItemAttributeValue(fields.Environment, item).getS
     )
-
-  override protected def toItem(jobHistory: JobHistory): Map[String, AttributeValue] =
-    Map(fields.ContentSourceId -> new AttributeValue(jobHistory.contentSourceId),
-      fields.StartTime -> new AttributeValue(jobHistory.startTime.toString),
-      fields.FinishTime -> new AttributeValue(jobHistory.finishTime.toString),
-      fields.Status -> new AttributeValue(jobHistory.status.toString.toLowerCase),
-      fields.Environment -> new AttributeValue(jobHistory.environment.toString))
 
   override protected def toItemUpdate(jobHistory: JobHistory): Map[String, AttributeValueUpdate] =
     Map(
