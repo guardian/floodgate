@@ -27,13 +27,6 @@ class RunningJobTable(protected val dynamoDB: AmazonDynamoDBAsyncClient, protect
       BigDecimal(getItemAttributeValue(fields.DocumentsExpected, item).getN).toInt,
       new DateTime(getItemAttributeValue(fields.StartTime, item).getS))
 
-  override protected def toItem(runningJob: RunningJob): Map[String, AttributeValue] =
-    Map(fields.ContentSourceId -> new AttributeValue(runningJob.contentSourceId),
-      fields.ContentSourceEnvironment -> new AttributeValue(runningJob.contentSourceEnvironment),
-      fields.DocumentsIndexed -> new AttributeValue().withN(runningJob.documentsIndexed.toString),
-      fields.DocumentsExpected -> new AttributeValue().withN(runningJob.documentsExpected.toString),
-      fields.StartTime -> new AttributeValue(runningJob.startTime.toString))
-
   override protected def toItemUpdate(runningJob: RunningJob): Map[String, AttributeValueUpdate] =
     Map(fields.DocumentsIndexed -> new AttributeValueUpdate().withValue(new AttributeValue().withN(runningJob.documentsIndexed.toString)),
       fields.DocumentsExpected -> new AttributeValueUpdate().withValue(new AttributeValue().withN(runningJob.documentsExpected.toString)),
