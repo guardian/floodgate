@@ -9,12 +9,19 @@ export default class NavigationComponent extends React.Component {
     }
 
     render () {
+        var distinctContentSources = [];
+        var allContentSources = this.props.data;
+        for(var i = 0; i < allContentSources.length; i++) {
+            if(distinctContentSources[allContentSources[i].id] == undefined)
+                distinctContentSources[allContentSources[i].id] = { appName: allContentSources[i].appName, environment: allContentSources[i].environment };
+        }
 
-        var contentSourceNodes = this.props.data.map(function(contentSource) {
-            var itemKey = contentSource.id + '-' + contentSource.environment;
-            var route = '#/reindex/' + contentSource.id + '/environment/' + contentSource.environment
+        var contentSourceNodes = Object.keys(distinctContentSources).map(function (itemKey) {
+            var appName = distinctContentSources[itemKey].appName;
+            var environment = distinctContentSources[itemKey].environment;
+            var route = '#/reindex/' + itemKey + '/environment/' + environment;
             return (
-                <MenuItem eventKey={itemKey} key={itemKey} href={route}>{contentSource.appName} <Label bsStyle="default">{contentSource.environment}</Label></MenuItem>
+                <MenuItem eventKey={itemKey} key={itemKey} href={route}>{appName}</MenuItem>
             );
         });
 
