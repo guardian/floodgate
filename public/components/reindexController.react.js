@@ -21,7 +21,6 @@ export default class ReindexControllerComponent extends React.Component {
         };
 
         this.updateEditModeState = this.updateEditModeState.bind(this);
-        this.loadContentSource = this.loadContentSource.bind(this);
         this.loadRunningReindex = this.loadRunningReindex.bind(this);
         this.loadContentSourceWithId = this.loadContentSourceWithId.bind(this);
     }
@@ -29,15 +28,13 @@ export default class ReindexControllerComponent extends React.Component {
     componentDidMount() {
         var contentSourceId = this.props.params.id;
         var environment = this.props.params.environment;
-        this.loadContentSource(contentSourceId, environment);
         this.loadReindexHistory(contentSourceId, environment);
         this.loadRunningReindex(contentSourceId, environment);
-        this.loadContentSourceWithId(contentSourceId);
+        this.loadContentSourceWithId(contentSourceId, environment);
     }
 
     componentWillReceiveProps(nextProps) {
         if (this.props.params.id !== nextProps.params.id || this.props.params.environment !== nextProps.params.environment) {
-            this.loadContentSource(nextProps.routeParams.id, nextProps.routeParams.environment);
             this.loadReindexHistory(nextProps.routeParams.id, nextProps.routeParams.environment);
             this.loadRunningReindex(nextProps.routeParams.id, nextProps.routeParams.environment);
             this.loadContentSourceWithId(nextProps.routeParams.id);
@@ -45,18 +42,19 @@ export default class ReindexControllerComponent extends React.Component {
         }
     }
 
-    loadContentSourceWithId(id) {
+    loadContentSourceWithId(id, environment) {
         ContentSourceService.getContentSourcesWithId(id).then(response => {
+            var contentSources = response.contentSources;
             this.setState({
-                contentSourcesForEnvironments: response.contentSources
-            });
-        });
-    }
-
-    loadContentSource(id, environment) {
-        ContentSourceService.getContentSource(id, environment).then(response => {
-            this.setState({
-                contentSource: response.contentSource
+                contentSourcesForEnvironments: contentSources
+            }, function() {
+                for(var i = 0; i < contentSources.length; i++) {
+                    if(contentSources[i].environment === environment) {
+                        this.setState({
+                            contentSource: contentSources[i]
+                        });
+                    }
+                }
             });
         });
     }
@@ -118,7 +116,7 @@ export default class ReindexControllerComponent extends React.Component {
 
     updateEditModeState(newState) {
         this.setState({ editModeOn: newState });
-        if(newState == false) this.loadContentSource(this.props.params.id, this.props.params.environment);
+        if(newState == false) this.loadContentSourceWithId(this.props.params.id, this.props.params.environment);
     }
 
     render () {

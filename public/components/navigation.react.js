@@ -12,7 +12,7 @@ export default class NavigationComponent extends React.Component {
         var distinctContentSources = [];
         var allContentSources = this.props.data;
         for(var i = allContentSources.length - 1; i >= 0; i--) {
-            if(distinctContentSources[allContentSources[i].id] == undefined)
+            if(distinctContentSources[allContentSources[i].id] === undefined)
                 distinctContentSources[allContentSources[i].id] = { appName: allContentSources[i].appName, environment: allContentSources[i].environment };
         }
 
