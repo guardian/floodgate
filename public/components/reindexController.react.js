@@ -37,24 +37,24 @@ export default class ReindexControllerComponent extends React.Component {
         if (this.props.params.id !== nextProps.params.id || this.props.params.environment !== nextProps.params.environment) {
             this.loadReindexHistory(nextProps.routeParams.id, nextProps.routeParams.environment);
             this.loadRunningReindex(nextProps.routeParams.id, nextProps.routeParams.environment);
-            this.loadContentSourceWithId(nextProps.routeParams.id);
+            this.loadContentSourceWithId(nextProps.routeParams.id, nextProps.routeParams.environment);
             this.setState({editModeOn: false});
         }
     }
 
     loadContentSourceWithId(id, environment) {
         ContentSourceService.getContentSourcesWithId(id).then(response => {
-            var contentSources = response.contentSources;
+            var contentSources = response.contentSources.reverse();
             this.setState({
                 contentSourcesForEnvironments: contentSources
             }, function() {
-                for(var i = 0; i < contentSources.length; i++) {
-                    if(contentSources[i].environment === environment) {
+                contentSources.forEach( contentSource => {
+                    if(contentSource.environment === environment) {
                         this.setState({
-                            contentSource: contentSources[i]
+                            contentSource: contentSource
                         });
                     }
-                }
+                });
             });
         });
     }
