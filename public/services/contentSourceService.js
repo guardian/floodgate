@@ -18,14 +18,6 @@ export default {
         })
     },
 
-    getContentSource:(id, environment) => {
-        return Reqwest({
-            url: '/content-source/' + id + '/' + environment,
-            contentType: 'text/json',
-            method: 'get'
-        })
-    },
-
     createContentSource:(form) => {
         return Reqwest({
             url: '/content-source',
