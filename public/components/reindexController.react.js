@@ -5,7 +5,7 @@ import JobHistory from './jobHistory.react';
 import RunningReindex from './runningReindex.react';
 import ReindexForm from './reindexForm.react';
 import ContentSourceService from '../services/contentSourceService';
-import { Label, Row, Col, Panel, ProgressBar } from 'react-bootstrap';
+import { Label, Row, Col, Panel, ProgressBar, Nav, NavItem } from 'react-bootstrap';
 
 export default class ReindexControllerComponent extends React.Component {
 
@@ -14,37 +14,47 @@ export default class ReindexControllerComponent extends React.Component {
 
         this.state = {
             contentSource: {},
+            contentSourcesForEnvironments: [],
             reindexHistory: [],
             runningReindex: {},
             editModeOn: false
         };
 
         this.updateEditModeState = this.updateEditModeState.bind(this);
-        this.loadContentSource = this.loadContentSource.bind(this);
         this.loadRunningReindex = this.loadRunningReindex.bind(this);
+        this.loadContentSourceWithId = this.loadContentSourceWithId.bind(this);
     }
 
     componentDidMount() {
         var contentSourceId = this.props.params.id;
         var environment = this.props.params.environment;
-        this.loadContentSource(contentSourceId, environment);
         this.loadReindexHistory(contentSourceId, environment);
         this.loadRunningReindex(contentSourceId, environment);
+        this.loadContentSourceWithId(contentSourceId, environment);
     }
 
     componentWillReceiveProps(nextProps) {
         if (this.props.params.id !== nextProps.params.id || this.props.params.environment !== nextProps.params.environment) {
-            this.loadContentSource(nextProps.routeParams.id, nextProps.routeParams.environment);
             this.loadReindexHistory(nextProps.routeParams.id, nextProps.routeParams.environment);
             this.loadRunningReindex(nextProps.routeParams.id, nextProps.routeParams.environment);
+            this.loadContentSourceWithId(nextProps.routeParams.id, nextProps.routeParams.environment);
             this.setState({editModeOn: false});
         }
     }
 
-    loadContentSource(id, environment) {
-        ContentSourceService.getContentSource(id, environment).then(response => {
+    loadContentSourceWithId(id, environment) {
+        ContentSourceService.getContentSourcesWithId(id).then(response => {
+            var contentSources = response.contentSources.reverse();
             this.setState({
-                contentSource: response.contentSource
+                contentSourcesForEnvironments: contentSources
+            }, function() {
+                contentSources.forEach( contentSource => {
+                    if(contentSource.environment === environment) {
+                        this.setState({
+                            contentSource: contentSource
+                        });
+                    }
+                });
             });
         });
     }
@@ -106,10 +116,19 @@ export default class ReindexControllerComponent extends React.Component {
 
     updateEditModeState(newState) {
         this.setState({ editModeOn: newState });
-        if(newState == false) this.loadContentSource(this.props.params.id, this.props.params.environment);
+        if(newState == false) this.loadContentSourceWithId(this.props.params.id, this.props.params.environment);
     }
 
     render () {
+
+        var environmentNodes = this.state.contentSourcesForEnvironments.map(function(contentSource){
+            var itemEnvironment = contentSource.environment;
+            var itemKey = contentSource.id;
+            var route = '#/reindex/' + itemKey + '/environment/' + itemEnvironment;
+            return(
+                <NavItem key={itemKey + '-' + itemEnvironment} eventKey={itemEnvironment} href={route}>{itemEnvironment}</NavItem>
+            )
+        });
 
         return (
             <div id="page-wrapper">
@@ -118,7 +137,14 @@ export default class ReindexControllerComponent extends React.Component {
                         <Col xs={12} md={12}>
                             <h3><Label>{this.state.contentSource.appName} Reindexer</Label></h3>
                         </Col>
-                        <Col xs={5} md={5}>
+                        <Col xs={12} md={12}>
+                            <Panel>
+                                <Nav bsStyle="pills" activeKey={this.props.params.environment}>
+                                    {environmentNodes}
+                                </Nav>
+                            </Panel>
+                        </Col>
+                        <Col xs={12} md={5}>
                             <Panel header="Details">
                                 {this.state.editModeOn  ?
                                     <ContentSourceEdit key={this.state.contentSource.id}
@@ -143,7 +169,7 @@ export default class ReindexControllerComponent extends React.Component {
                             </Panel>
                         </Col>
 
-                        <Col xs={7} md={7}>
+                        <Col xs={12} md={7}>
                             <Panel header="Running Reindexes">
                                 {this.state.runningReindex === undefined ||
                                  Object.keys(this.state.runningReindex).length === 0 ||
@@ -159,7 +185,7 @@ export default class ReindexControllerComponent extends React.Component {
                             </Panel>
                         </Col>
 
-                        <Col xs={7} md={7}>
+                        <Col xs={12} md={7}>
                             <Panel header="Reindex History">
                                 <JobHistory data={this.state.reindexHistory}/>
                             </Panel>
