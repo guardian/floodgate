@@ -144,7 +144,7 @@ export default class ReindexControllerComponent extends React.Component {
                                 </Nav>
                             </Panel>
                         </Col>
-                        <Col xs={5} md={5}>
+                        <Col xs={12} md={5}>
                             <Panel header="Details">
                                 {this.state.editModeOn  ?
                                     <ContentSourceEdit key={this.state.contentSource.id}
@@ -169,7 +169,7 @@ export default class ReindexControllerComponent extends React.Component {
                             </Panel>
                         </Col>
 
-                        <Col xs={7} md={7}>
+                        <Col xs={12} md={7}>
                             <Panel header="Running Reindexes">
                                 {this.state.runningReindex === undefined ||
                                  Object.keys(this.state.runningReindex).length === 0 ||
@@ -185,7 +185,7 @@ export default class ReindexControllerComponent extends React.Component {
                             </Panel>
                         </Col>
 
-                        <Col xs={7} md={7}>
+                        <Col xs={12} md={7}>
                             <Panel header="Reindex History">
                                 <JobHistory data={this.state.reindexHistory}/>
                             </Panel>
