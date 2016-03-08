@@ -28,8 +28,10 @@ object ProgressTracker {
 class ProgressTracker(ws: WSAPI, runningJobService: RunningJobService, jobHistoryService: JobHistoryService) extends Actor with ActorLogging with StrictLogging {
   import context.become
 
+  private val FailedAttemptsToRetrieveProgressLimit = 30
   private val PollInterval = 2.seconds
   private var nextPollSchedule: Option[Cancellable] = None
+  private var failedAttemptsToRetrieveProgress = 0
 
   final def receive = sleeping
 
@@ -85,7 +87,13 @@ class ProgressTracker(ws: WSAPI, runningJobService: RunningJobService, jobHistor
   }
 
   private def onFailure(contentSource: ContentSource, runningJob: RunningJob): Unit = {
-    scheduleNextUpdate(contentSource, runningJob)
+    if (FailedAttemptsToRetrieveProgressLimit == failedAttemptsToRetrieveProgress) {
+      failedAttemptsToRetrieveProgress = 0
+      completeProgressTracking(Failed, contentSource, runningJob)
+    } else {
+      failedAttemptsToRetrieveProgress += 1
+      scheduleNextUpdate(contentSource, runningJob)
+    }
   }
 
   private def actOnProgress(progress: Progress, contentSource: ContentSource, runningJob: RunningJob) = {
