@@ -1,4 +1,5 @@
 import React from 'react';
+import R from 'ramda';
 import { Link } from 'react-router';
 import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Label } from 'react-bootstrap'
 
@@ -9,18 +10,15 @@ export default class NavigationComponent extends React.Component {
     }
 
     render () {
-        let distinctContentSources = [];
         const allContentSources = this.props.data;
+        const distinctKeys = R.uniq(allContentSources.map(R.prop('id')));
 
-        allContentSources.forEach(contentSource => {
-            if (!distinctContentSources[contentSource.id])
-                distinctContentSources[contentSource.id] = { appName: contentSource.appName, environment: contentSource.environment };
-        });
-
-        const contentSourceNodes = Object.keys(distinctContentSources).map(function (itemKey) {
-            const appName = distinctContentSources[itemKey].appName;
-            const environment = distinctContentSources[itemKey].environment;
+        const contentSourceNodes = distinctKeys.map( itemKey => {
+            const contentSource = R.find(R.propEq('id', itemKey), allContentSources);
+            const appName = R.prop('appName', contentSource);
+            const environment = R.prop('environment', contentSource);
             const route = '#/reindex/' + itemKey + '/environment/' + environment;
+
             return (
                 <MenuItem eventKey={itemKey} key={itemKey} href={route}>{appName}</MenuItem>
             );
