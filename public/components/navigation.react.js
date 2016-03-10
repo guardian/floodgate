@@ -9,18 +9,18 @@ export default class NavigationComponent extends React.Component {
     }
 
     render () {
-        var distinctContentSources = [];
-        var allContentSources = this.props.data;
+        let distinctContentSources = [];
+        const allContentSources = this.props.data;
 
         allContentSources.forEach(contentSource => {
             if(distinctContentSources[contentSource.id] === undefined)
                 distinctContentSources[contentSource.id] = { appName: contentSource.appName, environment: contentSource.environment };
         });
 
-        var contentSourceNodes = Object.keys(distinctContentSources).map(function (itemKey) {
-            var appName = distinctContentSources[itemKey].appName;
-            var environment = distinctContentSources[itemKey].environment;
-            var route = '#/reindex/' + itemKey + '/environment/' + environment;
+        const contentSourceNodes = Object.keys(distinctContentSources).map(function (itemKey) {
+            const appName = distinctContentSources[itemKey].appName;
+            const environment = distinctContentSources[itemKey].environment;
+            const route = '#/reindex/' + itemKey + '/environment/' + environment;
             return (
                 <MenuItem eventKey={itemKey} key={itemKey} href={route}>{appName}</MenuItem>
             );

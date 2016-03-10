@@ -26,8 +26,8 @@ export default class ReindexControllerComponent extends React.Component {
     }
 
     componentDidMount() {
-        var contentSourceId = this.props.params.id;
-        var environment = this.props.params.environment;
+        const contentSourceId = this.props.params.id;
+        const environment = this.props.params.environment;
         this.loadReindexHistory(contentSourceId, environment);
         this.loadRunningReindex(contentSourceId, environment);
         this.loadContentSourceWithId(contentSourceId, environment);
@@ -44,7 +44,7 @@ export default class ReindexControllerComponent extends React.Component {
 
     loadContentSourceWithId(id, environment) {
         ContentSourceService.getContentSourcesWithId(id).then(response => {
-            var contentSources = response.contentSources.reverse();
+            const contentSources = response.contentSources.reverse();
             this.setState({
                 contentSourcesForEnvironments: contentSources
             }, function() {
@@ -92,7 +92,7 @@ export default class ReindexControllerComponent extends React.Component {
     }
 
     cancelReindex(currentRunningReindex) {
-        var newReindexHistoryItem = { contentSourceId: currentRunningReindex.contentSourceId,
+        const newReindexHistoryItem = { contentSourceId: currentRunningReindex.contentSourceId,
             environment: currentRunningReindex.contentSourceEnvironment, status: 'cancelled',
             startTime: currentRunningReindex.startTime, finishTime: new Date() };
 
@@ -104,7 +104,7 @@ export default class ReindexControllerComponent extends React.Component {
             });
         },
         errors => {
-            var indexOfItemToDelete = this.state.reindexHistory.findIndex(r => r.contentSourceId === currentRunningReindex.contentSourceId)
+            const indexOfItemToDelete = this.state.reindexHistory.findIndex(r => r.contentSourceId === currentRunningReindex.contentSourceId)
             //delete job history and add running job
             this.setState({
                 runningReindex: currentRunningReindex,
@@ -122,9 +122,9 @@ export default class ReindexControllerComponent extends React.Component {
     render () {
 
         var environmentNodes = this.state.contentSourcesForEnvironments.map(function(contentSource){
-            var itemEnvironment = contentSource.environment;
-            var itemKey = contentSource.id;
-            var route = '#/reindex/' + itemKey + '/environment/' + itemEnvironment;
+            const itemEnvironment = contentSource.environment;
+            const itemKey = contentSource.id;
+            const route = '#/reindex/' + itemKey + '/environment/' + itemEnvironment;
             return(
                 <NavItem key={itemKey + '-' + itemEnvironment} eventKey={itemEnvironment} href={route}>{itemEnvironment}</NavItem>
             )
