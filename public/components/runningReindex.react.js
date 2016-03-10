@@ -10,7 +10,6 @@ export default class RunningReindex extends React.Component {
         super(props);
 
         this.state = {
-            timeout: 2000,
             progressUpdatesEnabled: false,
             progress: 0
         };
@@ -52,19 +51,28 @@ export default class RunningReindex extends React.Component {
         this.props.onCancelReindex(runningReindex);
     }
 
+    renderCancelButton() {
+        if (this.props.isCancelSupported) {
+            return (
+                <Button bsStyle="danger" className="pull-right" type="button" onClick={this.cancelReindex.bind(this)}>Cancel</Button>
+            );
+        } else {
+            return (null);
+        }
+    }
+
 
     render () {
 
+        var timeout = 2000;
+
         return (
             <div key={this.props.data.startTime}>
-                <ReactInterval timeout={this.state.timeout} enabled={this.state.progressUpdatesEnabled}
+                <ReactInterval timeout={this.timeout} enabled={this.state.progressUpdatesEnabled}
                                callback={ this.updateRunningReindex.bind(this) } />
                 <ProgressBar striped active now={this.state.progress} label="%(percent)s%"/>
 
-                {this.props.isCancelSupported ?
-                    <Button bsStyle="danger" className="pull-right" type="button" onClick={this.cancelReindex.bind(this)}>Cancel</Button>
-                    : null
-                }
+                { this.renderCancelButton() }
             </div>
         );
     }
