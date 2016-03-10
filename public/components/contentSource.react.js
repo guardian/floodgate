@@ -6,7 +6,6 @@ export default class ContentSource extends React.Component {
 
     constructor(props) {
         super(props);
-        this.enterEditMode = this.enterEditMode.bind(this);
     }
 
     enterEditMode() {
@@ -23,7 +22,7 @@ export default class ContentSource extends React.Component {
                 <p><strong>Auth type:</strong> {this.props.contentSource.authType}</p>
 
                 <ButtonToolbar>
-                    <Button bsStyle="primary" className="pull-right" onClick={this.enterEditMode}> Edit Details</Button>
+                    <Button bsStyle="primary" className="pull-right" onClick={this.enterEditMode.bind(this)}> Edit Details</Button>
                 </ButtonToolbar>
             </div>
         );
