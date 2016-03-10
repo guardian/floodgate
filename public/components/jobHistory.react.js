@@ -1,4 +1,5 @@
 import React from 'react';
+import R from 'ramda';
 import { Table } from 'react-bootstrap';
 
 
@@ -21,7 +22,7 @@ export default class JobHistory extends React.Component {
 
         return (
             <div id="job-history">
-                {jobHistoryNodes.length === 0 ?
+                {R.isEmpty(jobHistoryNodes) ?
                     <p>No reindex history. Have you initiated a reindex for this content via Floodgate before?</p>
                     :
                     <Table striped hover>
