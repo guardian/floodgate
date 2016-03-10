@@ -16,11 +16,11 @@ export default class ReindexForm extends React.Component {
     }
 
     initiateReindex() {
-        var isToFromSupported = this.props.contentSource.contentSourceSettings.supportsToFromParams;
-        var id = this.props.contentSource.id;
-        var environment = this.props.contentSource.environment;
-        var startDate = this.state.startDate === '' || !isToFromSupported ? '' : Moment(this.state.startDate).toISOString();
-        var endDate = this.state.endDate === '' || !isToFromSupported ? '' : Moment(this.state.endDate).endOf('day').toISOString();
+        const isToFromSupported = this.props.contentSource.contentSourceSettings.supportsToFromParams;
+        const id = this.props.contentSource.id;
+        const environment = this.props.contentSource.environment;
+        const startDate = this.state.startDate === '' || !isToFromSupported ? '' : Moment(this.state.startDate).toISOString();
+        const endDate = this.state.endDate === '' || !isToFromSupported ? '' : Moment(this.state.endDate).endOf('day').toISOString();
 
         if(Moment(endDate).isBefore(startDate))
             this.setState({
@@ -34,7 +34,7 @@ export default class ReindexForm extends React.Component {
     }
 
     handleStartDate(e) {
-        var startDate = e.target.value;
+        const startDate = e.target.value;
         this.setState({
             startDate: startDate
         });
@@ -42,7 +42,7 @@ export default class ReindexForm extends React.Component {
     }
 
     handleEndDate(e) {
-        var endDate = e.target.value;
+        const endDate = e.target.value;
         this.setState({
             endDate: endDate
         });

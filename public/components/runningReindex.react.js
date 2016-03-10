@@ -33,13 +33,13 @@ export default class RunningReindex extends React.Component {
     }
 
     updateRunningReindex() {
-        var contentSourceId = this.props.data.contentSourceId;
-        var environment = this.props.data.contentSourceEnvironment;
+        const contentSourceId = this.props.data.contentSourceId;
+        const environment = this.props.data.contentSourceEnvironment;
         this.props.onReloadRunningReindex(contentSourceId, environment);
     }
 
     computeProgress(documentsIndexed, documentsExpected) {
-        var progress = 0;
+        let progress = 0;
 
         if (documentsExpected != 0) {
             progress = documentsIndexed / documentsExpected * 100;
@@ -48,7 +48,7 @@ export default class RunningReindex extends React.Component {
     }
 
     cancelReindex() {
-        var runningReindex = this.props.data;
+        const runningReindex = this.props.data;
         this.props.onCancelReindex(runningReindex);
     }
 
