@@ -58,24 +58,31 @@ export default class ReindexForm extends React.Component {
         this.setState({startDate: start, endDate: end});
     }
 
+    renderToFromParams() {
+        if (!this.props.contentSource.contentSourceSettings.supportsToFromParams) {
+            return (
+                <Alert bsStyle="info">Reindexing for a specific period of time is not supported with this content source. You may only reindex <strong>all</strong>.</Alert>
+            );
+        } else {
+            return (
+                <Row>
+                    <Col xs={6}>
+                        <Input type="date" label="Start date" value={this.state.startDate} onChange={this.handleStartDate.bind(this)} />
+                    </Col>
+                    <Col xs={6}>
+                        <Input type="date" label="End Date" value={this.state.endDate} onChange={this.handleEndDate.bind(this)} />
+                    </Col>
+                </Row>
+            );
+        }
+    }
+
     render () {
         return (
             <div>
                 { this.state.alertVisibility ? <Alert bsStyle={this.state.alertStyle} onDismiss={this.handleAlertDismiss.bind(this)}>{this.state.alertMessage}</Alert> : null }
                 <form>
-
-                    {this.props.contentSource.contentSourceSettings.supportsToFromParams ?
-                        <Row>
-                            <Col xs={6}>
-                                <Input type="date" label="Start date" value={this.state.startDate} onChange={this.handleStartDate.bind(this)} />
-                            </Col>
-                            <Col xs={6}>
-                                <Input type="date" label="End Date" value={this.state.endDate} onChange={this.handleEndDate.bind(this)} />
-                            </Col>
-                        </Row>
-                        :
-                        <Alert bsStyle="info">Reindexing for a specific period of time is not supported with this content source. You may only reindex <strong>all</strong>.</Alert>
-                    }
+                    {this.renderToFromParams()}
                     <Button bsStyle="primary" className="pull-right" onClick={this.initiateReindex.bind(this)}>Reindex</Button>
                 </form>
             </div>
