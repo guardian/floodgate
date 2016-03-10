@@ -5,6 +5,7 @@ import ContentSourceEdit from './contentSourceEdit.react';
 import JobHistory from './jobHistory.react';
 import RunningReindex from './runningReindex.react';
 import ReindexForm from './reindexForm.react';
+import NavigationPills from './navigationPills.react';
 import ContentSourceService from '../services/contentSourceService';
 import { Label, Row, Col, Panel, ProgressBar, Nav, NavItem } from 'react-bootstrap';
 
@@ -122,15 +123,6 @@ export default class ReindexControllerComponent extends React.Component {
 
     render () {
 
-        var environmentNodes = this.state.contentSourcesForEnvironments.map(function(contentSource){
-            const itemEnvironment = contentSource.environment;
-            const itemKey = contentSource.id;
-            const route = '#/reindex/' + itemKey + '/environment/' + itemEnvironment;
-            return(
-                <NavItem key={itemKey + '-' + itemEnvironment} eventKey={itemEnvironment} href={route}>{itemEnvironment}</NavItem>
-            )
-        });
-
         return (
             <div id="page-wrapper">
                 <div className="container-fluid">
@@ -140,9 +132,9 @@ export default class ReindexControllerComponent extends React.Component {
                         </Col>
                         <Col xs={12} md={12}>
                             <Panel>
-                                <Nav bsStyle="pills" activeKey={this.props.params.environment}>
-                                    {environmentNodes}
-                                </Nav>
+                                <NavigationPills key={this.state.contentSource.id}
+                                     contentSources={this.state.contentSourcesForEnvironments}
+                                     environment={this.state.contentSource.environment} />
                             </Panel>
                         </Col>
                         <Col xs={12} md={5}>
