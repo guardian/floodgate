@@ -1,4 +1,5 @@
 import React from 'react';
+import R from 'ramda';
 import ContentSource from './contentSource.react';
 import ContentSourceEdit from './contentSourceEdit.react';
 import JobHistory from './jobHistory.react';
@@ -171,10 +172,8 @@ export default class ReindexControllerComponent extends React.Component {
 
                         <Col xs={12} md={7}>
                             <Panel header="Running Reindexes">
-                                {!this.state.runningReindex ||
-                                 Object.keys(this.state.runningReindex).length === 0 ||
-                                 !this.state.contentSource.contentSourceSettings ||
-                                 Object.keys(this.state.contentSource).length === 0 ?
+                                {R.isNil(this.state.runningReindex) || R.isEmpty(Object.keys(this.state.runningReindex)) ||
+                                 R.isNil(this.state.contentSource.contentSourceSettings) || R.isEmpty(Object.keys(this.state.contentSource)) ?
                                     <p>There are no reindexes currently in progress.</p>
                                     :
                                     <RunningReindex data={this.state.runningReindex}

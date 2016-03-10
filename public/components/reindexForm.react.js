@@ -1,4 +1,5 @@
 import React from 'react';
+import R from 'ramda';
 import { Button, ButtonToolbar, Alert, Input, Row, Col } from 'react-bootstrap';
 import Moment from 'moment';
 
@@ -19,8 +20,8 @@ export default class ReindexForm extends React.Component {
         const isToFromSupported = this.props.contentSource.contentSourceSettings.supportsToFromParams;
         const id = this.props.contentSource.id;
         const environment = this.props.contentSource.environment;
-        const startDate = this.state.startDate === '' || !isToFromSupported ? '' : Moment(this.state.startDate).toISOString();
-        const endDate = this.state.endDate === '' || !isToFromSupported ? '' : Moment(this.state.endDate).endOf('day').toISOString();
+        const startDate = R.isEmpty(this.state.startDate) || !isToFromSupported ? '' : Moment(this.state.startDate).toISOString();
+        const endDate = R.isEmpty(this.state.endDate) || !isToFromSupported ? '' : Moment(this.state.endDate).endOf('day').toISOString();
 
         if (Moment(endDate).isBefore(startDate))
             this.setState({

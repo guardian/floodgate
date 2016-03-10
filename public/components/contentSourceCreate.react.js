@@ -41,7 +41,7 @@ export default class ContentSourceForm extends React.Component {
     }
 
     deleteEnvironmentItem(id, e) {
-        if(this.state.environmentCount == 1) {
+        if (this.state.environmentCount === 1) {
             this.setState({alertStyle: 'danger', alertMessage: 'You need at least one environment to submit the content source.', alertVisibility: true});
         }
         else {
@@ -109,7 +109,7 @@ export default class ContentSourceForm extends React.Component {
         var supportsToFromParams = this.state.supportsToFromParams;
         var supportsCancelReindex = this.state.supportsCancelReindex;
 
-        if( appName && description && environments ) {
+        if (appName && description && environments) {
             const toAdd = environments.map( function(obj, id){
                 return {
                     appName: appName,

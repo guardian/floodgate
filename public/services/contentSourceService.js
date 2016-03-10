@@ -1,4 +1,5 @@
 import Reqwest from 'reqwest';
+import R from 'ramda';
 
 export default {
 
@@ -54,9 +55,9 @@ export default {
 
     initiateReindex:(id, environment, startDate, endDate) => {
         let url = '/content-source/' + id + '/' + environment + '/reindex';
-        if (startDate != '' && endDate === '') url += '?from=' + startDate;
-        else if (startDate === '' && endDate != '') url += '?to=' + endDate;
-        else if (startDate != '' && endDate != '') url += '?from=' + startDate + "&to=" + endDate;
+        if (!R.isEmpty(startDate) && R.isEmpty(endDate)) url += '?from=' + startDate;
+        else if (R.isEmpty(startDate) && !R.isEmpty(endDate)) url += '?to=' + endDate;
+        else if (!R.isEmpty(startDate) && !R.isEmpty(endDate)) url += '?from=' + startDate + "&to=" + endDate;
 
         return Reqwest({
             url: url,
