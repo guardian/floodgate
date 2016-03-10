@@ -58,7 +58,7 @@ export default class ContentSourceEdit extends React.Component {
         const supportsToFromParams = this.state.supportsToFromParams;
         const supportsCancelReindex = this.state.supportsCancelReindex;
 
-        if(appName && description && reindexEndpoint && authType && supportsToFromParams != undefined && supportsCancelReindex != undefined) {
+        if (appName && description && reindexEndpoint && authType && supportsToFromParams && supportsCancelReindex) {
             this.handleFormSubmit(this.props.contentSource.id, this.props.contentSource.environment,
                 {appName: appName,
                  description: description,

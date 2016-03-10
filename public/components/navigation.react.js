@@ -13,7 +13,7 @@ export default class NavigationComponent extends React.Component {
         const allContentSources = this.props.data;
 
         allContentSources.forEach(contentSource => {
-            if(distinctContentSources[contentSource.id] === undefined)
+            if (!distinctContentSources[contentSource.id])
                 distinctContentSources[contentSource.id] = { appName: contentSource.appName, environment: contentSource.environment };
         });
 

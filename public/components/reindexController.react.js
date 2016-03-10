@@ -116,7 +116,7 @@ export default class ReindexControllerComponent extends React.Component {
 
     updateEditModeState(newState) {
         this.setState({ editModeOn: newState });
-        if(newState == false) this.loadContentSourceWithId(this.props.params.id, this.props.params.environment);
+        if (!newState) this.loadContentSourceWithId(this.props.params.id, this.props.params.environment);
     }
 
     render () {
@@ -160,7 +160,7 @@ export default class ReindexControllerComponent extends React.Component {
                             </Panel>
 
                             <Panel header="Start Reindex">
-                                {this.state.contentSource.contentSourceSettings != undefined ?
+                                {this.state.contentSource.contentSourceSettings ?
                                     <ReindexForm key={this.state.contentSource.id}
                                         contentSource={this.state.contentSource}
                                         onInitiateReindex={this.initiateReindex.bind(this)}/>
@@ -171,9 +171,9 @@ export default class ReindexControllerComponent extends React.Component {
 
                         <Col xs={12} md={7}>
                             <Panel header="Running Reindexes">
-                                {this.state.runningReindex === undefined ||
+                                {!this.state.runningReindex ||
                                  Object.keys(this.state.runningReindex).length === 0 ||
-                                 this.state.contentSource.contentSourceSettings === undefined ||
+                                 !this.state.contentSource.contentSourceSettings ||
                                  Object.keys(this.state.contentSource).length === 0 ?
                                     <p>There are no reindexes currently in progress.</p>
                                     :

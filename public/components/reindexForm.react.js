@@ -22,7 +22,7 @@ export default class ReindexForm extends React.Component {
         const startDate = this.state.startDate === '' || !isToFromSupported ? '' : Moment(this.state.startDate).toISOString();
         const endDate = this.state.endDate === '' || !isToFromSupported ? '' : Moment(this.state.endDate).endOf('day').toISOString();
 
-        if(Moment(endDate).isBefore(startDate))
+        if (Moment(endDate).isBefore(startDate))
             this.setState({
                 alertStyle: 'danger',
                 alertMessage: 'Invalid dates entered. Please correct and try again.',
