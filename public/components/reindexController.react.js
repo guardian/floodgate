@@ -1,9 +1,11 @@
 import React from 'react';
+import R from 'ramda';
 import ContentSource from './contentSource.react';
 import ContentSourceEdit from './contentSourceEdit.react';
 import JobHistory from './jobHistory.react';
 import RunningReindex from './runningReindex.react';
 import ReindexForm from './reindexForm.react';
+import NavigationPills from './navigationPills.react';
 import ContentSourceService from '../services/contentSourceService';
 import { Label, Row, Col, Panel, ProgressBar, Nav, NavItem } from 'react-bootstrap';
 
@@ -26,8 +28,8 @@ export default class ReindexControllerComponent extends React.Component {
     }
 
     componentDidMount() {
-        var contentSourceId = this.props.params.id;
-        var environment = this.props.params.environment;
+        const contentSourceId = this.props.params.id;
+        const environment = this.props.params.environment;
         this.loadReindexHistory(contentSourceId, environment);
         this.loadRunningReindex(contentSourceId, environment);
         this.loadContentSourceWithId(contentSourceId, environment);
@@ -44,7 +46,7 @@ export default class ReindexControllerComponent extends React.Component {
 
     loadContentSourceWithId(id, environment) {
         ContentSourceService.getContentSourcesWithId(id).then(response => {
-            var contentSources = response.contentSources.reverse();
+            const contentSources = response.contentSources.reverse();
             this.setState({
                 contentSourcesForEnvironments: contentSources
             }, function() {
@@ -92,7 +94,7 @@ export default class ReindexControllerComponent extends React.Component {
     }
 
     cancelReindex(currentRunningReindex) {
-        var newReindexHistoryItem = { contentSourceId: currentRunningReindex.contentSourceId,
+        const newReindexHistoryItem = { contentSourceId: currentRunningReindex.contentSourceId,
             environment: currentRunningReindex.contentSourceEnvironment, status: 'cancelled',
             startTime: currentRunningReindex.startTime, finishTime: new Date() };
 
@@ -104,7 +106,7 @@ export default class ReindexControllerComponent extends React.Component {
             });
         },
         errors => {
-            var indexOfItemToDelete = this.state.reindexHistory.findIndex(r => r.contentSourceId === currentRunningReindex.contentSourceId)
+            const indexOfItemToDelete = this.state.reindexHistory.findIndex(r => r.contentSourceId === currentRunningReindex.contentSourceId)
             //delete job history and add running job
             this.setState({
                 runningReindex: currentRunningReindex,
@@ -116,19 +118,10 @@ export default class ReindexControllerComponent extends React.Component {
 
     updateEditModeState(newState) {
         this.setState({ editModeOn: newState });
-        if(newState == false) this.loadContentSourceWithId(this.props.params.id, this.props.params.environment);
+        if (!newState) this.loadContentSourceWithId(this.props.params.id, this.props.params.environment);
     }
 
     render () {
-
-        var environmentNodes = this.state.contentSourcesForEnvironments.map(function(contentSource){
-            var itemEnvironment = contentSource.environment;
-            var itemKey = contentSource.id;
-            var route = '#/reindex/' + itemKey + '/environment/' + itemEnvironment;
-            return(
-                <NavItem key={itemKey + '-' + itemEnvironment} eventKey={itemEnvironment} href={route}>{itemEnvironment}</NavItem>
-            )
-        });
 
         return (
             <div id="page-wrapper">
@@ -139,9 +132,9 @@ export default class ReindexControllerComponent extends React.Component {
                         </Col>
                         <Col xs={12} md={12}>
                             <Panel>
-                                <Nav bsStyle="pills" activeKey={this.props.params.environment}>
-                                    {environmentNodes}
-                                </Nav>
+                                <NavigationPills key={this.state.contentSource.id}
+                                     contentSources={this.state.contentSourcesForEnvironments}
+                                     environment={this.state.contentSource.environment} />
                             </Panel>
                         </Col>
                         <Col xs={12} md={5}>
@@ -160,7 +153,7 @@ export default class ReindexControllerComponent extends React.Component {
                             </Panel>
 
                             <Panel header="Start Reindex">
-                                {this.state.contentSource.contentSourceSettings != undefined ?
+                                {this.state.contentSource.contentSourceSettings ?
                                     <ReindexForm key={this.state.contentSource.id}
                                         contentSource={this.state.contentSource}
                                         onInitiateReindex={this.initiateReindex.bind(this)}/>
@@ -171,10 +164,8 @@ export default class ReindexControllerComponent extends React.Component {
 
                         <Col xs={12} md={7}>
                             <Panel header="Running Reindexes">
-                                {this.state.runningReindex === undefined ||
-                                 Object.keys(this.state.runningReindex).length === 0 ||
-                                 this.state.contentSource.contentSourceSettings === undefined ||
-                                 Object.keys(this.state.contentSource).length === 0 ?
+                                {R.isNil(this.state.runningReindex) || R.isEmpty(Object.keys(this.state.runningReindex)) ||
+                                 R.isNil(this.state.contentSource.contentSourceSettings) || R.isEmpty(Object.keys(this.state.contentSource)) ?
                                     <p>There are no reindexes currently in progress.</p>
                                     :
                                     <RunningReindex data={this.state.runningReindex}

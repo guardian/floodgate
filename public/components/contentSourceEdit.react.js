@@ -1,4 +1,5 @@
 import React from 'react';
+import R from 'ramda';
 import { Button, ButtonToolbar, Input, Alert, Col } from 'react-bootstrap';
 import ContentSourceService from '../services/contentSourceService';
 
@@ -51,14 +52,14 @@ export default class ContentSourceEdit extends React.Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        var appName = this.state.appName.trim();
-        var description = this.state.description.trim();
-        var reindexEndpoint = this.state.reindexEndpoint.trim();
-        var authType = this.state.authType.trim();
-        var supportsToFromParams = this.state.supportsToFromParams;
-        var supportsCancelReindex = this.state.supportsCancelReindex;
+        const appName = this.state.appName.trim();
+        const description = this.state.description.trim();
+        const reindexEndpoint = this.state.reindexEndpoint.trim();
+        const authType = this.state.authType.trim();
+        const supportsToFromParams = this.state.supportsToFromParams;
+        const supportsCancelReindex = this.state.supportsCancelReindex;
 
-        if(appName && description && reindexEndpoint && authType && supportsToFromParams != undefined && supportsCancelReindex != undefined) {
+        if (appName && description && reindexEndpoint && authType && !R.isNil(supportsToFromParams) && !R.isNil(supportsCancelReindex)) {
             this.handleFormSubmit(this.props.contentSource.id, this.props.contentSource.environment,
                 {appName: appName,
                  description: description,
