@@ -51,7 +51,7 @@ class ReindexService(contentSourceService: ContentSourceService,
     ws.url(reindexUrl).post("") flatMap { response =>
       response.status match {
         case 200 | 201 =>
-          val runningJob = RunningJob(contentSource.id, contentSource.environment)
+          val runningJob = RunningJob(contentSource.id, contentSource.environment, dateParameters)
           reindexProgressMonitor ! LaunchTracker(contentSource, runningJob)
           runningJobService.createRunningJob(runningJob)
           Future.successful(Good(runningJob))

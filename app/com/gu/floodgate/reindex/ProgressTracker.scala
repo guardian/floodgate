@@ -99,13 +99,13 @@ class ProgressTracker(ws: WSAPI, runningJobService: RunningJobService, jobHistor
   private def actOnProgress(progress: Progress, contentSource: ContentSource, runningJob: RunningJob) = {
     progress.status match {
       case Completed =>
-        val runningJobUpdate = RunningJob(runningJob.contentSourceId, runningJob.contentSourceEnvironment, progress.documentsIndexed, progress.documentsExpected, runningJob.startTime)
+        val runningJobUpdate = RunningJob(runningJob.contentSourceId, runningJob.contentSourceEnvironment, progress.documentsIndexed, progress.documentsExpected, runningJob.startTime, runningJob.rangeFrom, runningJob.rangeTo)
         completeProgressTracking(Completed, contentSource, runningJobUpdate)
 
       case Failed => completeProgressTracking(Failed, contentSource, runningJob)
 
       case InProgress =>
-        val runningJobUpdate = RunningJob(runningJob.contentSourceId, runningJob.contentSourceEnvironment, progress.documentsIndexed, progress.documentsExpected, runningJob.startTime)
+        val runningJobUpdate = RunningJob(runningJob.contentSourceId, runningJob.contentSourceEnvironment, progress.documentsIndexed, progress.documentsExpected, runningJob.startTime, runningJob.rangeFrom, runningJob.rangeTo)
         runningJobService.updateRunningJob(runningJob.contentSourceId, runningJob.contentSourceEnvironment, runningJobUpdate)
         scheduleNextUpdate(contentSource, runningJob)
 
@@ -120,7 +120,7 @@ class ProgressTracker(ws: WSAPI, runningJobService: RunningJobService, jobHistor
       context.stop(self)
     }
 
-    val jobHistory = JobHistory(runningJob.contentSourceId, runningJob.startTime, new DateTime(), status, runningJob.contentSourceEnvironment)
+    val jobHistory = JobHistory(runningJob.contentSourceId, runningJob.startTime, new DateTime(), status, runningJob.contentSourceEnvironment, runningJob.rangeFrom, runningJob.rangeTo)
     runningJobService.removeRunningJob(runningJob.contentSourceId, runningJob.contentSourceEnvironment)
     jobHistoryService.createJobHistory(jobHistory)
 
