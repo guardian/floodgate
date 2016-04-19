@@ -94,9 +94,15 @@ export default class ReindexControllerComponent extends React.Component {
     }
 
     cancelReindex(currentRunningReindex) {
-        const newReindexHistoryItem = { contentSourceId: currentRunningReindex.contentSourceId,
-            environment: currentRunningReindex.contentSourceEnvironment, status: 'cancelled',
-            startTime: currentRunningReindex.startTime, finishTime: new Date() };
+        const newReindexHistoryItem = { 
+            contentSourceId: currentRunningReindex.contentSourceId,
+            environment: currentRunningReindex.contentSourceEnvironment, 
+            status: 'cancelled',
+            startTime: currentRunningReindex.startTime, 
+            finishTime: new Date(),
+            rangeFrom: currentRunningReindex.rangeFrom,
+            rangeTo: currentRunningReindex.rangeTo
+        };
 
         ContentSourceService.cancelReindex(currentRunningReindex.contentSourceId, currentRunningReindex.contentSourceEnvironment).then( response => {
             // Optimistically add job history and delete running job

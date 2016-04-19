@@ -14,21 +14,27 @@ class RunningJobTable(protected val dynamoDB: AmazonDynamoDBAsyncClient, protect
     val DocumentsIndexed = "documentsIndexed"
     val DocumentsExpected = "documentsExpected"
     val StartTime = "startTime"
+    val RangeFrom = "rangeFrom"
+    val RangeTo = "rangeTo"
   }
 
   override protected val keyName = fields.ContentSourceId
   override protected val maybeSortKeyName = Some(fields.ContentSourceEnvironment)
 
-  override protected def fromItem(item: Map[String, AttributeValue]): RunningJob =
+  override protected def fromItem(item: Map[String, AttributeValue]): RunningJob = {
     RunningJob(
       getItemAttributeValue(fields.ContentSourceId, item).getS,
       getItemAttributeValue(fields.ContentSourceEnvironment, item).getS,
       BigDecimal(getItemAttributeValue(fields.DocumentsIndexed, item).getN).toInt,
       BigDecimal(getItemAttributeValue(fields.DocumentsExpected, item).getN).toInt,
-      new DateTime(getItemAttributeValue(fields.StartTime, item).getS))
+      new DateTime(getItemAttributeValue(fields.StartTime, item).getS),
+      item.get(fields.RangeFrom).map(v => new DateTime(v.getS)),
+      item.get(fields.RangeTo).map(v => new DateTime(v.getS)))
+  }
 
   override protected def toItemUpdate(runningJob: RunningJob): Map[String, AttributeValueUpdate] =
-    Map(fields.DocumentsIndexed -> new AttributeValueUpdate().withValue(new AttributeValue().withN(runningJob.documentsIndexed.toString)),
+    Map(
+      fields.DocumentsIndexed -> new AttributeValueUpdate().withValue(new AttributeValue().withN(runningJob.documentsIndexed.toString)),
       fields.DocumentsExpected -> new AttributeValueUpdate().withValue(new AttributeValue().withN(runningJob.documentsExpected.toString)),
       fields.StartTime -> new AttributeValueUpdate().withValue(new AttributeValue(runningJob.startTime.toString)))
 
