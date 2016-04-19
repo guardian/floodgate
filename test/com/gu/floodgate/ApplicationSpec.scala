@@ -1,8 +1,6 @@
 package com.gu.floodgate
 
-import com.gu.floodgate.Application
 import org.scalatest.{ FlatSpec, Matchers }
-import play.api.libs.iteratee.Concurrent
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import R from 'ramda';
 import { Table } from 'react-bootstrap';
+import JobHistoryDateRange from './jobHistoryDateRange.react';
 
 
 export default class JobHistory extends React.Component {
@@ -14,6 +15,7 @@ export default class JobHistory extends React.Component {
             return (
                 <tr key={jobHistory.startTime}>
                     <td>{jobHistory.status}</td>
+                    <td><JobHistoryDateRange rangeFrom={jobHistory.rangeFrom} rangeTo={jobHistory.rangeTo} /></td>
                     <td>{ new Date(jobHistory.startTime).toUTCString() }</td>
                     <td>{ new Date(jobHistory.finishTime).toUTCString() }</td>
                 </tr>
@@ -29,6 +31,7 @@ export default class JobHistory extends React.Component {
                         <thead>
                             <tr>
                                 <th>Status</th>
+                                <th>Date Range</th>
                                 <th>Start Time</th>
                                 <th>Finish Time</th>
                             </tr>
