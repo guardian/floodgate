@@ -28,8 +28,8 @@ class RunningJobTable(protected val dynamoDB: AmazonDynamoDBAsyncClient, protect
       BigDecimal(getItemAttributeValue(fields.DocumentsIndexed, item).getN).toInt,
       BigDecimal(getItemAttributeValue(fields.DocumentsExpected, item).getN).toInt,
       new DateTime(getItemAttributeValue(fields.StartTime, item).getS),
-      item.get(fields.RangeFrom).map(v => new DateTime(v.getS)),
-      item.get(fields.RangeTo).map(v => new DateTime(v.getS)))
+      for (v <- item.get(fields.RangeFrom); s <- Option(v.getS)) yield new DateTime(s),
+      for (v <- item.get(fields.RangeTo); s <- Option(v.getS)) yield new DateTime(s))
   }
 
   override protected def toItemUpdate(runningJob: RunningJob): Map[String, AttributeValueUpdate] =
