@@ -30,8 +30,8 @@ class JobHistoryTable(protected val dynamoDB: AmazonDynamoDBAsyncClient, protect
       new DateTime(getItemAttributeValue(fields.FinishTime, item).getS),
       ReindexStatus.fromString(getItemAttributeValue(fields.Status, item).getS).getOrElse(Unknown),
       getItemAttributeValue(fields.Environment, item).getS,
-      item.get(fields.RangeFrom).map(v => new DateTime(v.getS)),
-      item.get(fields.RangeTo).map(v => new DateTime(v.getS))
+      for (v <- item.get(fields.RangeFrom); s <- Option(v.getS)) yield new DateTime(s),
+      for (v <- item.get(fields.RangeTo); s <- Option(v.getS)) yield new DateTime(s)
     )
   }
 
