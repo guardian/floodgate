@@ -30,7 +30,11 @@
             "Description": "The ARN of the SSL certificate to use for the ELB",
             "Type": "String",
             "Default": "arn:aws:iam::***REMOVED***:server-certificate/star.capi.gutools.co.uk-exp2018-01-27"
-        }
+        },
+        "AMI": {
+            "Description": "AMI ID",
+            "Type": "String"
+        },
     },
     "Resources": {
         "RootRole": {
@@ -159,7 +163,7 @@
         "LaunchConfig": {
             "Type": "AWS::AutoScaling::LaunchConfiguration",
             "Properties": {
-                "ImageId": "ami-98832beb",
+                "ImageId": {"Ref": "AMI"},
                 "AssociatePublicIpAddress": true,
                 "SecurityGroups": [
                     { "Ref": "ApplicationSecurityGroup" }
