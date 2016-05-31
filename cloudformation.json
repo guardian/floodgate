@@ -34,7 +34,7 @@
         "AMI": {
             "Description": "AMI ID",
             "Type": "String"
-        },
+        }
     },
     "Resources": {
         "RootRole": {
