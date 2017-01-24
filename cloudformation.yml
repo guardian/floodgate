@@ -5,7 +5,7 @@ Parameters:
     Stack:
         Description: Stack name
         Type: String
-        AllowedValues: 
+        AllowedValues:
             - content-api-floodgate
             - content-api-floodgate-preview
         Default: content-api-floodgate
@@ -23,14 +23,9 @@ Parameters:
     Subnets:
         Description: 'Subnets to run load balancer within'
         Type: List<AWS::EC2::Subnet::Id>
-    SSLCertificate:
-        Description: 'The ARN of the SSL certificate to use for the ELB'
-        Type: String
-        Default: arn:aws:iam::***REMOVED***:server-certificate/star.capi.gutools.co.uk-exp2018-01-27
     AMI:
         Description: 'AMI ID'
         Type: String
-    
 Resources:
     RootRole:
         Type: AWS::IAM::Role
@@ -46,13 +41,13 @@ Resources:
         Type: AWS::IAM::Policy
         Properties:
             PolicyName: download-config-and-app-from-s3
-            Roles: 
+            Roles:
                 - !Ref RootRole
             PolicyDocument:
                 Statement:
                     - Effect: Allow
                       Action: [ 's3:GetObject' ]
-                      Resource: 
+                      Resource:
                         - arn:aws:s3:::content-api-config/*
                         - arn:aws:s3:::content-api-dist/*
 
@@ -60,7 +55,7 @@ Resources:
         Type: AWS::IAM::Policy
         Properties:
             PolicyName: DynamoDBPolicy
-            Roles: 
+            Roles:
                 - !Ref RootRole
             PolicyDocument:
                 Statement:
@@ -73,19 +68,22 @@ Resources:
         Type: AWS::IAM::InstanceProfile
         Properties:
             Path: /
-            Roles: 
+            Roles:
                 - !Ref RootRole
 
     LoadBalancer:
         Type: AWS::ElasticLoadBalancing::LoadBalancer
         Properties:
             Scheme: internet-facing
-            SecurityGroups: 
+            SecurityGroups:
                 - !Ref LoadBalancerSecurityGroup
             Subnets: !Ref Subnets
             CrossZone: true
             Listeners:
-                - { Protocol: HTTPS, LoadBalancerPort: 443, InstancePort: 9000, SSLCertificateId: !Ref SSLCertificate }
+                Protocol: HTTPS
+                LoadBalancerPort: 443
+                InstancePort: 9000
+                SSLCertificateId: !Sub arn:aws:iam::${AWS::AccountId}:server-certificate/star.capi.gutools.co.uk-exp2018-01-27
             HealthCheck:
                 Target: 'HTTP:9000/healthcheck'
                 Timeout: 5
@@ -108,7 +106,7 @@ Resources:
             DesiredCapacity: 1
             HealthCheckType: ELB
             HealthCheckGracePeriod: 300
-            LoadBalancerNames: 
+            LoadBalancerNames:
                 - !Ref LoadBalancer
             Tags:
                 - { Key: Stack, Value: !Ref Stack, PropagateAtLaunch: true }
@@ -135,7 +133,7 @@ Resources:
 
                         aws s3 cp s3://content-api-dist/authorized_keys /home/ubuntu/.ssh/authorized_keys
                         cd /home/content-api
-                        
+
                         mkdir -p /etc/gu
                         mkdir logs
 
@@ -143,7 +141,7 @@ Resources:
                         aws s3 cp s3://content-api-dist/${Stack}/${Stage}/content-api-floodgate/content-api-floodgate.service /etc/systemd/system/floodgate.service
                         aws s3 cp s3://content-api-config/content-api-floodgate/${Stage}/floodgate.conf /etc/gu/floodgate.conf
                         aws s3 cp s3://content-api-dist/${Stack}/${Stage}/content-api-floodgate/content-api-floodgate-0.1-SNAPSHOT.tgz .
-                        
+
                         tar xfv content-api-floodgate-0.1-SNAPSHOT.tgz
                         mv content-api-floodgate-0.1-SNAPSHOT floodgate
 
