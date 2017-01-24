@@ -62,7 +62,7 @@ Resources:
                     - Effect: Allow
                       Action: [ 'dynamodb:*' ]
                       Resource:
-                            - !Sub arn:aws:dynamodb:*:***REMOVED***:table/floodgate-*-${Stage}
+                            - !Sub arn:aws:dynamodb:*:${AWS::AccountId}:table/floodgate-*-${Stage}
 
     InstanceProfile:
         Type: AWS::IAM::InstanceProfile
@@ -80,7 +80,7 @@ Resources:
             Subnets: !Ref Subnets
             CrossZone: true
             Listeners:
-                Protocol: HTTPS
+              - Protocol: HTTPS
                 LoadBalancerPort: 443
                 InstancePort: 9000
                 SSLCertificateId: !Sub arn:aws:iam::${AWS::AccountId}:server-certificate/star.capi.gutools.co.uk-exp2018-01-27
