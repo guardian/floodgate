@@ -1,12 +1,13 @@
 package com.gu.floodgate
 
 import com.gu.floodgate.reindex.ReindexStatus.{ Completed, InProgress }
-import com.gu.floodgate.reindex.{ ReindexStatus, Progress }
+import com.gu.floodgate.reindex.{ Progress, ReindexStatus }
 import com.typesafe.scalalogging.StrictLogging
+import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc._
 
-class Application extends Controller with AuthActions with StrictLogging {
+class Application(val conf: Configuration) extends Controller with AuthActions with StrictLogging {
 
   def healthcheck = Action {
     Ok("ok")

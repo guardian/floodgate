@@ -15,6 +15,7 @@ import play.api.{ BuiltInComponentsFromContext }
 import play.api.routing.Router
 import controllers.Assets
 import router.Routes
+import play.api.Configuration
 
 class AppComponents(context: Context) extends BuiltInComponentsFromContext(context) with AhcWSComponents {
 
@@ -58,8 +59,9 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
   val runningJobController = new RunningJobApi(runningJobService)
   val jobHistoryController = new JobHistoryApi(jobHistoryService)
 
-  val appController = new Application
-  val loginController = new Login(wsApi)
+  val appController = new Application(configuration)
+
+  val loginController = new Login(wsApi, configuration)
 
   val assets = new Assets(httpErrorHandler)
   val router: Router = new Routes(httpErrorHandler, appController, loginController,
