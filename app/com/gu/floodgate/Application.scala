@@ -1,7 +1,7 @@
 package com.gu.floodgate
 
 import com.gu.floodgate.reindex.ReindexStatus.{ Completed, InProgress }
-import com.gu.floodgate.reindex.{ Progress, ReindexStatus }
+import com.gu.floodgate.reindex.{ Progress }
 import com.typesafe.scalalogging.StrictLogging
 import play.api.Configuration
 import play.api.libs.json.Json

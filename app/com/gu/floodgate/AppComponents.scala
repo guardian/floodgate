@@ -15,7 +15,6 @@ import play.api.{ BuiltInComponentsFromContext }
 import play.api.routing.Router
 import controllers.Assets
 import router.Routes
-import play.api.Configuration
 
 class AppComponents(context: Context) extends BuiltInComponentsFromContext(context) with AhcWSComponents {
 
