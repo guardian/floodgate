@@ -6,6 +6,8 @@ import play.api.mvc.{ Call }
 import com.gu.floodgate.reindex.ReindexStatus.{ InProgress, Completed }
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.api.Configuration
+import play.api.Environment
 
 /**
  * These tests are provided as a way of demonstating how we expect the reindex endpoints on a particular content
@@ -13,7 +15,8 @@ import play.api.test.Helpers._
  */
 class FloodgateIntegrationSpec extends FlatSpec with Matchers {
 
-  val application = new Application
+  val configuration = Configuration.load(Environment.simple())
+  val application = new Application(configuration)
 
   val reindexRoute = "/reindex"
   val initiateReindexRequest = new Call("POST", reindexRoute)
