@@ -1,22 +1,22 @@
 package com.gu.floodgate
 
-import play.api.Play
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
 import scala.concurrent.Future
 import com.gu.googleauth._
 import play.api.libs.ws.WSAPI
-import play.api.Play.current
 import org.joda.time.Duration
+import play.api.Configuration
 
 trait AuthActions extends Actions {
+  def conf: Configuration
   def loginTarget: Call = routes.Login.login()
   def googleAuthConfig =
     GoogleAuthConfig(
-      Play.configuration.getString("google.clientid").getOrElse(sys.error("No google clientid.")),
-      Play.configuration.getString("google.clientsecret").getOrElse(sys.error("No google clientsecret.")),
-      Play.configuration.getString("google.oauthcallback").getOrElse(sys.error("No google oauthcallback.")),
+      conf.getString("google.clientid").getOrElse(sys.error("No google clientid.")),
+      conf.getString("google.clientsecret").getOrElse(sys.error("No google clientsecret.")),
+      conf.getString("google.oauthcallback").getOrElse(sys.error("No google oauthcallback.")),
       Some("guardian.co.uk"),
       Some(Duration.standardDays(30)),
       true
@@ -24,7 +24,7 @@ trait AuthActions extends Actions {
   def authConfig = googleAuthConfig
 }
 
-class Login(ws: WSAPI) extends Controller with AuthActions {
+class Login(ws: WSAPI, val conf: Configuration) extends Controller with AuthActions {
   val ANTI_FORGERY_KEY = "antiForgeryToken"
 
   def login = Action.async { implicit request =>

@@ -10,13 +10,13 @@ import com.gu.floodgate.reindex.{ ProgressTrackerController, ReindexService }
 import com.gu.floodgate.runningjob.{ RunningJobTable, RunningJobService, RunningJobApi }
 import com.gu.floodgate.{ Login, Application }
 import play.api.ApplicationLoader.Context
-import play.api.libs.ws.ning.NingWSComponents
+import play.api.libs.ws.ahc.AhcWSComponents
 import play.api.{ BuiltInComponentsFromContext }
 import play.api.routing.Router
 import controllers.Assets
 import router.Routes
 
-class AppComponents(context: Context) extends BuiltInComponentsFromContext(context) with NingWSComponents {
+class AppComponents(context: Context) extends BuiltInComponentsFromContext(context) with AhcWSComponents {
 
   val awsCredsProvider = new AWSCredentialsProviderChain(
     new EnvironmentVariableCredentialsProvider(),
@@ -58,8 +58,9 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
   val runningJobController = new RunningJobApi(runningJobService)
   val jobHistoryController = new JobHistoryApi(jobHistoryService)
 
-  val appController = new Application
-  val loginController = new Login(wsApi)
+  val appController = new Application(configuration)
+
+  val loginController = new Login(wsApi, configuration)
 
   val assets = new Assets(httpErrorHandler)
   val router: Router = new Routes(httpErrorHandler, appController, loginController,
