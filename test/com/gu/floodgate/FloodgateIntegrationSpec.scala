@@ -1,22 +1,26 @@
-package com.gu.floodgate
+package controllers
 
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
 import com.gu.floodgate.reindex.Progress
 import org.scalatest.{ FlatSpec, Matchers }
-import play.api.mvc.{ Call }
-import com.gu.floodgate.reindex.ReindexStatus.{ InProgress, Completed }
+import play.api.mvc.Call
+import com.gu.floodgate.reindex.ReindexStatus.{ Completed, InProgress }
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.Configuration
 import play.api.Environment
+import play.api.libs.ws.ahc.AhcWSClient
 
 /**
- * These tests are provided as a way of demonstating how we expect the reindex endpoints on a particular content
+ * These tests are provided as a way of demonstrating how we expect the reindex endpoints on a particular content
  * source to behave in order to have integration with Floodgate.
  */
 class FloodgateIntegrationSpec extends FlatSpec with Matchers {
 
+  val wsClient = AhcWSClient()(ActorMaterializer()(ActorSystem()))
   val configuration = Configuration.load(Environment.simple())
-  val application = new Application(configuration)
+  val application = new Application(wsClient, configuration)
 
   val reindexRoute = "/reindex"
   val initiateReindexRequest = new Call("POST", reindexRoute)

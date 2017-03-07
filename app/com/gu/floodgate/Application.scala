@@ -1,17 +1,15 @@
-package com.gu.floodgate
+package controllers
 
 import com.gu.floodgate.reindex.ReindexStatus.{ Completed, InProgress }
-import com.gu.floodgate.reindex.{ Progress }
+import com.gu.floodgate.reindex.Progress
 import com.typesafe.scalalogging.StrictLogging
 import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc._
+import com.gu.floodgate.views
+import play.api.libs.ws.WSClient
 
-class Application(val conf: Configuration) extends Controller with AuthActions with StrictLogging {
-
-  def healthcheck = Action {
-    Ok("ok")
-  }
+class Application(val wsClient: WSClient, val conf: Configuration) extends Controller with AuthActions with StrictLogging {
 
   def index = AuthAction {
     Ok(views.html.app("Floodgate"))

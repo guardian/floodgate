@@ -1,28 +1,24 @@
 
 import com.amazonaws.ClientConfiguration
 import com.amazonaws.auth.profile.ProfileCredentialsProvider
-import com.amazonaws.auth.{ InstanceProfileCredentialsProvider, SystemPropertiesCredentialsProvider, EnvironmentVariableCredentialsProvider, AWSCredentialsProviderChain }
-import com.amazonaws.regions.{ Regions, Region }
+import com.amazonaws.auth.{ AWSCredentialsProviderChain, InstanceProfileCredentialsProvider }
+import com.amazonaws.regions.{ Region, Regions }
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClient
-import com.gu.floodgate.contentsource.{ ContentSourceTable, ContentSourceService, ContentSourceApi }
-import com.gu.floodgate.jobhistory.{ JobHistoryTable, JobHistoryService, JobHistoryApi }
+import com.gu.floodgate.contentsource.{ ContentSourceApi, ContentSourceService, ContentSourceTable }
+import com.gu.floodgate.jobhistory.{ JobHistoryApi, JobHistoryService, JobHistoryTable }
 import com.gu.floodgate.reindex.{ ProgressTrackerController, ReindexService }
-import com.gu.floodgate.runningjob.{ RunningJobTable, RunningJobService, RunningJobApi }
-import com.gu.floodgate.{ Login, Application }
+import com.gu.floodgate.runningjob.{ RunningJobApi, RunningJobService, RunningJobTable }
 import play.api.ApplicationLoader.Context
 import play.api.libs.ws.ahc.AhcWSComponents
-import play.api.{ BuiltInComponentsFromContext }
+import play.api.BuiltInComponentsFromContext
 import play.api.routing.Router
-import controllers.Assets
+import controllers.{ Application, Assets, Healthcheck, Login }
 import router.Routes
 
 class AppComponents(context: Context) extends BuiltInComponentsFromContext(context) with AhcWSComponents {
 
   val awsCredsProvider = new AWSCredentialsProviderChain(
-    new EnvironmentVariableCredentialsProvider(),
-    new SystemPropertiesCredentialsProvider(),
     new ProfileCredentialsProvider("capi"),
-    new ProfileCredentialsProvider(),
     new InstanceProfileCredentialsProvider()
   )
 
@@ -58,12 +54,14 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
   val runningJobController = new RunningJobApi(runningJobService)
   val jobHistoryController = new JobHistoryApi(jobHistoryService)
 
-  val appController = new Application(configuration)
+  val appController = new Application(wsClient, configuration)
 
-  val loginController = new Login(wsApi, configuration)
+  val healthcheckController = new Healthcheck
+
+  val loginController = new Login(wsClient, configuration)
 
   val assets = new Assets(httpErrorHandler)
-  val router: Router = new Routes(httpErrorHandler, appController, loginController,
+  val router: Router = new Routes(httpErrorHandler, appController, healthcheckController, loginController,
     contentSourceController, jobHistoryController, runningJobController, assets)
 
 }

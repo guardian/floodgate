@@ -3,14 +3,15 @@
 # ~~~~
 
 # Handled by client side code
-GET         /                                                             com.gu.floodgate.Application.index
+GET         /                                                             controllers.Application.index
 
 # Healthcheck
-GET        /healthcheck                                                   com.gu.floodgate.Application.healthcheck
+GET        /healthcheck                                                   controllers.Healthcheck.healthcheck
 
 # Auth
-GET         /login                                                        com.gu.floodgate.Login.login
-GET         /oauth2callback                                               com.gu.floodgate.Login.oauth2Callback
+GET         /login                                                        controllers.Login.login
+GET         /loginAction                                                   controllers.Login.loginAction
+GET         /oauth2callback                                               controllers.Login.oauth2Callback
 
 # Api
 GET         /content-source                                               com.gu.floodgate.contentsource.ContentSourceApi.getAllContentSources
@@ -33,9 +34,9 @@ GET         /running-job/:id/:environment                                 com.gu
 
 # Fake client reindex endpoints
 
-GET         /reindex                                                      com.gu.floodgate.Application.fakeReindexRouteProgress
-POST        /reindex                                                      com.gu.floodgate.Application.fakeReindexRouteInitiate
-DELETE      /reindex                                                      com.gu.floodgate.Application.fakeReindexRouteCancel
+GET         /reindex                                                      controllers.Application.fakeReindexRouteProgress
+POST        /reindex                                                      controllers.Application.fakeReindexRouteInitiate
+DELETE      /reindex                                                      controllers.Application.fakeReindexRouteCancel
 
 # Map static resources from the /public folder to the /assets URL path
 GET        /assets/*file                                                  controllers.Assets.versioned(path="/public", file: Asset)
