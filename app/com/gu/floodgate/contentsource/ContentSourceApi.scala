@@ -24,18 +24,16 @@ class ContentSourceApi(contentSourceService: ContentSourceService,
   }
 
   def getContentSources(id: String) = Action.async { implicit request =>
-    contentSourceService.getContentSources(id) map { contentSourceOrError =>
-      contentSourceOrError match {
-        case Good(cs) => Ok(Json.toJson(ContentSourcesResponse(cs)))
-        case Bad(error) => NotFound(Json.toJson(ErrorResponse(error.message)))
-      }
+    contentSourceService.getContentSources(id) map {
+      case Good(cs) => Ok(Json.toJson(ContentSourcesResponse(cs)))
+      case Bad(error) => NotFound(Json.toJson(ErrorResponse(error.message)))
     }
   }
 
   def getContentSource(id: String, environment: String) = Action { implicit request =>
     contentSourceService.getContentSource(id, environment) match {
-      case Good(cs) => Ok(Json.toJson(SingleContentSourceResponse(cs)))
-      case Bad(error) => NotFound(Json.toJson(ErrorResponse(error.message)))
+      case Right(cs) => Ok(Json.toJson(SingleContentSourceResponse(cs)))
+      case Left(error) => NotFound(Json.toJson(ErrorResponse(error.message)))
     }
   }
 
@@ -70,24 +68,19 @@ class ContentSourceApi(contentSourceService: ContentSourceService,
 
   def reindex(id: String, environment: String, from: Option[String], to: Option[String]) = Action.async { implicit request =>
     DateParameters(from, to) match {
-      case Good(dp: DateParameters) => {
-        reindexService.reindex(id, environment, dp) map { runningJobOrError =>
-          runningJobOrError match {
-            case Good(runningJob) => Ok(Json.toJson(runningJob))
-            case Bad(error) => BadRequest(Json.toJson(ErrorResponse(error.message)))
-          }
+      case Good(dp: DateParameters) =>
+        reindexService.reindex(id, environment, dp) map {
+          case Good(runningJob) => Ok(Json.toJson(runningJob))
+          case Bad(error) => BadRequest(Json.toJson(ErrorResponse(error.message)))
         }
-      }
       case Bad(error) => Future.successful(BadRequest(Json.toJson(ErrorResponse(error.message))))
     }
   }
 
   def cancelReindex(id: String, environment: String) = Action.async { implicit request =>
-    reindexService.cancelReindex(id, environment: String) map { happyOrError =>
-      happyOrError match {
-        case Good(_) => Ok
-        case Bad(error) => BadRequest(Json.toJson(ErrorResponse(error.message)))
-      }
+    reindexService.cancelReindex(id, environment: String) map {
+      case Right(_) => Ok
+      case Left(error) => BadRequest(Json.toJson(ErrorResponse(error.message)))
     }
   }
 
@@ -99,8 +92,8 @@ class ContentSourceApi(contentSourceService: ContentSourceService,
 
   def getRunningReindex(id: String, environment: String) = Action { implicit request =>
     runningJobService.getRunningJob(id, environment) match {
-      case Good(rj) => Ok(Json.toJson(SingleRunningJobResponse(rj)))
-      case Bad(error) => NotFound(Json.toJson(ErrorResponse(error.message)))
+      case Right(rj) => Ok(Json.toJson(SingleRunningJobResponse(rj)))
+      case Left(error) => NotFound(Json.toJson(ErrorResponse(error.message)))
     }
   }
 
