@@ -3,7 +3,6 @@ package com.gu.floodgate.reindex
 import com.gu.floodgate.{ CustomError, InvalidDateTimeParameter }
 import org.joda.time.DateTime
 import org.joda.time.format.{ ISODateTimeFormat, DateTimeFormatter }
-import org.scalactic.{ Or, Bad, Good }
 import play.json.extra.JsonFormat
 
 import scala.util.{ Success, Try }
@@ -15,13 +14,13 @@ object DateParameters {
 
   private val formatter: DateTimeFormatter = ISODateTimeFormat.dateTime()
 
-  def apply(from: Option[String], to: Option[String]): DateParameters Or CustomError = {
+  def apply(from: Option[String], to: Option[String]): Either[CustomError, DateParameters] = {
     val fromDate = Try(from map parseDateTime)
     val toDate = Try(to map parseDateTime)
 
     (fromDate, toDate) match {
-      case (Success(f), Success(t)) => Good(DateParameters(f, t))
-      case _ => Bad(InvalidDateTimeParameter(s"Date parameter provided is invalid."))
+      case (Success(f), Success(t)) => Right(DateParameters(f, t))
+      case _ => Left(InvalidDateTimeParameter(s"Date parameter provided is invalid."))
     }
   }
 

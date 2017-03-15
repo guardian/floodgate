@@ -5,8 +5,7 @@ import java.util.UUID
 import com.gu.floodgate.ErrorResponse
 import com.gu.floodgate.jobhistory.{ JobHistoriesResponse, JobHistoryService }
 import com.gu.floodgate.reindex.{ DateParameters, ReindexService }
-import com.gu.floodgate.runningjob.{ SingleRunningJobResponse, RunningJobsResponse, RunningJobService }
-import org.scalactic.{ Bad, Good }
+import com.gu.floodgate.runningjob.{ SingleRunningJobResponse, RunningJobService }
 import play.api.libs.json.Json
 import play.api.mvc.{ Action, Controller }
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -25,8 +24,8 @@ class ContentSourceApi(contentSourceService: ContentSourceService,
 
   def getContentSources(id: String) = Action.async { implicit request =>
     contentSourceService.getContentSources(id) map {
-      case Good(cs) => Ok(Json.toJson(ContentSourcesResponse(cs)))
-      case Bad(error) => NotFound(Json.toJson(ErrorResponse(error.message)))
+      case Right(cs) => Ok(Json.toJson(ContentSourcesResponse(cs)))
+      case Left(error) => NotFound(Json.toJson(ErrorResponse(error.message)))
     }
   }
 
@@ -68,12 +67,12 @@ class ContentSourceApi(contentSourceService: ContentSourceService,
 
   def reindex(id: String, environment: String, from: Option[String], to: Option[String]) = Action.async { implicit request =>
     DateParameters(from, to) match {
-      case Good(dp: DateParameters) =>
+      case Right(dp: DateParameters) =>
         reindexService.reindex(id, environment, dp) map {
-          case Good(runningJob) => Ok(Json.toJson(runningJob))
-          case Bad(error) => BadRequest(Json.toJson(ErrorResponse(error.message)))
+          case Right(runningJob) => Ok(Json.toJson(runningJob))
+          case Left(error) => BadRequest(Json.toJson(ErrorResponse(error.message)))
         }
-      case Bad(error) => Future.successful(BadRequest(Json.toJson(ErrorResponse(error.message))))
+      case Left(error) => Future.successful(BadRequest(Json.toJson(ErrorResponse(error.message))))
     }
   }
 

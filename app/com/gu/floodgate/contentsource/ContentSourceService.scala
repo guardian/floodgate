@@ -1,7 +1,6 @@
 package com.gu.floodgate.contentsource
 
 import com.gu.floodgate.{ ContentSourceNotFound, CustomError, DynamoDBTable }
-import org.scalactic.{ Bad, Good, Or }
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import cats.syntax.either._
@@ -10,11 +9,11 @@ class ContentSourceService(contentSourceTable: DynamoDBTable[ContentSource]) {
 
   def getAllContentSources(): Future[Seq[ContentSource]] = contentSourceTable.getAll()
 
-  def getContentSources(id: String): Future[Seq[ContentSource] Or CustomError] = {
+  def getContentSources(id: String): Future[Either[CustomError, Seq[ContentSource]]] = {
     contentSourceTable.getItems(id) map { contentSources =>
       if (contentSources.isEmpty)
-        Bad(ContentSourceNotFound(s"A content source with id: $id does not exist."))
-      else Good(contentSources)
+        Left(ContentSourceNotFound(s"A content source with id: $id does not exist."))
+      else Right(contentSources)
     }
   }
 

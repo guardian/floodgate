@@ -29,15 +29,14 @@ object FloodgateBuild extends Build {
         resolvers += "Sonatype releases" at "https://oss.sonatype.org/content/repositories/releases",
         libraryDependencies ++= Seq(
         ws,
-        "com.amazonaws" % "aws-java-sdk-kinesis" % "1.10.45",
-        "com.amazonaws" % "aws-java-sdk-dynamodb" % "1.10.45",
+        "com.amazonaws" % "aws-java-sdk-kinesis" % "1.11.8",
+        "com.amazonaws" % "aws-java-sdk-dynamodb" % "1.11.8",
         "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
         "io.megl" % "play-json-extra_2.11" % "2.4.3",
-        "org.scalactic" %% "scalactic" % "2.2.6",
         "com.gu" %% "play-googleauth" % "0.6.0",
         "com.gu" %% "scanamo" % "0.9.2",
         "org.scalatest" %% "scalatest" % "2.2.5" % "test",
-        "org.typelevel" % "cats-core_2.11" % "0.9.0"
+        "org.typelevel" %% "cats-core" % "0.9.0"
       ),
 
       addCompilerPlugin("org.scalamacros" % "paradise" % "2.0.1" cross CrossVersion.full),
