@@ -19,7 +19,7 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
 
   val awsCredsProvider = new AWSCredentialsProviderChain(
     new ProfileCredentialsProvider("capi"),
-    new InstanceProfileCredentialsProvider()
+    InstanceProfileCredentialsProvider.getInstance()
   )
 
   val region = Region getRegion Regions.fromName(configuration.getString("aws.region") getOrElse "eu-west-1")
