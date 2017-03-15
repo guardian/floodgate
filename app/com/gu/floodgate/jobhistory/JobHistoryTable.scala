@@ -1,13 +1,13 @@
 package com.gu.floodgate.jobhistory
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClient
-import com.amazonaws.services.dynamodbv2.model.{ AttributeValueUpdate, AttributeValue }
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsync
+import com.amazonaws.services.dynamodbv2.model.{ AttributeValue, AttributeValueUpdate }
 import com.gu.floodgate.DynamoDBTable
 import com.gu.floodgate.reindex.ReindexStatus
 import com.gu.floodgate.reindex.ReindexStatus.Unknown
 import org.joda.time.DateTime
 
-class JobHistoryTable(protected val dynamoDB: AmazonDynamoDBAsyncClient, protected val tableName: String)
+class JobHistoryTable(protected val dynamoDB: AmazonDynamoDBAsync, protected val tableName: String)
     extends DynamoDBTable[JobHistory] {
 
   object fields {

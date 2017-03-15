@@ -1,11 +1,11 @@
 package com.gu.floodgate.runningjob
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClient
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsync
 import com.amazonaws.services.dynamodbv2.model._
 import com.gu.floodgate.DynamoDBTable
 import org.joda.time.DateTime
 
-class RunningJobTable(protected val dynamoDB: AmazonDynamoDBAsyncClient, protected val tableName: String)
+class RunningJobTable(protected val dynamoDB: AmazonDynamoDBAsync, protected val tableName: String)
     extends DynamoDBTable[RunningJob] {
 
   object fields {

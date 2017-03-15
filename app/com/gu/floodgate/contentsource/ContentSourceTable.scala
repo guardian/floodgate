@@ -1,12 +1,12 @@
 package com.gu.floodgate.contentsource
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClient
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsync
 import com.amazonaws.services.dynamodbv2.model.{ AttributeValue, AttributeValueUpdate }
 import com.gu.floodgate.DynamoDBTable
 
 import scala.collection.JavaConverters._
 
-class ContentSourceTable(protected val dynamoDB: AmazonDynamoDBAsyncClient, protected val tableName: String)
+class ContentSourceTable(protected val dynamoDB: AmazonDynamoDBAsync, protected val tableName: String)
     extends DynamoDBTable[ContentSource] {
 
   object fields {
