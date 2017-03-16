@@ -4,7 +4,9 @@ import cats.data.ValidatedNel
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsync
 import com.amazonaws.services.dynamodbv2.model._
 import com.amazonaws.handlers.AsyncHandler
-import com.gu.scanamo.{ DynamoReadError, DynamoFormat, Scanamo }
+import com.gu.scanamo.error.DynamoReadError
+import com.gu.scanamo.query.{ KeyEquals, UniqueKey }
+import com.gu.scanamo.{ DynamoFormat, Scanamo }
 import com.typesafe.scalalogging.StrictLogging
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
@@ -41,9 +43,9 @@ trait DynamoDBTable[T] extends StrictLogging {
     promise.future
   }
 
-  def getItem[T: DynamoFormat](hashKey: String, sortKey: String): Option[ValidatedNel[DynamoReadError, T]] = {
+  def getItem[T: DynamoFormat](hashKey: String, sortKey: String): Option[Either[DynamoReadError, T]] = {
     maybeSortKeyName flatMap { sortKeyName =>
-      Scanamo.get[String, T](dynamoDB)(tableName)(keyName -> hashKey, sortKeyName -> sortKey)
+      Scanamo.get[T](dynamoDB)(tableName)(UniqueKey(KeyEquals(Symbol(keyName), hashKey) and KeyEquals(Symbol(sortKeyName), sortKey)))
     } orElse None
   }
 
@@ -91,16 +93,16 @@ trait DynamoDBTable[T] extends StrictLogging {
         .withAttributeUpdates(toItemUpdate(t).mapValues(_.withAction(AttributeAction.PUT)))
     }
 
-    maybeRequest foreach (updateThisItem(_))
+    maybeRequest foreach updateThisItem
   }
 
-  def deleteItem[T: DynamoFormat](hashKey: String): Unit = {
-    Scanamo.delete[String, T](dynamoDB)(tableName)(keyName -> hashKey)
+  def deleteItem(hashKey: String): Unit = {
+    Scanamo.delete(dynamoDB)(tableName)(UniqueKey(KeyEquals(Symbol(keyName), hashKey)))
   }
 
-  def deleteItem[T: DynamoFormat](hashKey: String, sortKey: String): Unit = {
+  def deleteItem(hashKey: String, sortKey: String): Unit = {
     maybeSortKeyName map { sortKeyName =>
-      Scanamo.delete[String, T](dynamoDB)(tableName)(keyName -> hashKey, sortKeyName -> sortKey)
+      Scanamo.delete(dynamoDB)(tableName)(UniqueKey(KeyEquals(Symbol(keyName), hashKey) and KeyEquals(Symbol(sortKeyName), sortKey)))
     }
   }
 

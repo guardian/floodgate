@@ -5,8 +5,7 @@ import java.util.UUID
 import com.gu.floodgate.ErrorResponse
 import com.gu.floodgate.jobhistory.{ JobHistoriesResponse, JobHistoryService }
 import com.gu.floodgate.reindex.{ DateParameters, ReindexService }
-import com.gu.floodgate.runningjob.{ SingleRunningJobResponse, RunningJobsResponse, RunningJobService }
-import org.scalactic.{ Bad, Good }
+import com.gu.floodgate.runningjob.{ SingleRunningJobResponse, RunningJobService }
 import play.api.libs.json.Json
 import play.api.mvc.{ Action, Controller }
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -24,18 +23,16 @@ class ContentSourceApi(contentSourceService: ContentSourceService,
   }
 
   def getContentSources(id: String) = Action.async { implicit request =>
-    contentSourceService.getContentSources(id) map { contentSourceOrError =>
-      contentSourceOrError match {
-        case Good(cs) => Ok(Json.toJson(ContentSourcesResponse(cs)))
-        case Bad(error) => NotFound(Json.toJson(ErrorResponse(error.message)))
-      }
+    contentSourceService.getContentSources(id) map {
+      case Right(cs) => Ok(Json.toJson(ContentSourcesResponse(cs)))
+      case Left(error) => NotFound(Json.toJson(ErrorResponse(error.message)))
     }
   }
 
   def getContentSource(id: String, environment: String) = Action { implicit request =>
     contentSourceService.getContentSource(id, environment) match {
-      case Good(cs) => Ok(Json.toJson(SingleContentSourceResponse(cs)))
-      case Bad(error) => NotFound(Json.toJson(ErrorResponse(error.message)))
+      case Right(cs) => Ok(Json.toJson(SingleContentSourceResponse(cs)))
+      case Left(error) => NotFound(Json.toJson(ErrorResponse(error.message)))
     }
   }
 
@@ -70,24 +67,19 @@ class ContentSourceApi(contentSourceService: ContentSourceService,
 
   def reindex(id: String, environment: String, from: Option[String], to: Option[String]) = Action.async { implicit request =>
     DateParameters(from, to) match {
-      case Good(dp: DateParameters) => {
-        reindexService.reindex(id, environment, dp) map { runningJobOrError =>
-          runningJobOrError match {
-            case Good(runningJob) => Ok(Json.toJson(runningJob))
-            case Bad(error) => BadRequest(Json.toJson(ErrorResponse(error.message)))
-          }
+      case Right(dp: DateParameters) =>
+        reindexService.reindex(id, environment, dp) map {
+          case Right(runningJob) => Ok(Json.toJson(runningJob))
+          case Left(error) => BadRequest(Json.toJson(ErrorResponse(error.message)))
         }
-      }
-      case Bad(error) => Future.successful(BadRequest(Json.toJson(ErrorResponse(error.message))))
+      case Left(error) => Future.successful(BadRequest(Json.toJson(ErrorResponse(error.message))))
     }
   }
 
   def cancelReindex(id: String, environment: String) = Action.async { implicit request =>
-    reindexService.cancelReindex(id, environment: String) map { happyOrError =>
-      happyOrError match {
-        case Good(_) => Ok
-        case Bad(error) => BadRequest(Json.toJson(ErrorResponse(error.message)))
-      }
+    reindexService.cancelReindex(id, environment: String) map {
+      case Right(_) => Ok
+      case Left(error) => BadRequest(Json.toJson(ErrorResponse(error.message)))
     }
   }
 
@@ -99,8 +91,8 @@ class ContentSourceApi(contentSourceService: ContentSourceService,
 
   def getRunningReindex(id: String, environment: String) = Action { implicit request =>
     runningJobService.getRunningJob(id, environment) match {
-      case Good(rj) => Ok(Json.toJson(SingleRunningJobResponse(rj)))
-      case Bad(error) => NotFound(Json.toJson(ErrorResponse(error.message)))
+      case Right(rj) => Ok(Json.toJson(SingleRunningJobResponse(rj)))
+      case Left(error) => NotFound(Json.toJson(ErrorResponse(error.message)))
     }
   }
 

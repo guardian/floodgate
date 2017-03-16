@@ -1,18 +1,18 @@
 package com.gu.floodgate.jobhistory
 
-import cats.data.Validated
 import com.gu.floodgate.DynamoDBTable
 import com.gu.floodgate.reindex.ReindexStatus
-import com.gu.floodgate.reindex.ReindexStatus.{ Unknown }
+import com.gu.floodgate.reindex.ReindexStatus._
 import com.gu.scanamo.DynamoFormat
-import org.joda.time.DateTime
-
+import com.gu.scanamo.DynamoFormat._
+import org.joda.time.{ DateTimeZone, DateTime }
 import scala.concurrent.Future
+import cats.syntax.either._
 
 class JobHistoryService(jobHistoryTable: DynamoDBTable[JobHistory]) {
 
-  implicit val dateFormat = DynamoFormat.xmap(DynamoFormat.stringFormat)(d => Validated.valid(new DateTime(d)))(_.toString)
-  implicit val reindexStatusFormat = DynamoFormat.xmap(DynamoFormat.stringFormat)(s => Validated.valid(ReindexStatus.fromString(s).getOrElse(Unknown)))(ReindexStatus.asString(_))
+  implicit val dateFormat = DynamoFormat.coercedXmap[DateTime, String, IllegalArgumentException](DateTime.parse(_).withZone(DateTimeZone.UTC))(_.toString)
+  implicit val reindexStatusFormat = DynamoFormat.coercedXmap[ReindexStatus, String, IllegalArgumentException](s => ReindexStatus.fromString(s).getOrElse(Unknown))(ReindexStatus.asString)
 
   def createJobHistory(jobHistory: JobHistory): Unit = jobHistoryTable.saveItem(jobHistory)
   def getJobHistories(): Future[Seq[JobHistory]] = jobHistoryTable.getAll()

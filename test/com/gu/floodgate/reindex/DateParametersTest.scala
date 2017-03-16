@@ -2,8 +2,8 @@ package com.gu.floodgate.reindex
 
 import com.gu.floodgate.CustomError
 import org.joda.time.DateTime
-import org.scalactic.{ Or }
 import org.scalatest.{ Matchers, FlatSpec }
+import cats.syntax.either._
 
 class DateParametersTest extends FlatSpec with Matchers {
 
@@ -14,7 +14,7 @@ class DateParametersTest extends FlatSpec with Matchers {
     val from = Some("2016-01-01T00:00:00Z")
     val to = Some("2016-01-31T00:00:00Z")
 
-    val dateParametersOrError: DateParameters Or CustomError = DateParameters(from, to)
+    val dateParametersOrError: Either[CustomError, DateParameters] = DateParameters(from, to)
 
     dateParametersOrError foreach { dp =>
       dp.from should be(Some(new DateTime(from.get)))
@@ -28,7 +28,7 @@ class DateParametersTest extends FlatSpec with Matchers {
     val from = None
     val to = None
 
-    val dateParametersOrError: DateParameters Or CustomError = DateParameters(from, to)
+    val dateParametersOrError: Either[CustomError, DateParameters] = DateParameters(from, to)
 
     dateParametersOrError foreach { dp =>
       dp.from should be(None)
@@ -42,9 +42,9 @@ class DateParametersTest extends FlatSpec with Matchers {
     val from = Some("45467")
     val to = Some("2016-01-31T00:00:00Z")
 
-    val dateParametersOrError: DateParameters Or CustomError = DateParameters(from, to)
+    val dateParametersOrError: Either[CustomError, DateParameters] = DateParameters(from, to)
 
-    dateParametersOrError.badMap(f => f.message should be("Date parameter provided is invalid."))
+    dateParametersOrError.leftMap(f => f.message should be("Date parameter provided is invalid."))
 
   }
 
@@ -53,9 +53,9 @@ class DateParametersTest extends FlatSpec with Matchers {
     val from = Some("2016-01-01T00:00:00Z")
     val to = Some("INVALID-DATE")
 
-    val dateParametersOrError: DateParameters Or CustomError = DateParameters(from, to)
+    val dateParametersOrError: Either[CustomError, DateParameters] = DateParameters(from, to)
 
-    dateParametersOrError.badMap(f => f.message should be("Date parameter provided is invalid."))
+    dateParametersOrError.leftMap(f => f.message should be("Date parameter provided is invalid."))
 
   }
 }

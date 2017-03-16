@@ -3,7 +3,7 @@ import com.amazonaws.ClientConfiguration
 import com.amazonaws.auth.profile.ProfileCredentialsProvider
 import com.amazonaws.auth.{ AWSCredentialsProviderChain, InstanceProfileCredentialsProvider }
 import com.amazonaws.regions.{ Region, Regions }
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsyncClient
+import com.amazonaws.services.dynamodbv2._
 import com.gu.floodgate.contentsource.{ ContentSourceApi, ContentSourceService, ContentSourceTable }
 import com.gu.floodgate.jobhistory.{ JobHistoryApi, JobHistoryService, JobHistoryTable }
 import com.gu.floodgate.reindex.{ ProgressTrackerController, ReindexService }
@@ -19,12 +19,19 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
 
   val awsCredsProvider = new AWSCredentialsProviderChain(
     new ProfileCredentialsProvider("capi"),
-    new InstanceProfileCredentialsProvider()
+    InstanceProfileCredentialsProvider.getInstance()
   )
 
   val region = Region getRegion Regions.fromName(configuration.getString("aws.region") getOrElse "eu-west-1")
   val clientConfiguration = new ClientConfiguration()
-  val dynamoDB = region.createClient(classOf[AmazonDynamoDBAsyncClient], awsCredsProvider, clientConfiguration)
+
+  val dynamoDB: AmazonDynamoDBAsync = {
+    val builder = AmazonDynamoDBAsyncClientBuilder.standard()
+    builder.withRegion(region.toString)
+    builder.withClientConfiguration(clientConfiguration)
+    builder.withCredentials(awsCredsProvider)
+    builder.build()
+  }
 
   val contentSourceTable = {
     val tableName = configuration.getString("aws.table.name.contentsource") getOrElse "floodgate-content-source-DEV"
