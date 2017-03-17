@@ -5,7 +5,7 @@ regions:
   - eu-west-1
 
 deployments:
-  floodgate:
+  content-api-floodgate:
     type: autoscaling
     parameters:
       bucket: content-api-dist
