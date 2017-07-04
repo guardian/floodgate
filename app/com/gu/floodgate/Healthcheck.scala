@@ -1,6 +1,6 @@
 package controllers
 
-import play.api.mvc.{ Action, Controller }
+import play.api.mvc.legacy.Controller
 
 class Healthcheck extends Controller {
 

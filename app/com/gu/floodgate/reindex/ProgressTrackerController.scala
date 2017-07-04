@@ -1,22 +1,22 @@
 package com.gu.floodgate.reindex
 
-import akka.actor.{ ActorRef, ActorLogging, Actor, Props }
+import akka.actor.{ Actor, ActorLogging, ActorRef, Props }
 import com.gu.floodgate.contentsource.ContentSource
 import com.gu.floodgate.jobhistory.JobHistoryService
 import com.gu.floodgate.reindex.ProgressTracker.{ Cancel, TrackProgress }
-import com.gu.floodgate.reindex.ProgressTrackerController.{ RemoveTracker, LaunchTracker }
+import com.gu.floodgate.reindex.ProgressTrackerController.{ LaunchTracker, RemoveTracker }
 import com.gu.floodgate.runningjob.{ RunningJob, RunningJobService }
 import com.typesafe.scalalogging.StrictLogging
-import play.api.libs.ws.WSAPI
+import play.api.libs.ws.WSClient
 
 object ProgressTrackerController {
-  def props(ws: WSAPI, runningJobService: RunningJobService, jobHistoryService: JobHistoryService) = Props(new ProgressTrackerController(ws: WSAPI, runningJobService: RunningJobService, jobHistoryService))
+  def props(ws: WSClient, runningJobService: RunningJobService, jobHistoryService: JobHistoryService) = Props(new ProgressTrackerController(ws: WSClient, runningJobService: RunningJobService, jobHistoryService))
 
   case class LaunchTracker(contentSource: ContentSource, runningJob: RunningJob)
   case class RemoveTracker(contentSource: ContentSource, runningJob: RunningJob)
 }
 
-class ProgressTrackerController(ws: WSAPI, runningJobService: RunningJobService, jobHistoryService: JobHistoryService) extends Actor with ActorLogging with StrictLogging {
+class ProgressTrackerController(ws: WSClient, runningJobService: RunningJobService, jobHistoryService: JobHistoryService) extends Actor with ActorLogging with StrictLogging {
 
   private var runningTrackers: Map[String, ActorRef] = Map.empty[String, ActorRef]
 

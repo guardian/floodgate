@@ -5,18 +5,21 @@ import cats.syntax.either._
 import com.gu.floodgate._
 import com.gu.floodgate.contentsource.{ ContentSource, ContentSourceService }
 import com.gu.floodgate.jobhistory.JobHistoryService
-import com.gu.floodgate.reindex.ProgressTrackerController.{ RemoveTracker, LaunchTracker }
+import com.gu.floodgate.reindex.ProgressTrackerController.{ LaunchTracker, RemoveTracker }
 import com.gu.floodgate.runningjob.{ RunningJob, RunningJobService }
 import com.typesafe.scalalogging.StrictLogging
-import play.api.libs.ws.WSAPI
+import play.api.libs.ws.WSClient
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ReindexService(contentSourceService: ContentSourceService,
+class ReindexService(
+    contentSourceService: ContentSourceService,
     runningJobService: RunningJobService,
     jobHistoryService: JobHistoryService,
     reindexProgressMonitor: ActorRef,
-    ws: WSAPI) extends StrictLogging {
+    ws: WSClient
+) extends StrictLogging {
 
   /**
    * @param id - id of content source to initiate reindex upon.

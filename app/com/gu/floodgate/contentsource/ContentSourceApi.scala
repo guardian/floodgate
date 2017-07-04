@@ -3,18 +3,22 @@ package com.gu.floodgate.contentsource
 import java.util.UUID
 
 import com.gu.floodgate.ErrorResponse
+import com.gu.floodgate.Formats._
 import com.gu.floodgate.jobhistory.{ JobHistoriesResponse, JobHistoryService }
 import com.gu.floodgate.reindex.{ DateParameters, ReindexService }
-import com.gu.floodgate.runningjob.{ SingleRunningJobResponse, RunningJobService }
-import play.api.libs.json.Json
-import play.api.mvc.{ Action, Controller }
+import com.gu.floodgate.runningjob.{ RunningJobService, SingleRunningJobResponse }
+import play.api.libs.json._
+import play.api.mvc.legacy.Controller
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class ContentSourceApi(contentSourceService: ContentSourceService,
+class ContentSourceApi(
+    contentSourceService: ContentSourceService,
     reindexService: ReindexService,
     jobHistoryService: JobHistoryService,
-    runningJobService: RunningJobService) extends Controller {
+    runningJobService: RunningJobService
+) extends Controller {
 
   def getAllContentSources = Action.async { implicit request =>
     contentSourceService.getAllContentSources() map { contentSources =>

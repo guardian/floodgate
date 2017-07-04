@@ -39,10 +39,12 @@ class ContentSourceTable(protected val dynamoDB: AmazonDynamoDBAsync, protected 
   override protected def toItemUpdate(contentSource: ContentSource): Map[String, AttributeValueUpdate] = {
     val contentSourceSettings = contentSource.contentSourceSettings.toMap.mapValues(new AttributeValue().withBOOL(_)).asJava
 
-    Map(fields.AppName -> new AttributeValueUpdate().withValue(new AttributeValue(contentSource.appName)),
+    Map(
+      fields.AppName -> new AttributeValueUpdate().withValue(new AttributeValue(contentSource.appName)),
       fields.Description -> new AttributeValueUpdate().withValue(new AttributeValue(contentSource.description)),
       fields.ReindexEndpoint -> new AttributeValueUpdate().withValue(new AttributeValue(contentSource.reindexEndpoint)),
       fields.AuthType -> new AttributeValueUpdate().withValue(new AttributeValue(contentSource.authType)),
-      fields.ContentSourceSettings -> new AttributeValueUpdate().withValue(new AttributeValue().withM(contentSourceSettings)))
+      fields.ContentSourceSettings -> new AttributeValueUpdate().withValue(new AttributeValue().withM(contentSourceSettings))
+    )
   }
 }

@@ -3,11 +3,8 @@ package com.gu.floodgate.reindex
 import com.gu.floodgate.{ CustomError, InvalidDateTimeParameter }
 import org.joda.time.DateTime
 import org.joda.time.format.{ ISODateTimeFormat, DateTimeFormatter }
-import play.json.extra.JsonFormat
-
 import scala.util.{ Success, Try }
 
-@JsonFormat
 case class DateParameters(from: Option[DateTime], to: Option[DateTime])
 
 object DateParameters {

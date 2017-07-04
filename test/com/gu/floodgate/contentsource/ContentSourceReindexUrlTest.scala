@@ -14,7 +14,8 @@ class ContentSourceReindexUrlTest extends FlatSpec with Matchers {
       reindexEndpoint = "http://myurl.com/reindex?api-key=my-key",
       environment = "code-live",
       authType = "api-key",
-      contentSourceSettings = ContentSourceSettings(true, true))
+      contentSourceSettings = ContentSourceSettings(true, true)
+    )
 
   val contentSourceWithVpcPeerAuth = ContentSource(
     id = "id",
@@ -23,7 +24,8 @@ class ContentSourceReindexUrlTest extends FlatSpec with Matchers {
     reindexEndpoint = "http://myurl.com/reindex",
     environment = "code-live",
     authType = "vpc-peered",
-    contentSourceSettings = ContentSourceSettings(true, true))
+    contentSourceSettings = ContentSourceSettings(true, true)
+  )
 
   it should "return the correct url to initiate a reindex when using api-key auth" in {
     val from = new DateTime("2016-01-01T00:00:00Z")

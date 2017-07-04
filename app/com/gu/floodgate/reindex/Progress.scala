@@ -1,21 +1,32 @@
 package com.gu.floodgate.reindex
 
-import play.json.extra.JsonFormat
-import macrame.enum
-import play.json.extra.Picklers._
+sealed trait ReindexStatus
 
-@enum class ReindexStatus {
-  InProgress("in progress")
-  Failed("failed")
-  Completed("completed")
-  Cancelled("cancelled")
-  Unknown("unknown")
+object ReindexStatus {
+
+  def asString(s: ReindexStatus): String = s match {
+    case InProgress => "in progress"
+    case Failed => "failed"
+    case Completed => "completed"
+    case Cancelled => "cancelled"
+    case Unknown => "unknown"
+  }
+
+  def fromString(s: String): Option[ReindexStatus] = s match {
+    case "in progress" => Some(InProgress)
+    case "failed" => Some(Failed)
+    case "completed" => Some(Completed)
+    case "cancelled" => Some(Cancelled)
+    case "unknown" => Some(Unknown)
+    case _ => None
+  }
+
 }
 
-object ReindexStatus extends EnumStringJSON[ReindexStatus] {
-  def asString(s: ReindexStatus): String = asStringImpl(s)
-  def fromString(s: String): Option[ReindexStatus] = fromStringImpl(s)
-}
+case object InProgress extends ReindexStatus
+case object Failed extends ReindexStatus
+case object Completed extends ReindexStatus
+case object Cancelled extends ReindexStatus
+case object Unknown extends ReindexStatus
 
-@JsonFormat
 case class Progress(status: ReindexStatus, documentsIndexed: Int, documentsExpected: Int)

@@ -1,8 +1,9 @@
 package com.gu.floodgate.jobhistory
 
 import play.api.libs.json.Json
-import play.api.mvc.{ Action, Controller }
+import play.api.mvc.legacy.Controller
 import scala.concurrent.ExecutionContext.Implicits.global
+import com.gu.floodgate.Formats._
 
 class JobHistoryApi(jobHistoryService: JobHistoryService) extends Controller {
 
