@@ -1,6 +1,6 @@
 package com.gu.floodgate
 
-import play.json.extra.JsonFormat
+import play.api.libs.json.Json
 
 /* Type indicating an operation has been successful but does not necessarily need/require a return type */
 case class Happy()
@@ -16,5 +16,4 @@ case class ReindexCannotBeInitiated(message: String) extends CustomError
 case class CancellingReindexFailed(message: String) extends CustomError
 case class RunningJobNotFound(message: String) extends CustomError
 
-@JsonFormat
 case class ErrorResponse(errorMessage: String)

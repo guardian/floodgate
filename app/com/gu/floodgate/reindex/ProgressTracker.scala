@@ -1,22 +1,22 @@
 package com.gu.floodgate.reindex
 
-import akka.actor.{ Cancellable, Actor, ActorLogging, Props }
+import akka.actor.{ Actor, ActorLogging, Cancellable, Props }
 import com.gu.floodgate.contentsource.ContentSource
-import com.gu.floodgate.jobhistory.{ JobHistoryService, JobHistory }
-import com.gu.floodgate.reindex.ProgressTracker.{ Cancel, UpdateProgress, TrackProgress }
+import com.gu.floodgate.jobhistory.{ JobHistory, JobHistoryService }
+import com.gu.floodgate.reindex.ProgressTracker.{ Cancel, TrackProgress, UpdateProgress }
 import com.gu.floodgate.runningjob.{ RunningJob, RunningJobService }
 import com.typesafe.scalalogging.StrictLogging
 import org.joda.time.DateTime
-import play.api.libs.ws.{ WSResponse, WSAPI }
+import play.api.libs.ws.{ WSClient, WSResponse }
 import scala.concurrent.duration._
 import scala.util.{ Failure, Success, Try }
-import com.gu.floodgate.reindex.ReindexStatus.{ Completed, InProgress, Failed, Cancelled }
+import com.gu.floodgate.Formats._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object ProgressTracker {
 
-  def props(ws: WSAPI, runningJobService: RunningJobService, jobHistoryService: JobHistoryService) =
+  def props(ws: WSClient, runningJobService: RunningJobService, jobHistoryService: JobHistoryService) =
     Props(new ProgressTracker(ws, runningJobService, jobHistoryService))
 
   case class TrackProgress(contentSource: ContentSource, runningJob: RunningJob)
@@ -25,7 +25,7 @@ object ProgressTracker {
 
 }
 
-class ProgressTracker(ws: WSAPI, runningJobService: RunningJobService, jobHistoryService: JobHistoryService) extends Actor with ActorLogging with StrictLogging {
+class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHistoryService: JobHistoryService) extends Actor with ActorLogging with StrictLogging {
   import context.become
 
   private val FailedAttemptsToRetrieveProgressLimit = 30

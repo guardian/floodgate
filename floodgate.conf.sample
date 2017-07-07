@@ -1,8 +1,10 @@
 include "application"
 
+aws {
+    region=
+    table.name.contentsource=
+    table.name.jobhistory=
+    table.name.runningjob=
+}
 
-aws.region=
-aws.table.name.contentsource=
-aws.table.name.jobhistory=
-aws.table.name.runningjob=
 

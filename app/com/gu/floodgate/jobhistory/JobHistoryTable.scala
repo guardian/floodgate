@@ -3,8 +3,7 @@ package com.gu.floodgate.jobhistory
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsync
 import com.amazonaws.services.dynamodbv2.model.{ AttributeValue, AttributeValueUpdate }
 import com.gu.floodgate.DynamoDBTable
-import com.gu.floodgate.reindex.ReindexStatus
-import com.gu.floodgate.reindex.ReindexStatus.Unknown
+import com.gu.floodgate.reindex._
 import org.joda.time.DateTime
 
 class JobHistoryTable(protected val dynamoDB: AmazonDynamoDBAsync, protected val tableName: String)
@@ -40,6 +39,7 @@ class JobHistoryTable(protected val dynamoDB: AmazonDynamoDBAsync, protected val
       fields.StartTime -> new AttributeValueUpdate().withValue(new AttributeValue(jobHistory.startTime.toString)),
       fields.FinishTime -> new AttributeValueUpdate().withValue(new AttributeValue(jobHistory.finishTime.toString)),
       fields.Status -> new AttributeValueUpdate().withValue(new AttributeValue(ReindexStatus.asString(jobHistory.status))),
-      fields.Environment -> new AttributeValueUpdate().withValue(new AttributeValue(jobHistory.environment)))
+      fields.Environment -> new AttributeValueUpdate().withValue(new AttributeValue(jobHistory.environment))
+    )
 
 }

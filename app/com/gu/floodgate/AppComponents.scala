@@ -1,3 +1,4 @@
+package com.gu.floodgate
 
 import com.amazonaws.ClientConfiguration
 import com.amazonaws.auth.profile.ProfileCredentialsProvider
@@ -10,19 +11,22 @@ import com.gu.floodgate.reindex.{ ProgressTrackerController, ReindexService }
 import com.gu.floodgate.runningjob.{ RunningJobApi, RunningJobService, RunningJobTable }
 import play.api.ApplicationLoader.Context
 import play.api.libs.ws.ahc.AhcWSComponents
-import play.api.BuiltInComponentsFromContext
+import play.api.{ BuiltInComponentsFromContext, NoHttpFiltersComponents }
 import play.api.routing.Router
-import controllers.{ Application, Assets, Healthcheck, Login }
+import controllers.{ Application, AssetsComponents, Healthcheck, Login }
+import play.api.mvc.legacy.Controller
 import router.Routes
 
-class AppComponents(context: Context) extends BuiltInComponentsFromContext(context) with AhcWSComponents {
+class AppComponents(context: Context) extends BuiltInComponentsFromContext(context) with NoHttpFiltersComponents with AhcWSComponents with AssetsComponents {
+
+  Controller.init(controllerComponents)
 
   val awsCredsProvider = new AWSCredentialsProviderChain(
     new ProfileCredentialsProvider("capi"),
     InstanceProfileCredentialsProvider.getInstance()
   )
 
-  val region = Region getRegion Regions.fromName(configuration.getString("aws.region") getOrElse "eu-west-1")
+  val region = Region getRegion Regions.fromName(configuration.getOptional[String]("aws.region") getOrElse "eu-west-1")
   val clientConfiguration = new ClientConfiguration()
 
   val dynamoDB: AmazonDynamoDBAsync = {
@@ -34,17 +38,17 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
   }
 
   val contentSourceTable = {
-    val tableName = configuration.getString("aws.table.name.contentsource") getOrElse "floodgate-content-source-DEV"
+    val tableName = configuration.getOptional[String]("aws.table.name.contentsource") getOrElse "floodgate-content-source-DEV"
     new ContentSourceTable(dynamoDB, tableName)
   }
 
   val jobHistoryTable = {
-    val tableName = configuration.getString("aws.table.name.jobhistory") getOrElse "floodgate-job-history-DEV"
+    val tableName = configuration.getOptional[String]("aws.table.name.jobhistory") getOrElse "floodgate-job-history-DEV"
     new JobHistoryTable(dynamoDB, tableName)
   }
 
   val runningJobTable = {
-    val tableName = configuration.getString("aws.table.name.runningjob") getOrElse "floodgate-running-job-DEV"
+    val tableName = configuration.getOptional[String]("aws.table.name.runningjob") getOrElse "floodgate-running-job-DEV"
     new RunningJobTable(dynamoDB, tableName)
   }
 
@@ -53,9 +57,10 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
   val jobHistoryService = new JobHistoryService(jobHistoryTable)
 
   val progressTrackerControllerActor = actorSystem.actorOf(
-    ProgressTrackerController.props(wsApi, runningJobService, jobHistoryService), "progress-tracker-controller")
+    ProgressTrackerController.props(wsClient, runningJobService, jobHistoryService), "progress-tracker-controller"
+  )
 
-  val reindexService = new ReindexService(contentSourceService, runningJobService, jobHistoryService, progressTrackerControllerActor, wsApi)
+  val reindexService = new ReindexService(contentSourceService, runningJobService, jobHistoryService, progressTrackerControllerActor, wsClient)
 
   val contentSourceController = new ContentSourceApi(contentSourceService, reindexService, jobHistoryService, runningJobService)
   val runningJobController = new RunningJobApi(runningJobService)
@@ -67,7 +72,6 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
 
   val loginController = new Login(wsClient, configuration)
 
-  val assets = new Assets(httpErrorHandler)
   val router: Router = new Routes(httpErrorHandler, appController, healthcheckController, loginController,
     contentSourceController, jobHistoryController, runningJobController, assets)
 

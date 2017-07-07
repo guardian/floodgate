@@ -2,8 +2,9 @@ package com.gu.floodgate.runningjob
 
 import com.gu.floodgate.ErrorResponse
 import play.api.libs.json.Json
-import play.api.mvc.{ Action, Controller }
+import play.api.mvc.legacy.Controller
 import scala.concurrent.ExecutionContext.Implicits.global
+import com.gu.floodgate.Formats._
 
 class RunningJobApi(runningJobService: RunningJobService) extends Controller {
 

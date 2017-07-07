@@ -1,11 +1,11 @@
 package com.gu.floodgate.jobhistory
 
 import com.gu.floodgate.DynamoDBTable
-import com.gu.floodgate.reindex.ReindexStatus
-import com.gu.floodgate.reindex.ReindexStatus._
+import com.gu.floodgate.reindex._
 import com.gu.scanamo.DynamoFormat
 import com.gu.scanamo.DynamoFormat._
-import org.joda.time.{ DateTimeZone, DateTime }
+import org.joda.time.{ DateTime, DateTimeZone }
+
 import scala.concurrent.Future
 import cats.syntax.either._
 

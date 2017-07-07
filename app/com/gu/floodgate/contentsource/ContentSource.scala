@@ -1,34 +1,34 @@
 package com.gu.floodgate.contentsource
 
 import java.util.UUID
+
 import com.amazonaws.services.dynamodbv2.model.AttributeValue
 import com.gu.floodgate.reindex.DateParameters
-import play.json.extra.JsonFormat
 
 /*
  * Used for creation as we generate the ID server side and do not expect the client to provide it.
  */
-@JsonFormat
+
 case class ContentSourceWithoutId(
   appName: String,
   description: String,
   reindexEndpoint: String,
   environment: String,
   authType: String,
-  contentSourceSettings: ContentSourceSettings)
+  contentSourceSettings: ContentSourceSettings
+)
 
-@JsonFormat
 case class ContentSourcesResponse(contentSources: Seq[ContentSource])
 
-@JsonFormat
 case class SingleContentSourceResponse(contentSource: ContentSource)
 
-@JsonFormat
 case class ContentSourceSettings(supportsToFromParams: Boolean = true, supportsCancelReindex: Boolean = true) {
 
   def toMap = {
-    Map(ContentSourceSettings.fields.SupportsToFromParams -> this.supportsToFromParams,
-      ContentSourceSettings.fields.SupportsCancelReindex -> this.supportsCancelReindex)
+    Map(
+      ContentSourceSettings.fields.SupportsToFromParams -> this.supportsToFromParams,
+      ContentSourceSettings.fields.SupportsCancelReindex -> this.supportsCancelReindex
+    )
   }
 }
 
@@ -47,7 +47,6 @@ object ContentSourceSettings {
   }
 }
 
-@JsonFormat
 case class ContentSource(
     id: String,
     appName: String,
@@ -55,7 +54,8 @@ case class ContentSource(
     reindexEndpoint: String,
     environment: String,
     authType: String,
-    contentSourceSettings: ContentSourceSettings) {
+    contentSourceSettings: ContentSourceSettings
+) {
 
   def uniqueId: String = s"$id-$environment"
 
@@ -77,13 +77,13 @@ case class ContentSource(
  * Used for updates as we do not allow the user to update their id or environment, which act as hashkey and sort key in
  * the DB.
  */
-@JsonFormat
 case class ContentWithoutIdAndEnvironment(
   appName: String,
   description: String,
   reindexEndpoint: String,
   authType: String,
-  contentSourceSettings: ContentSourceSettings)
+  contentSourceSettings: ContentSourceSettings
+)
 
 object ContentSource {
 
