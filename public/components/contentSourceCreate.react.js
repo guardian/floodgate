@@ -158,9 +158,9 @@ export default class ContentSourceForm extends React.Component {
                                                             <Input type="select" onChange={this.handleEnvironmentsChange.bind(this, id, "environment")} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select value={e.environment}>
                                                                 <option value="" disabled>Select environment ... </option>
                                                                 <option value="live-code">Code [live]</option>
-                                                                <option value="preview-code">Code [preview]</option>
+                                                                <option value="draft-code">Code [draft]</option>
                                                                 <option value="live-prod">Prod [live]</option>
-                                                                <option value="preview-prod">Prod [preview]</option>
+                                                                <option value="draft-prod">Prod [draft]</option>
                                                             </Input>
                                                         </Col>
                                                         <Col xs={6}>
