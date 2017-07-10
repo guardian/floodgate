@@ -3,6 +3,8 @@ organization := "com.gu"
 description := "The Content API reindexing control panel"
 scalaVersion := "2.11.8"
 scalacOptions ++= Seq("-feature", "-deprecation", "-unchecked", "-target:jvm-1.8")
+// Line isn't right but keeping it in here to discuss with Tom
+stage := sys.props.getOrElse("stage", default = "dev")
 
 enablePlugins(PlayScala, RiffRaffArtifact, UniversalPlugin)
 
@@ -29,7 +31,7 @@ riffRaffPackageType := (packageZipTarball in Universal).value
 riffRaffUploadArtifactBucket := Option("riffraff-artifact")
 riffRaffUploadManifestBucket := Option("riffraff-builds")
 riffRaffManifestVcsUrl := "git@github.com:guardian/floodgate.git"
-riffRaffManifestProjectName := "Content Platforms::floodgate"
+riffRaffManifestProjectName := s"Content Platforms::${name.value}"
 
 initialize := {
   val _ = initialize.value
