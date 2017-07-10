@@ -28,20 +28,18 @@ export default class ReindexControllerComponent extends React.Component {
     }
 
     componentDidMount() {
-        const { id: contentSourceId, environment } = this.props.params;
+        const contentSourceId = this.props.params.id;
+        const environment = this.props.params.environment;
         this.loadReindexHistory(contentSourceId, environment);
         this.loadRunningReindex(contentSourceId, environment);
         this.loadContentSourceWithId(contentSourceId, environment);
     }
 
     componentWillReceiveProps(nextProps) {
-        const { id: curId, environment: curEnv } = this.props.params;
-        const { id: nextId, environment: nextEnv } = nextProps.params;
-        if (curId !== nextId || curEnv !== nextEnv) {
-            const { id: routeId, environment: routeEnv } = nextProps.routeParams;
-            this.loadReindexHistory(routeId, routeEnv);
-            this.loadRunningReindex(routeId, routeEnv);
-            this.loadContentSourceWithId(routeId, routeEnv);
+        if (this.props.params.id !== nextProps.params.id || this.props.params.environment !== nextProps.params.environment) {
+            this.loadReindexHistory(nextProps.routeParams.id, nextProps.routeParams.environment);
+            this.loadRunningReindex(nextProps.routeParams.id, nextProps.routeParams.environment);
+            this.loadContentSourceWithId(nextProps.routeParams.id, nextProps.routeParams.environment);
             this.setState({editModeOn: false});
         }
     }
@@ -96,11 +94,11 @@ export default class ReindexControllerComponent extends React.Component {
     }
 
     cancelReindex(currentRunningReindex) {
-        const newReindexHistoryItem = {
+        const newReindexHistoryItem = { 
             contentSourceId: currentRunningReindex.contentSourceId,
-            environment: currentRunningReindex.contentSourceEnvironment,
+            environment: currentRunningReindex.contentSourceEnvironment, 
             status: 'cancelled',
-            startTime: currentRunningReindex.startTime,
+            startTime: currentRunningReindex.startTime, 
             finishTime: new Date(),
             rangeFrom: currentRunningReindex.rangeFrom,
             rangeTo: currentRunningReindex.rangeTo
