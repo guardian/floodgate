@@ -4,26 +4,12 @@ import com.gu.googleauth._
 import play.api.libs.ws.WSClient
 import play.api.Configuration
 import com.gu.floodgate.views
+import play.api.mvc.Call
 import play.api.mvc.legacy.Controller
 
-trait AuthActions extends Actions with Filters {
-  def conf: Configuration
-  def groupChecker: GoogleGroupChecker = ???
+import scala.concurrent.ExecutionContext
 
-  // Google configuration
-  override val authConfig = GoogleAuthConfig(
-    clientId = conf.getOptional[String]("google.clientid").getOrElse(sys.error("No google clientid.")),
-    clientSecret = conf.getOptional[String]("google.clientsecret").getOrElse(sys.error("No google clientsecret.")),
-    redirectUrl = conf.getOptional[String]("google.oauthcallback").getOrElse(sys.error("No google oauthcallback.")),
-    domain = "guardian.co.uk"
-  )
-  // your app's routing
-  override val loginTarget = routes.Login.loginAction()
-  override val defaultRedirectTarget = routes.Application.index()
-  override val failureRedirectTarget = routes.Login.login()
-}
-
-class Login(val wsClient: WSClient, val conf: Configuration) extends Controller with AuthActions {
+class Login(val authConfig: GoogleAuthConfig, val wsClient: WSClient, val conf: Configuration)(implicit executionContext: ExecutionContext) extends Controller with LoginSupport {
 
   /**
    * Shows UI for login button and logout error feedback
@@ -53,4 +39,7 @@ class Login(val wsClient: WSClient, val conf: Configuration) extends Controller 
   def logout = Action { implicit request =>
     Redirect(routes.Application.index()).withNewSession
   }
+
+  override val failureRedirectTarget: Call = routes.Login.login()
+  override val defaultRedirectTarget: Call = routes.Application.index()
 }
