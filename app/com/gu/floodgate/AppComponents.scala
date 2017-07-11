@@ -9,11 +9,13 @@ import com.gu.floodgate.contentsource.{ ContentSourceApi, ContentSourceService, 
 import com.gu.floodgate.jobhistory.{ JobHistoryApi, JobHistoryService, JobHistoryTable }
 import com.gu.floodgate.reindex.{ ProgressTrackerController, ReindexService }
 import com.gu.floodgate.runningjob.{ RunningJobApi, RunningJobService, RunningJobTable }
+import com.gu.googleauth.{ AuthAction, GoogleAuthConfig }
 import play.api.ApplicationLoader.Context
 import play.api.libs.ws.ahc.AhcWSComponents
 import play.api.{ BuiltInComponentsFromContext, NoHttpFiltersComponents }
 import play.api.routing.Router
-import controllers.{ Application, AssetsComponents, Healthcheck, Login }
+import controllers.{ Application, AssetsComponents, Healthcheck, Login, routes }
+import play.api.mvc.AnyContent
 import play.api.mvc.legacy.Controller
 import router.Routes
 
@@ -66,11 +68,18 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
   val runningJobController = new RunningJobApi(runningJobService)
   val jobHistoryController = new JobHistoryApi(jobHistoryService)
 
-  val appController = new Application(wsClient, configuration)
+  val authConfig = {
+    val clientId = configuration.get[String]("google.clientid")
+    val clientSecret = configuration.get[String]("google.clientsecret")
+    val redirectUrl = configuration.get[String]("google.oauthcallback")
+    val domain = "guardian.co.uk"
+    GoogleAuthConfig(clientId, clientSecret, redirectUrl, domain)
+  }
+  val authAction = new AuthAction[AnyContent](authConfig, routes.Login.loginAction(), controllerComponents.parsers.default)(executionContext)
 
+  val appController = new Application(authAction, authConfig, wsClient, configuration)
   val healthcheckController = new Healthcheck
-
-  val loginController = new Login(wsClient, configuration)
+  val loginController = new Login(authConfig, wsClient, configuration)
 
   val router: Router = new Routes(httpErrorHandler, appController, healthcheckController, loginController,
     contentSourceController, jobHistoryController, runningJobController, assets)

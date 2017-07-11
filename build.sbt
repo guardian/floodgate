@@ -15,15 +15,13 @@ libraryDependencies ++= Seq(
   "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
   "com.typesafe.play" %% "play-json" % "2.6.0",
   "com.typesafe.play" %% "play-json-joda" % "2.6.0",
-  "com.gu" %% "play-googleauth" % "0.6.0",
+  "com.gu" %% "play-googleauth" % "0.7.0",
   "com.gu" %% "scanamo" % "0.9.2",
   "org.scalatest" %% "scalatest" % "2.2.5" % "test",
   "com.typesafe.play" %% "play-specs2" % "2.6.0",
   "org.typelevel" %% "cats-core" % "0.9.0",
   "com.typesafe.play" %% "play-logback" % "2.6.0"
 )
-
-addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
 routesGenerator := InjectedRoutesGenerator
 
