@@ -15,5 +15,6 @@ case class ReindexAlreadyRunning(message: String) extends CustomError
 case class ReindexCannotBeInitiated(message: String) extends CustomError
 case class CancellingReindexFailed(message: String) extends CustomError
 case class RunningJobNotFound(message: String) extends CustomError
+case class ScanamoReadError(message: String) extends CustomError
 
 case class ErrorResponse(errorMessage: String)

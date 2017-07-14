@@ -46,6 +46,7 @@ export default class ReindexControllerComponent extends React.Component {
 
     loadContentSourceWithId(id, environment) {
         ContentSourceService.getContentSourcesWithId(id).then(response => {
+            console.log(response.contentSources);
             const contentSources = response.contentSources.reverse();
             this.setState({
                 contentSourcesForEnvironments: contentSources
@@ -174,7 +175,12 @@ export default class ReindexControllerComponent extends React.Component {
                                  R.isNil(this.state.contentSource.contentSourceSettings) || R.isEmpty(Object.keys(this.state.contentSource)) ?
                                     <p>There are no reindexes currently in progress.</p>
                                     :
-                                    <RunningReindex data={this.state.runningReindex}
+                                    <RunningReindex documentsIndexes={this.state.runningReindex.documentsIndexed}
+                                                    documentsExpected={this.state.runningReindex.documentsExpected}
+                                                    environment={this.state.runningReindex.contentSourceEnvironment}
+                                                    id={this.state.runningReindex.contentSourceId}
+                                                    startTime={this.state.runningReindex.startTime}
+                                                    reindex={this.state.runningReindex}
                                                     isCancelSupported={this.state.contentSource.contentSourceSettings.supportsCancelReindex}
                                                     onCancelReindex={this.cancelReindex.bind(this)}
                                                     onReloadRunningReindex={this.loadRunningReindex.bind(this)}/>

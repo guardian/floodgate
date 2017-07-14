@@ -36,6 +36,7 @@ export default class NavigationComponent extends React.Component {
                         <NavDropdown eventKey={2} title="Content sources" id="nav-content-source-dropdown">
                             {contentSourceNodes}
                         </NavDropdown>
+                        <NavItem eventKey={3} href="#/test">Test</NavItem>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>

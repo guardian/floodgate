@@ -14,6 +14,8 @@ GET         /loginAction                                                  contro
 GET         /oauth2callback                                               controllers.Login.oauth2Callback
 
 # Api
+GET         /content-source/bulk-status                                   com.gu.floodgate.contentsource.ContentSourceApi.checkIfInBulkMode
+POST        /content-source/bulk-reindexer                                com.gu.floodgate.contentsource.ContentSourceApi.startBulkReindexer
 GET         /content-source                                               com.gu.floodgate.contentsource.ContentSourceApi.getAllContentSources
 GET         /content-source/:id                                           com.gu.floodgate.contentsource.ContentSourceApi.getContentSources(id)
 GET         /content-source/:id/:environment                              com.gu.floodgate.contentsource.ContentSourceApi.getContentSource(id, environment)
@@ -21,6 +23,7 @@ POST        /content-source                                               com.gu
 PUT         /content-source/:id/:environment                              com.gu.floodgate.contentsource.ContentSourceApi.updateContentSource(id, environment)
 DELETE      /content-source/:id                                           com.gu.floodgate.contentsource.ContentSourceApi.deleteContentSource(id)
 POST        /content-source/:id/:environment/reindex                      com.gu.floodgate.contentsource.ContentSourceApi.reindex(id, environment, from: Option[String] ?= None, to: Option[String] ?= None)
+DELETE      /content-source/:id/:environment/pending-reindex              com.gu.floodgate.contentsource.ContentSourceApi.cancelPendingReindex(id, environment)
 DELETE      /content-source/:id/:environment/reindex                      com.gu.floodgate.contentsource.ContentSourceApi.cancelReindex(id, environment)
 GET         /content-source/:id/:environment/reindex/history              com.gu.floodgate.contentsource.ContentSourceApi.getReindexHistory(id, environment)
 GET         /content-source/:id/:environment/reindex/running              com.gu.floodgate.contentsource.ContentSourceApi.getRunningReindex(id, environment)
