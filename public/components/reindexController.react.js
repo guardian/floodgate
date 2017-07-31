@@ -46,7 +46,6 @@ export default class ReindexControllerComponent extends React.Component {
 
     loadContentSourceWithId(id, environment) {
         ContentSourceService.getContentSourcesWithId(id).then(response => {
-            console.log(response.contentSources);
             const contentSources = response.contentSources.reverse();
             this.setState({
                 contentSourcesForEnvironments: contentSources

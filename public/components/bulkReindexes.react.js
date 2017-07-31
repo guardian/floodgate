@@ -21,8 +21,9 @@ export default class BulkReindex extends React.Component {
         if (isRunningJob && !reindex.settings.supportsCancelReindex) {
             return (null);
         } else {
+            var cancelWithReindexData = this.cancelReindex.bind(reindex, isRunningJob)
             return (
-                <Button bsStyle="danger" className="pull-right" type="button" onClick={this.cancelReindex.bind(this, reindex, isRunningJob)}>Cancel</Button>
+                <Button bsStyle="danger" className="pull-right" type="button" onClick={cancelWithReindexData} data-reindex={reindex}>Cancel</Button>
             );
         }
     }
@@ -54,7 +55,7 @@ export default class BulkReindex extends React.Component {
                                         startTime={runningJob.startTime}
                                         reindex={runningJob}
                                         isCancelSupported={false}
-                                        onCancelReindex={this.cancelReindex.bind(this)}
+                                        onCancelReindex={ () => {} }
                                         onReloadRunningReindex={this.props.onReloadRunningReindex}/>
                     </td>
                     <td>{new Date(runningJob.startTime).toUTCString()}</td>

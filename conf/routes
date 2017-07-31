@@ -14,9 +14,9 @@ GET         /loginAction                                                  contro
 GET         /oauth2callback                                               controllers.Login.oauth2Callback
 
 # Api
+GET         /content-source                                               com.gu.floodgate.contentsource.ContentSourceApi.getAllContentSources
 GET         /content-source/bulk-status                                   com.gu.floodgate.contentsource.ContentSourceApi.checkIfInBulkMode
 POST        /content-source/bulk-reindexer                                com.gu.floodgate.contentsource.ContentSourceApi.startBulkReindexer
-GET         /content-source                                               com.gu.floodgate.contentsource.ContentSourceApi.getAllContentSources
 GET         /content-source/:id                                           com.gu.floodgate.contentsource.ContentSourceApi.getContentSources(id)
 GET         /content-source/:id/:environment                              com.gu.floodgate.contentsource.ContentSourceApi.getContentSource(id, environment)
 POST        /content-source                                               com.gu.floodgate.contentsource.ContentSourceApi.createContentSources

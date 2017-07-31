@@ -29,16 +29,26 @@ export default class BulkReindexControllerComponent extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.initiateBulkReindex = this.initiateBulkReindex.bind(this);
         this.checkRunningReindexes = this.checkRunningReindexes.bind(this);
+        this.handleReindexLiveStack = this.handleReindexLiveStack.bind(this);
+        this.handleReindexPreviewStack = this.handleReindexPreviewStack.bind(this);
+        this.handleReindexCode = this.handleReindexCode.bind(this);
+        this.handleReindexProd = this.handleReindexProd.bind(this);
+        this.cancelReindex = this.cancelReindex.bind(this);
     }
 
     componentDidMount() {
-        this.checkRunningReindexes();
-        setInterval(this.checkRunningReindexes, 30000);
+        let intervalPeriod = 1000;
+        setInterval(this.checkRunningReindexes, intervalPeriod);
     }
 
     initiateBulkReindex(environments) {
         if (environments.length > 0) {
-            ContentSourceService.initiateBulkReindexer(environments)
+            ContentSourceService.initiateBulkReindexer(environments).then (response => {
+                this.checkRunningReindexes()
+                },
+            errors => {
+                this.setState({alertStyle: 'danger', alertMessage: 'Failed to trigger reindexes for '+ environments, alertVisibility: true});
+            });
         } else {
             console.log("Error: No content selected to be reindexed.")
         }
@@ -82,8 +92,8 @@ export default class BulkReindexControllerComponent extends React.Component {
 
     checkRunningReindexes() {
         this.requestBulkStatus().then(response => {
-            var json = JSON.parse(response);
-            var reindexInProgress =  json.IsReindexing;
+            let json = JSON.parse(response);
+            let reindexInProgress =  json.IsReindexing;
             if (!reindexInProgress) {
                 this.setState({
                     inBulkMode: false
@@ -160,22 +170,22 @@ export default class BulkReindexControllerComponent extends React.Component {
                         <form className="form-horizontal" onSubmit={this.handleSubmit}>
                             <Row>
                                 <Col xs={12} md={12}>
-                                    <h3><Label>Reindexer</Label></h3>
+                                    <h3><Label>Bulk Reindexer</Label></h3>
                                     <Panel header="Start Reindex">
                                         <Input label="Stack" labelClassName="col-xs-2" wrapperClassName="wrapper">
                                             <Col xs={5}>
-                                                <Input type="checkbox" defaultChecked={this.state.reindexLiveStack} onChange={this.handleReindexLiveStack.bind(this)} label="Live" />
+                                                <Input type="checkbox" defaultChecked={this.state.reindexLiveStack} onChange={this.handleReindexLiveStack} label="Live" />
                                             </Col>
                                             <Col xs={5}>
-                                                <Input type="checkbox" defaultChecked={this.state.reindexPreviewStack} onChange={this.handleReindexPreviewStack.bind(this)} label="Preview" />
+                                                <Input type="checkbox" defaultChecked={this.state.reindexPreviewStack} onChange={this.handleReindexPreviewStack} label="Preview" />
                                             </Col>
                                         </Input>
                                         <Input label="Stage" labelClassName="col-xs-2" wrapperClassName="wrapper">
                                             <Col xs={5}>
-                                                <Input type="checkbox" defaultChecked={this.state.reindexProd} onChange={this.handleReindexProd.bind(this)} label="PROD" />
+                                                <Input type="checkbox" defaultChecked={this.state.reindexProd} onChange={this.handleReindexProd} label="PROD" />
                                             </Col>
                                             <Col xs={5}>
-                                                <Input type="checkbox" defaultChecked={this.state.reindexCode} onChange={this.handleReindexCode.bind(this)} label="CODE" />
+                                                <Input type="checkbox" defaultChecked={this.state.reindexCode} onChange={this.handleReindexCode} label="CODE" />
                                             </Col>
                                         </Input>
                                         <ButtonToolbar>
@@ -195,8 +205,8 @@ export default class BulkReindexControllerComponent extends React.Component {
                                         <BulkReindex completedReindexes={this.state.completedReindexes}
                                                        runningReindexes={this.state.runningReindexes}
                                                        pendingReindexes={this.state.pendingReindexes}
-                                                       onReloadRunningReindex={this.checkRunningReindexes.bind(this)}
-                                                       onCancelReindex={this.cancelReindex.bind(this)}/>
+                                                       onReloadRunningReindex={this.checkRunningReindexes}
+                                                       onCancelReindex={this.cancelReindex}/>
                                     }
                             </Col>
                         </Row>

@@ -5,13 +5,15 @@ import java.util.UUID
 import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
-import com.gu.floodgate.ErrorResponse
+import com.gu.floodgate.{ BulkReindexInProcess, ErrorResponse }
 import com.gu.floodgate.Formats._
 import com.gu.floodgate.jobhistory.{ JobHistoriesResponse, JobHistoryService }
 import com.gu.floodgate.reindex.BulkJobActor._
 import com.gu.floodgate.reindex.{ DateParameters, ReindexService }
 import com.gu.floodgate.runningjob.{ RunningJobService, SingleRunningJobResponse }
+import com.typesafe.scalalogging.StrictLogging
 import play.api.libs.json._
+import play.api.mvc.Result
 import play.api.mvc.legacy.Controller
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -24,7 +26,7 @@ class ContentSourceApi(
     jobHistoryService: JobHistoryService,
     runningJobService: RunningJobService,
     bulkJobActorsMap: Map[String, ActorRef]
-) extends Controller {
+) extends Controller with StrictLogging {
 
   implicit val timeout = Timeout(10.seconds)
 
@@ -78,13 +80,35 @@ class ContentSourceApi(
   }
 
   def reindex(id: String, environment: String, from: Option[String], to: Option[String]) = Action.async { implicit request =>
-    DateParameters(from, to) match {
-      case Right(dp: DateParameters) =>
-        reindexService.reindex(id, environment, dp) map {
-          case Right(runningJob) => Ok(Json.toJson(runningJob))
-          case Left(error) => BadRequest(Json.toJson(ErrorResponse(error.message)))
+
+    def triggerReindex: Future[Result] = {
+      DateParameters(from, to) match {
+        case Right(dp: DateParameters) =>
+          reindexService.reindex(id, environment, dp) map {
+            case Right(runningJob) => Ok(Json.toJson(runningJob))
+            case Left(error) => BadRequest(Json.toJson(ErrorResponse(error.message)))
+          }
+        case Left(error) => Future.successful(BadRequest(Json.toJson(ErrorResponse(error.message))))
+      }
+    }
+
+    val maybeActor = bulkJobActorsMap.get(environment)
+
+    maybeActor match {
+      case Some(actor) => {
+        val futureActorStatus = (actor ? IsActorReindexing).mapTo[BulkReindexRequestResult]
+        futureActorStatus.flatMap {
+          case _: IsReindexing => {
+            BulkReindexInProcess(s"Bulk reindex is in process for content source with id: $id and environment: $environment.")
+            Future.successful(Ok(s"""{ "IsBulkReindexing": true}"""))
+          }
+          case NotReindexing => triggerReindex
         }
-      case Left(error) => Future.successful(BadRequest(Json.toJson(ErrorResponse(error.message))))
+      }
+      case None => {
+        ErrorResponse(s"No actor found for $environment. Running reindex for $id.")
+        triggerReindex
+      }
     }
   }
 
@@ -109,10 +133,10 @@ class ContentSourceApi(
     bulkJobsActorStatus.map { actorStatusList =>
       val isReindexingList = actorEnvs.zip(actorStatusList).collect { case (s, status: IsReindexing) => (s, status) }
       isReindexingList match {
-        case Nil => Ok(s"""{ "IsReindexing": ${false}}""")
-        case x :: xs => {
-          val resultMap = (x :: xs).toMap
-          Ok(s"""{ "IsReindexing": ${true}, "data": ${Json.toJson(resultMap)} } """)
+        case Nil => Ok(s"""{ "IsReindexing": false}""")
+        case x => {
+          val resultMap = (x).toMap
+          Ok(s"""{ "IsReindexing": true, "data": ${Json.toJson(resultMap)} } """)
         }
       }
     }
@@ -123,11 +147,11 @@ class ContentSourceApi(
       case Some(actor) => {
         val futureActorResponse = (actor ? DropPendingJob(id, environment)).mapTo[DropPendingJobResult]
         futureActorResponse.map {
-          case CancelledPendingJob => Ok(s"""{ "CancelledJob": ${true}, "data": { "id": ${id}, "env": ${environment}}}""")
-          case FailedToCancelPendingJob => Ok(s"""{ "CancelledJob": ${false}, "data": { "id": ${id}, "env": ${environment}}}""")
+          case CancelledPendingJob => Ok(s"""{ "CancelledJob": true, "data": { "id": $id, "env": $environment}}""")
+          case FailedToCancelPendingJob => Ok(s"""{ "CancelledJob": false, "data": { "id": $id, "env": $environment}}""")
         }
       }
-      case None => Future.successful(Ok(s"""{ "ActorUnavailable": ${environment}}"""))
+      case None => Future.successful(Ok(s"""{ "ActorUnavailable": $environment}"""))
     }
   }
 

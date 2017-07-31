@@ -29,6 +29,7 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
     InstanceProfileCredentialsProvider.getInstance()
   )
 
+  val configEnvironment = configuration.get[String]("env")
   val region = Region getRegion Regions.fromName(configuration.getOptional[String]("aws.region") getOrElse "eu-west-1")
   val clientConfiguration = new ClientConfiguration()
 
@@ -67,18 +68,18 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
   val runningJobController = new RunningJobApi(runningJobService)
   val jobHistoryController = new JobHistoryApi(jobHistoryService)
 
-  val previewCodeBulkJobActor = generateBulkActors("draft-code")
-  val liveCodeBulkJobActor = generateBulkActors("live-code")
-  val previewProdBulkJobActor = generateBulkActors("draft-prod")
-  val liveProdBulkJobActor = generateBulkActors("live-prod")
-
-  val bulkActorsMap = Map(
-    "draft-code" -> previewCodeBulkJobActor,
-    "live-code" -> liveCodeBulkJobActor,
-    "draft-prod" -> previewProdBulkJobActor,
-    "live-prod" -> liveProdBulkJobActor
-  )
-
+  val bulkActorsMap: Map[String, ActorRef] = {
+    if (configEnvironment == "TEST") {
+      Map()
+    } else {
+      Map(
+        "draft-code" -> generateBulkActors("draft-code"),
+        "live-code" -> generateBulkActors("live-code"),
+        "draft-prod" -> generateBulkActors("draft-prod"),
+        "live-prod" -> generateBulkActors("live-prod")
+      )
+    }
+  }
   val contentSourceController = new ContentSourceApi(contentSourceService, reindexService, jobHistoryService, runningJobService, bulkActorsMap)
 
   val authConfig = {
