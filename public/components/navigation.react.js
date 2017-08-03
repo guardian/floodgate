@@ -1,7 +1,7 @@
 import React from 'react';
 import R from 'ramda';
 import { Link } from 'react-router';
-import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Label } from 'react-bootstrap'
+import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from 'react-bootstrap'
 
 export default class NavigationComponent extends React.Component {
 
@@ -33,7 +33,8 @@ export default class NavigationComponent extends React.Component {
                 <Navbar.Collapse>
                     <Nav>
                         <NavItem eventKey={1} href="#/register">Register</NavItem>
-                        <NavDropdown eventKey={2} title="Content sources" id="nav-content-source-dropdown">
+                        <NavItem eventKey={2} href="#/bulk">Bulk Reindexer</NavItem>
+                        <NavDropdown eventKey={3} title="Content sources" id="nav-content-source-dropdown">
                             {contentSourceNodes}
                         </NavDropdown>
                     </Nav>

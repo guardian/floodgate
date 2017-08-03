@@ -1,9 +1,10 @@
 package com.gu.floodgate.runningjob
 
 import cats.syntax.either._
-import com.gu.floodgate.{ ContentSourceNotFound, RunningJobNotFound, CustomError, DynamoDBTable }
+import com.gu.floodgate._
 import com.gu.scanamo.DynamoFormat
-import org.joda.time.{ DateTimeZone, DateTime }
+import org.joda.time.{ DateTime, DateTimeZone }
+
 import scala.concurrent.Future
 
 class RunningJobService(runningJobTable: DynamoDBTable[RunningJob]) {
@@ -18,7 +19,7 @@ class RunningJobService(runningJobTable: DynamoDBTable[RunningJob]) {
 
   def getRunningJob(contentSourceId: String, contentSourceEnvironment: String): Either[CustomError, RunningJob] =
     runningJobTable.getItem[RunningJob](contentSourceId, contentSourceEnvironment) match {
-      case Some(result) => result.leftMap(err => RunningJobNotFound(s"A running job for content source with id: $contentSourceId and environment: $contentSourceEnvironment does not exist."))
-      case None => Left(ContentSourceNotFound(s"A running job for content source with id: $contentSourceId and environment: $contentSourceEnvironment does not exist."))
+      case Some(result) => result.leftMap(err => ScanamoReadError(s"There was a DynamoRead error for content with id: $contentSourceId and environment: $contentSourceEnvironment: $err"))
+      case None => Left(RunningJobNotFound(s"A running job for content source with id: $contentSourceId and environment: $contentSourceEnvironment does not exist."))
     }
 }

@@ -2,23 +2,33 @@ package com.gu.floodgate.contentsource
 
 import java.util.UUID
 
-import com.gu.floodgate.ErrorResponse
+import akka.actor.ActorRef
+import akka.pattern.ask
+import akka.util.Timeout
+import com.gu.floodgate.{ BulkReindexInProcess, ErrorResponse }
 import com.gu.floodgate.Formats._
 import com.gu.floodgate.jobhistory.{ JobHistoriesResponse, JobHistoryService }
+import com.gu.floodgate.reindex.BulkJobActor._
 import com.gu.floodgate.reindex.{ DateParameters, ReindexService }
 import com.gu.floodgate.runningjob.{ RunningJobService, SingleRunningJobResponse }
+import com.typesafe.scalalogging.StrictLogging
 import play.api.libs.json._
+import play.api.mvc.Result
 import play.api.mvc.legacy.Controller
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.duration._
 
 class ContentSourceApi(
     contentSourceService: ContentSourceService,
     reindexService: ReindexService,
     jobHistoryService: JobHistoryService,
-    runningJobService: RunningJobService
-) extends Controller {
+    runningJobService: RunningJobService,
+    bulkJobActorsMap: Map[String, ActorRef]
+) extends Controller with StrictLogging {
+
+  implicit val timeout = Timeout(10.seconds)
 
   def getAllContentSources = Action.async { implicit request =>
     contentSourceService.getAllContentSources() map { contentSources =>
@@ -70,13 +80,78 @@ class ContentSourceApi(
   }
 
   def reindex(id: String, environment: String, from: Option[String], to: Option[String]) = Action.async { implicit request =>
-    DateParameters(from, to) match {
-      case Right(dp: DateParameters) =>
-        reindexService.reindex(id, environment, dp) map {
-          case Right(runningJob) => Ok(Json.toJson(runningJob))
-          case Left(error) => BadRequest(Json.toJson(ErrorResponse(error.message)))
+
+    def triggerReindex: Future[Result] = {
+      DateParameters(from, to) match {
+        case Right(dp: DateParameters) =>
+          reindexService.reindex(id, environment, dp) map {
+            case Right(runningJob) => Ok(Json.toJson(runningJob))
+            case Left(error) => BadRequest(Json.toJson(ErrorResponse(error.message)))
+          }
+        case Left(error) => Future.successful(BadRequest(Json.toJson(ErrorResponse(error.message))))
+      }
+    }
+
+    val maybeActor = bulkJobActorsMap.get(environment)
+
+    maybeActor match {
+      case Some(actor) => {
+        val futureActorStatus = (actor ? IsActorReindexing).mapTo[BulkReindexRequestResult]
+        futureActorStatus.flatMap {
+          case _: IsReindexing => {
+            BulkReindexInProcess(s"Bulk reindex is in process for content source with id: $id and environment: $environment.")
+            Future.successful(Ok(s"""{ "IsBulkReindexing": true}"""))
+          }
+          case NotReindexing => triggerReindex
         }
-      case Left(error) => Future.successful(BadRequest(Json.toJson(ErrorResponse(error.message))))
+      }
+      case None => {
+        ErrorResponse(s"No actor found for $environment. Running reindex for $id.")
+        triggerReindex
+      }
+    }
+  }
+
+  def startBulkReindexer = Action.async(parse.json) { implicit request =>
+    (request.body \ "environments").validate[List[String]].fold(
+      error => jsonError,
+      environments => {
+        val actorList = environments.flatMap(env => bulkJobActorsMap.get(env))
+        val bulkJobResponse = Future.sequence(actorList.map(actor => (actor ? StartBulkReindex).mapTo[BulkReindexRequestResult]))
+        bulkJobResponse.map { resultList =>
+          val failedOrSucceeded = environments.zip(resultList.map(resultObject => resultObject == CanTrigger)).toMap
+          Ok(Json.toJson(failedOrSucceeded))
+        }
+      }
+    )
+  }
+
+  def checkIfInBulkMode = Action.async { implicit request =>
+    val actorList = bulkJobActorsMap.values.toList
+    val actorEnvs = bulkJobActorsMap.keys.toList
+    val bulkJobsActorStatus = Future.sequence(actorList.map(actor => (actor ? IsActorReindexing).mapTo[BulkReindexRequestResult]))
+    bulkJobsActorStatus.map { actorStatusList =>
+      val isReindexingList = actorEnvs.zip(actorStatusList).collect { case (s, status: IsReindexing) => (s, status) }
+      isReindexingList match {
+        case Nil => Ok(s"""{ "IsReindexing": false}""")
+        case x => {
+          val resultMap = (x).toMap
+          Ok(s"""{ "IsReindexing": true, "data": ${Json.toJson(resultMap)} } """)
+        }
+      }
+    }
+  }
+
+  def cancelPendingReindex(id: String, environment: String) = Action.async { implicit request =>
+    bulkJobActorsMap.get(environment) match {
+      case Some(actor) => {
+        val futureActorResponse = (actor ? DropPendingJob(id, environment)).mapTo[DropPendingJobResult]
+        futureActorResponse.map {
+          case CancelledPendingJob => Ok(s"""{ "CancelledJob": true, "data": { "id": $id, "env": $environment}}""")
+          case FailedToCancelPendingJob => Ok(s"""{ "CancelledJob": false, "data": { "id": $id, "env": $environment}}""")
+        }
+      }
+      case None => Future.successful(Ok(s"""{ "ActorUnavailable": $environment}"""))
     }
   }
 

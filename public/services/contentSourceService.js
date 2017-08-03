@@ -65,9 +65,34 @@ export default {
         })
     },
 
+    initiateBulkReindexer:(env) => {
+        return Reqwest({
+            url: '/content-source/' + 'bulk-reindexer',
+            contentType: 'text/json',
+            method: 'post',
+            data: JSON.stringify({ environments: env })
+
+        })
+    },
+
+    requestBulkStatus:() => {
+        return Reqwest({
+            url: '/content-source/' + 'bulk-status',
+            contentType: 'text/json',
+            method: 'get'
+        })
+    },
+
     cancelReindex:(id, environment) => {
         return Reqwest({
             url: '/content-source/' + id + '/' + environment + '/reindex',
+            method: 'delete'
+        })
+    },
+
+    cancelPendingReindex:(id, environment) => {
+        return Reqwest({
+            url: '/content-source/' + id + '/' + environment + '/pending-reindex',
             method: 'delete'
         })
     }
