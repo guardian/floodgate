@@ -10,7 +10,7 @@ This document provides instructions for integrating a new content source with CA
 
 ## Make content indexable in CAPI
 
-Every time an piece of content in your database is updated, your app should send an event to a Kinesis stream. Porter will consume these events and write their contents to Elasticsearch.
+Every time a piece of content in your database is updated, your app should send an event to a Kinesis stream. Porter will consume these events and write their contents to Elasticsearch.
 
 Events should be Thrift encoded and compressed, and should contain a complete representation of the item that has been updated. In other words, it should NOT contain only a delta describing what has changed.
 
