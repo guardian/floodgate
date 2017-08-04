@@ -19,21 +19,21 @@ export default class RunningReindex extends React.Component {
 
     componentDidMount() {
         this.setState({
-            progress: this.computeProgress( this.props.documentsIndexed, this.props.documentsExpected),
+            progress: this.computeProgress( this.props.data.documentsIndexed, this.props.data.documentsExpected),
             progressUpdatesEnabled: true
         });
     }
 
     componentWillReceiveProps(nextProps) {
         this.setState({
-            progress: this.computeProgress( nextProps.documentsIndexed, nextProps.documentsExpected),
+            progress: this.computeProgress( nextProps.data.documentsIndexed, nextProps.data.documentsExpected),
             progressUpdatesEnabled: true
         });
     }
 
     updateRunningReindex() {
-        const contentSourceId = this.props.id;
-        const environment = this.props.environment;
+        const contentSourceId = this.props.data.contentSourceId;
+        const environment = this.props.data.contentSourceEnvironment;
         this.props.onReloadRunningReindex(contentSourceId, environment);
     }
 
@@ -47,7 +47,7 @@ export default class RunningReindex extends React.Component {
     }
 
     cancelReindex() {
-        const runningReindex = this.props.reindex;
+        const runningReindex = this.props.data;
         this.props.onCancelReindex(runningReindex);
     }
 
@@ -67,7 +67,7 @@ export default class RunningReindex extends React.Component {
         var timeout = 2000;
 
         return (
-            <div key={this.props.startTime}>
+            <div key={this.props.data.startTime}>
                 <ReactInterval timeout={this.timeout} enabled={this.state.progressUpdatesEnabled}
                                callback={ this.updateRunningReindex.bind(this) } />
                 <ProgressBar striped active now={this.state.progress} label="%(percent)s%"/>

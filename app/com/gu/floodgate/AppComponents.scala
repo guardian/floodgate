@@ -1,14 +1,13 @@
 package com.gu.floodgate
 
-import akka.actor.ActorRef
 import com.amazonaws.ClientConfiguration
 import com.amazonaws.auth.profile.ProfileCredentialsProvider
 import com.amazonaws.auth.{ AWSCredentialsProviderChain, InstanceProfileCredentialsProvider }
 import com.amazonaws.regions.{ Region, Regions }
 import com.amazonaws.services.dynamodbv2._
-import com.gu.floodgate.contentsource.{ ContentSource, ContentSourceApi, ContentSourceService, ContentSourceTable }
+import com.gu.floodgate.contentsource.{ ContentSourceApi, ContentSourceService, ContentSourceTable }
 import com.gu.floodgate.jobhistory.{ JobHistoryApi, JobHistoryService, JobHistoryTable }
-import com.gu.floodgate.reindex.{ BulkJobActor, ProgressTrackerController, ReindexService }
+import com.gu.floodgate.reindex.{ ProgressTrackerController, ReindexService }
 import com.gu.floodgate.runningjob.{ RunningJobApi, RunningJobService, RunningJobTable }
 import com.gu.googleauth.{ AuthAction, GoogleAuthConfig }
 import play.api.ApplicationLoader.Context
@@ -29,7 +28,6 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
     InstanceProfileCredentialsProvider.getInstance()
   )
 
-  val configEnvironment = configuration.get[String]("env")
   val region = Region getRegion Regions.fromName(configuration.getOptional[String]("aws.region") getOrElse "eu-west-1")
   val clientConfiguration = new ClientConfiguration()
 
@@ -65,22 +63,10 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
   )
 
   val reindexService = new ReindexService(contentSourceService, runningJobService, jobHistoryService, progressTrackerControllerActor, wsClient)
+
+  val contentSourceController = new ContentSourceApi(contentSourceService, reindexService, jobHistoryService, runningJobService)
   val runningJobController = new RunningJobApi(runningJobService)
   val jobHistoryController = new JobHistoryApi(jobHistoryService)
-
-  val bulkActorsMap: Map[String, ActorRef] = {
-    if (configEnvironment == "TEST") {
-      Map()
-    } else {
-      Map(
-        "draft-code" -> generateBulkActors("draft-code"),
-        "live-code" -> generateBulkActors("live-code"),
-        "draft-prod" -> generateBulkActors("draft-prod"),
-        "live-prod" -> generateBulkActors("live-prod")
-      )
-    }
-  }
-  val contentSourceController = new ContentSourceApi(contentSourceService, reindexService, jobHistoryService, runningJobService, bulkActorsMap)
 
   val authConfig = {
     val clientId = configuration.get[String]("google.clientid")
@@ -97,11 +83,5 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
 
   val router: Router = new Routes(httpErrorHandler, appController, healthcheckController, loginController,
     contentSourceController, jobHistoryController, runningJobController, assets)
-
-  def generateBulkActors(environment: String): ActorRef = {
-    val contentSources = contentSourceTable.getAllSync[ContentSource]()
-    val idList = contentSources.filter(contentSource => contentSource.environment == environment).toList
-    actorSystem.actorOf(BulkJobActor.props(idList, runningJobService, reindexService, jobHistoryService), s"${environment}-bulk-job")
-  }
 
 }

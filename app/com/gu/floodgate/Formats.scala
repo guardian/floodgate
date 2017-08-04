@@ -2,14 +2,11 @@ package com.gu.floodgate
 
 import com.gu.floodgate.contentsource._
 import com.gu.floodgate.jobhistory._
-import com.gu.floodgate.reindex.BulkJobActor.{ CompletedJobInfo, IsReindexing, PendingJobInfo, RunningJobInfo }
 import com.gu.floodgate.reindex._
 import com.gu.floodgate.runningjob._
 import play.api.libs.json._
 import play.api.libs.json.JodaWrites._
 import play.api.libs.json.JodaReads._
-
-import scala.concurrent.Future
 
 object Formats {
 
@@ -44,10 +41,5 @@ object Formats {
   implicit val jobHistoryFormat = Json.format[JobHistory]
   implicit val jobHistoriesResponseFormat = Json.format[JobHistoriesResponse]
   implicit val errorResponseFormat = Json.format[ErrorResponse]
-
-  implicit val completedJobInfoFormat = Json.format[CompletedJobInfo]
-  implicit val pendingJobInfoFormat = Json.format[PendingJobInfo]
-  implicit val runningJobInfoFormat = Json.format[RunningJobInfo]
-  implicit val isReindexingFormat = Json.format[IsReindexing]
 
 }

@@ -8,10 +8,9 @@ import com.gu.scanamo.error.DynamoReadError
 import com.gu.scanamo.query.{ KeyEquals, UniqueKey }
 import com.gu.scanamo.{ DynamoFormat, Scanamo }
 import com.typesafe.scalalogging.StrictLogging
-
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
-import scala.concurrent.{ ExecutionContext, Future, Promise }
+import scala.concurrent.{ Promise, Future }
 
 trait DynamoDBTable[T] extends StrictLogging {
 
@@ -44,18 +43,6 @@ trait DynamoDBTable[T] extends StrictLogging {
     promise.future
   }
 
-  def getAllSync[T: DynamoFormat](): Seq[T] = {
-    Scanamo.scan[T](dynamoDB)(tableName).flatMap { either =>
-      either.fold(
-        error => {
-          logger.error(error.toString)
-          None
-        },
-        result => Some(result)
-      )
-    }
-  }
-
   def getItem[T: DynamoFormat](hashKey: String, sortKey: String): Option[Either[DynamoReadError, T]] = {
     maybeSortKeyName flatMap { sortKeyName =>
       Scanamo.get[T](dynamoDB)(tableName)(UniqueKey(KeyEquals(Symbol(keyName), hashKey) and KeyEquals(Symbol(sortKeyName), sortKey)))
@@ -82,20 +69,6 @@ trait DynamoDBTable[T] extends StrictLogging {
       ))
 
     getListOfItems(request)
-  }
-
-  def getLatestItem(id: String, filterKeyName: String, filterValue: String)(implicit ec: ExecutionContext): Future[Option[T]] = {
-    val request = new QueryRequest().withTableName(tableName)
-      .withScanIndexForward(false)
-      .withKeyConditionExpression(s"$keyName = :$keyName")
-      .withFilterExpression(s"$filterKeyName = :$filterKeyName")
-      .withLimit(1)
-      .withExpressionAttributeValues(Map(
-        s":$keyName" -> new AttributeValue().withS(id),
-        s":$filterKeyName" -> new AttributeValue().withS(filterValue)
-      ))
-
-    getListOfItems(request).map(resultList => resultList.headOption)
   }
 
   def saveItem[T: DynamoFormat](t: T): PutItemResult = {
