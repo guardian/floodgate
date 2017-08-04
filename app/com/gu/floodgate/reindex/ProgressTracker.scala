@@ -1,15 +1,16 @@
 package com.gu.floodgate.reindex
 
-import akka.actor.{ Actor, ActorLogging, Cancellable, Props }
+import akka.actor.{Actor, ActorLogging, Cancellable, Props}
 import com.gu.floodgate.contentsource.ContentSource
-import com.gu.floodgate.jobhistory.{ JobHistory, JobHistoryService }
-import com.gu.floodgate.reindex.ProgressTracker.{ Cancel, TrackProgress, UpdateProgress }
-import com.gu.floodgate.runningjob.{ RunningJob, RunningJobService }
+import com.gu.floodgate.jobhistory.{JobHistory, JobHistoryService}
+import com.gu.floodgate.reindex.ProgressTracker.{Cancel, TrackProgress, UpdateProgress}
+import com.gu.floodgate.runningjob.{RunningJob, RunningJobService}
 import com.typesafe.scalalogging.StrictLogging
-import org.joda.time.DateTime
-import play.api.libs.ws.{ WSClient, WSResponse }
+import org.joda.time.{DateTime, Minutes}
+import play.api.libs.ws.{WSClient, WSResponse}
+
 import scala.concurrent.duration._
-import scala.util.{ Failure, Success, Try }
+import scala.util.{Failure, Success, Try}
 import com.gu.floodgate.Formats._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -106,9 +107,14 @@ class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHis
 
       case InProgress =>
         val runningJobUpdate = RunningJob(runningJob.contentSourceId, runningJob.contentSourceEnvironment, progress.documentsIndexed, progress.documentsExpected, runningJob.startTime, runningJob.rangeFrom, runningJob.rangeTo)
-        runningJobService.updateRunningJob(runningJob.contentSourceId, runningJob.contentSourceEnvironment, runningJobUpdate)
-        scheduleNextUpdate(contentSource, runningJob)
+        val periodIndexing = Minutes.minutesBetween(runningJobUpdate.startTime, DateTime.now())
 
+        if (runningJobUpdate.documentsIndexed == 0 && (periodIndexing.getMinutes - 10) >= 0) {
+          completeProgressTracking(Failed, contentSource, runningJobUpdate)
+        } else {
+          runningJobService.updateRunningJob(runningJob.contentSourceId, runningJob.contentSourceEnvironment, runningJobUpdate)
+          scheduleNextUpdate(contentSource, runningJob)
+        }
       case _ => logger.warn(s"Incorrect status sent from client: ${progress.status.toString} for content source: ${contentSource.id}")
     }
   }
