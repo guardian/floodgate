@@ -17,5 +17,4 @@ deployments:
         AmigoStage: PROD
       cloudFormationStackName: content-api-floodgate
       prependStackToCloudFormationStackName: false
-      appendStageToCloudFormationStackName: true
       cloudFormationStackByTags: false
