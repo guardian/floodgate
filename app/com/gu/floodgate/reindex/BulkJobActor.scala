@@ -1,14 +1,15 @@
 package com.gu.floodgate.reindex
 
-import akka.actor.{ Actor, ActorLogging, Props }
+import akka.actor.{Actor, ActorLogging, Props}
 import akka.pattern.pipe
-import com.gu.floodgate.{ CustomError, RunningJobNotFound }
-import com.gu.floodgate.contentsource.{ ContentSource, ContentSourceSettings }
-import com.gu.floodgate.jobhistory.JobHistoryService
+import com.gu.floodgate.{CustomError, RunningJobNotFound}
+import com.gu.floodgate.contentsource.{ContentSource, ContentSourceSettings}
+import com.gu.floodgate.jobhistory.{JobHistory, JobHistoryService}
 import com.gu.floodgate.reindex.BulkJobActor._
-import com.gu.floodgate.runningjob.RunningJobService
+import com.gu.floodgate.runningjob.{RunningJob, RunningJobService}
 import com.typesafe.scalalogging.StrictLogging
 import org.joda.time.DateTime
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -26,6 +27,11 @@ object BulkJobActor {
   case class RunningJobInfo(name: String, id: String, env: String, documentsIndexed: Int, documentsExpected: Int, startTime: DateTime, settings: ContentSourceSettings)
   case class PendingJobInfo(name: String, id: String, env: String)
   case class CompletedJobInfo(name: String, id: String, env: String, startTime: DateTime, finishTime: DateTime, status: ReindexStatus)
+  object CompletedJobInfo {
+    def apply(source: ContentSource, history: JobHistory): CompletedJobInfo = {
+      CompletedJobInfo(source.appName, source.id, source.environment, history.startTime, history.finishTime, history.status)
+    }
+  }
 
   //  Messages sent to controller
   sealed trait BulkReindexRequestResult
@@ -162,17 +168,18 @@ class BulkJobActor(contentSources: List[ContentSource], runningJobService: Runni
   }
   private def getCompletedJobs: Future[List[CompletedJobInfo]] = {
 
-    val completedSources = orderedContentSources.filterNot(source => pendingReindexes.contains(source))
-    val result = Future.sequence(completedSources.map { source =>
+    val completedAndRunningSources = orderedContentSources.filterNot(source => pendingReindexes.contains(source))
+
+    val result = Future.sequence(completedAndRunningSources.map { source =>
       jobHistoryService.getLatestJob(source.id, source.environment).map { maybeJobHistory =>
-        maybeJobHistory.map { jobHistory =>
-          CompletedJobInfo(source.appName, source.id, source.environment, jobHistory.startTime, jobHistory.finishTime, jobHistory.status)
+        maybeJobHistory.collect {
+          case jh if runningJobService.getRunningJob(jh.contentSourceId, jh.environment).isLeft =>
+            CompletedJobInfo(source, jh)
         }
       }
     })
 
-    result.map(list => list.flatten)
-
+    result.map(l => l.flatten)
   }
 
   private def getPendingJobs: List[PendingJobInfo] = pendingReindexes.map(source => PendingJobInfo(source.appName, source.id, source.environment))
@@ -183,7 +190,7 @@ class BulkJobActor(contentSources: List[ContentSource], runningJobService: Runni
       case source :: xs => {
         reindexService.reindex(source.id, source.environment, new DateParameters(None, None)).map {
           case Left(error) => self ! ReindexError(source.id, source.environment, error)
-          case Right(runningJob) => self ! ReindexStarted(source.id, source.environment)
+          case Right(runningJob) => self ! ReindexStarted(runningJob.contentSourceId, runningJob.contentSourceEnvironment)
         }
       }
     }

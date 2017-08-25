@@ -37,7 +37,7 @@ export default class BulkReindexControllerComponent extends React.Component {
     }
 
     componentDidMount() {
-        let intervalPeriod = 1000;
+        let intervalPeriod = 5000;
         setInterval(this.checkRunningReindexes, intervalPeriod);
     }
 

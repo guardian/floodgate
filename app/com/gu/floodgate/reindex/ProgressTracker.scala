@@ -1,16 +1,16 @@
 package com.gu.floodgate.reindex
 
-import akka.actor.{Actor, ActorLogging, Cancellable, Props}
+import akka.actor.{ Actor, ActorLogging, Cancellable, Props }
 import com.gu.floodgate.contentsource.ContentSource
-import com.gu.floodgate.jobhistory.{JobHistory, JobHistoryService}
-import com.gu.floodgate.reindex.ProgressTracker.{Cancel, TrackProgress, UpdateProgress}
-import com.gu.floodgate.runningjob.{RunningJob, RunningJobService}
+import com.gu.floodgate.jobhistory.{ JobHistory, JobHistoryService }
+import com.gu.floodgate.reindex.ProgressTracker.{ Cancel, TrackProgress, UpdateProgress }
+import com.gu.floodgate.runningjob.{ RunningJob, RunningJobService }
 import com.typesafe.scalalogging.StrictLogging
-import org.joda.time.{DateTime, Minutes}
-import play.api.libs.ws.{WSClient, WSResponse}
+import org.joda.time.{ DateTime, Minutes }
+import play.api.libs.ws.{ WSClient, WSResponse }
 
 import scala.concurrent.duration._
-import scala.util.{Failure, Success, Try}
+import scala.util.{ Failure, Success, Try }
 import com.gu.floodgate.Formats._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -109,7 +109,9 @@ class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHis
         val runningJobUpdate = RunningJob(runningJob.contentSourceId, runningJob.contentSourceEnvironment, progress.documentsIndexed, progress.documentsExpected, runningJob.startTime, runningJob.rangeFrom, runningJob.rangeTo)
         val periodIndexing = Minutes.minutesBetween(runningJobUpdate.startTime, DateTime.now())
 
-        if (runningJobUpdate.documentsIndexed == 0 && (periodIndexing.getMinutes - 10) >= 0) {
+        val jobHasStalled: Boolean = runningJobUpdate.documentsIndexed == 0 && (periodIndexing.getMinutes - 10) >= 0
+
+        if (jobHasStalled) {
           completeProgressTracking(Failed, contentSource, runningJobUpdate)
         } else {
           runningJobService.updateRunningJob(runningJob.contentSourceId, runningJob.contentSourceEnvironment, runningJobUpdate)
