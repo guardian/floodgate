@@ -9,6 +9,7 @@ deployments:
     type: autoscaling
     parameters:
       bucket: content-api-dist
+    dependencies: [ content-api-floodgate-ami-update ]
   content-api-floodgate-ami-update:
     type: ami-cloudformation-parameter
     parameters:
