@@ -12,7 +12,6 @@ export default class BulkReindex extends React.Component {
         this.renderCancelButton = this.renderCancelButton.bind(this);
     }
 
-
     cancelReindex(reindex, isRunningJob) {
         this.props.onCancelReindex(reindex, isRunningJob);
     }
@@ -21,7 +20,7 @@ export default class BulkReindex extends React.Component {
         if (isRunningJob && !reindex.settings.supportsCancelReindex) {
             return (null);
         } else {
-            var cancelWithReindexData = this.cancelReindex.bind(reindex, isRunningJob)
+            var cancelWithReindexData = this.cancelReindex.bind(this, reindex, isRunningJob)
             return (
                 <Button bsStyle="danger" className="pull-right" type="button" onClick={cancelWithReindexData} data-reindex={reindex}>Cancel</Button>
             );

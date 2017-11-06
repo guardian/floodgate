@@ -174,7 +174,7 @@ export default class ReindexControllerComponent extends React.Component {
                                  R.isNil(this.state.contentSource.contentSourceSettings) || R.isEmpty(Object.keys(this.state.contentSource)) ?
                                     <p>There are no reindexes currently in progress.</p>
                                     :
-                                    <RunningReindex documentsIndexes={this.state.runningReindex.documentsIndexed}
+                                    <RunningReindex documentsIndexed={this.state.runningReindex.documentsIndexed}
                                                     documentsExpected={this.state.runningReindex.documentsExpected}
                                                     environment={this.state.runningReindex.contentSourceEnvironment}
                                                     id={this.state.runningReindex.contentSourceId}
