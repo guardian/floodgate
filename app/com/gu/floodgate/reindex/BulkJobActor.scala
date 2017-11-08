@@ -1,12 +1,12 @@
 package com.gu.floodgate.reindex
 
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.{ Actor, ActorLogging, Props }
 import akka.pattern.pipe
-import com.gu.floodgate.{CustomError, RunningJobNotFound}
-import com.gu.floodgate.contentsource.{ContentSource, ContentSourceSettings}
-import com.gu.floodgate.jobhistory.{JobHistory, JobHistoryService}
+import com.gu.floodgate.{ CustomError, RunningJobNotFound }
+import com.gu.floodgate.contentsource.{ ContentSource, ContentSourceSettings }
+import com.gu.floodgate.jobhistory.{ JobHistory, JobHistoryService }
 import com.gu.floodgate.reindex.BulkJobActor._
-import com.gu.floodgate.runningjob.{RunningJob, RunningJobService}
+import com.gu.floodgate.runningjob.{ RunningJob, RunningJobService }
 import com.typesafe.scalalogging.StrictLogging
 import org.joda.time.DateTime
 

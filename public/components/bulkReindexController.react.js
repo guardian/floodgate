@@ -37,7 +37,8 @@ export default class BulkReindexControllerComponent extends React.Component {
     }
 
     componentDidMount() {
-        let intervalPeriod = 5000;
+        this.checkRunningReindexes();
+        let intervalPeriod = 1000;
         setInterval(this.checkRunningReindexes, intervalPeriod);
     }
 
@@ -108,6 +109,7 @@ export default class BulkReindexControllerComponent extends React.Component {
     }
 
     cancelReindex(reindex, isReindexRunning) {
+
         if (isReindexRunning) {
             ContentSourceService.cancelReindex(reindex.id, reindex.env).then( response => {
                     this.setState({
