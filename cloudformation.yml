@@ -26,6 +26,9 @@ Parameters:
     AMI:
         Description: 'AMI ID'
         Type: String
+    SSLCertificate:
+        Description: 'The ARN of the SSL certificate to use for the ELB'
+        Type: String
 Resources:
     RootRole:
         Type: AWS::IAM::Role
@@ -83,7 +86,7 @@ Resources:
               - Protocol: HTTPS
                 LoadBalancerPort: 443
                 InstancePort: 9000
-                SSLCertificateId: !Sub arn:aws:iam::${AWS::AccountId}:server-certificate/star.capi.gutools.co.uk-exp2018-01-27
+                SSLCertificateId: !Ref SSLCertificate
             HealthCheck:
                 Target: 'HTTP:9000/healthcheck'
                 Timeout: 5
