@@ -9,7 +9,6 @@ import com.gu.scanamo.query.{ KeyEquals, UniqueKey }
 import com.gu.scanamo.{ DynamoFormat, Scanamo }
 import com.typesafe.scalalogging.StrictLogging
 
-import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 import scala.concurrent.{ ExecutionContext, Future, Promise }
 
@@ -34,7 +33,7 @@ trait DynamoDBTable[T] extends StrictLogging {
       }
 
       override def onSuccess(request: ScanRequest, result: ScanResult) = {
-        val items: List[T] = result.getItems.asScala.toList.map(f => fromItem(f.toMap))
+        val items: List[T] = result.getItems.asScala.toList.map(f => fromItem(f.asScala.toMap))
         promise.success(items)
       }
 
@@ -66,7 +65,7 @@ trait DynamoDBTable[T] extends StrictLogging {
     val request = new QueryRequest().withTableName(tableName)
       .withScanIndexForward(false)
       .withKeyConditionExpression(s"$keyName = :$keyName")
-      .withExpressionAttributeValues(Map(s":$keyName" -> new AttributeValue().withS(id)))
+      .withExpressionAttributeValues(Map(s":$keyName" -> new AttributeValue().withS(id)).asJava)
 
     getListOfItems(request)
   }
@@ -79,7 +78,7 @@ trait DynamoDBTable[T] extends StrictLogging {
       .withExpressionAttributeValues(Map(
         s":$keyName" -> new AttributeValue().withS(id),
         s":$filterKeyName" -> new AttributeValue().withS(filterValue)
-      ))
+      ).asJava)
 
     getListOfItems(request)
   }
@@ -93,7 +92,7 @@ trait DynamoDBTable[T] extends StrictLogging {
       .withExpressionAttributeValues(Map(
         s":$keyName" -> new AttributeValue().withS(id),
         s":$filterKeyName" -> new AttributeValue().withS(filterValue)
-      ))
+      ).asJava)
 
     getListOfItems(request).map(resultList => resultList.headOption)
   }
@@ -104,8 +103,8 @@ trait DynamoDBTable[T] extends StrictLogging {
 
   def updateItem(id: String, t: T): Unit = {
     val request = new UpdateItemRequest().withTableName(tableName)
-      .withKey(Map(keyName -> new AttributeValue(id)))
-      .withAttributeUpdates(toItemUpdate(t).mapValues(_.withAction(AttributeAction.PUT)))
+      .withKey(Map(keyName -> new AttributeValue(id)).asJava)
+      .withAttributeUpdates(toItemUpdate(t).mapValues(_.withAction(AttributeAction.PUT)).asJava)
 
     updateThisItem(request)
   }
@@ -116,8 +115,8 @@ trait DynamoDBTable[T] extends StrictLogging {
         .withKey(Map(
           keyName -> new AttributeValue(hashKey),
           sortKeyName -> new AttributeValue(sortKey)
-        ))
-        .withAttributeUpdates(toItemUpdate(t).mapValues(_.withAction(AttributeAction.PUT)))
+        ).asJava)
+        .withAttributeUpdates(toItemUpdate(t).mapValues(_.withAction(AttributeAction.PUT)).asJava)
     }
 
     maybeRequest foreach updateThisItem
@@ -152,7 +151,7 @@ trait DynamoDBTable[T] extends StrictLogging {
       }
 
       override def onSuccess(request: QueryRequest, result: QueryResult) = {
-        val item: List[T] = result.getItems.asScala.toList.map(f => fromItem(f.toMap))
+        val item: List[T] = result.getItems.asScala.toList.map(f => fromItem(f.asScala.toMap))
         promise.success(item)
       }
 

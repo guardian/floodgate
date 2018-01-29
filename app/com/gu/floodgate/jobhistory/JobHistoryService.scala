@@ -11,7 +11,6 @@ import scala.concurrent.{ ExecutionContext, Future }
 class JobHistoryService(jobHistoryTable: DynamoDBTable[JobHistory]) {
 
   implicit val dateFormat = DynamoFormat.coercedXmap[DateTime, String, IllegalArgumentException](DateTime.parse(_).withZone(DateTimeZone.UTC))(_.toString)
-  implicit val reindexStatusFormat = DynamoFormat.coercedXmap[ReindexStatus, String, IllegalArgumentException](s => ReindexStatus.fromString(s).getOrElse(Unknown))(ReindexStatus.asString)
 
   def createJobHistory(jobHistory: JobHistory): Unit = jobHistoryTable.saveItem[JobHistory](jobHistory)
   def getJobHistories(): Future[Seq[JobHistory]] = jobHistoryTable.getAll()
