@@ -6,7 +6,7 @@ User=content-api
 Group=content-api
 Restart=on-failure
 Environment='HOME=/home/content-api'
-Environment='JAVA_OPTS=-Xms256m -Xmx256m -XX:+UseConcMarkSweepGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:/home/content-api/logs/gc.log -XX:ReservedCodeCacheSize=256m -Dconfig.file=/etc/gu/floodgate.conf'
+Environment='JAVA_OPTS=-Xms320m -Xmx320m -XX:+UseConcMarkSweepGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps -Xloggc:/home/content-api/logs/gc.log -XX:ReservedCodeCacheSize=320m -Dconfig.file=/etc/gu/floodgate.conf'
 WorkingDirectory=/home/content-api
 ExecStart=/home/content-api/floodgate/bin/content-api-floodgate
 
