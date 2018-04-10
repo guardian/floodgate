@@ -39,6 +39,8 @@ Resources:
                     - Effect: Allow
                       Principal: { Service: [ 'ec2.amazonaws.com' ] }
                       Action: [ 'sts:AssumeRole' ]
+            ManagedPolicyArns:
+            - arn:aws:iam::aws:policy/service-role/AmazonEC2RoleforSSM
 
     DownloadConfigAndAppFromS3Policy:
         Type: AWS::IAM::Policy
@@ -134,7 +136,6 @@ Resources:
 
                         aws configure set region ${Region}
 
-                        aws s3 cp s3://content-api-dist/authorized_keys /home/ubuntu/.ssh/authorized_keys
                         cd /home/content-api
 
                         mkdir -p /etc/gu
