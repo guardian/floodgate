@@ -12,7 +12,7 @@ object ReindexStatus {
     case Unknown => "unknown"
   }
 
-  def fromString(s: String): Option[ReindexStatus] = s match {
+  def fromString(s: String): Option[ReindexStatus] = s.toLowerCase match {
     case "in progress" => Some(InProgress)
     case "failed" => Some(Failed)
     case "completed" => Some(Completed)
