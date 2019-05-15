@@ -125,7 +125,7 @@ Resources:
             AssociatePublicIpAddress: true
             SecurityGroups:
                 - !Ref ApplicationSecurityGroup
-            InstanceType: t2.nano
+            InstanceType: t3.nano
             IamInstanceProfile: !Ref InstanceProfile
             UserData:
                 Fn::Base64:
