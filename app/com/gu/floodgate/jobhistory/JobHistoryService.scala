@@ -10,10 +10,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class JobHistoryService(jobHistoryTable: DynamoDBTable[JobHistory])(implicit ec: ExecutionContext) {
 
-  implicit val dateFormat = DynamoFormat.coercedXmap[DateTime, String, IllegalArgumentException](
-    DateTime.parse(_).withZone(DateTimeZone.UTC)
-  )(_.toString)
-
   def createJobHistory(jobHistory: JobHistory): Unit = jobHistoryTable.saveItem(jobHistory)
   def getJobHistories()(implicit ec: ExecutionContext): Future[Seq[JobHistory]] = jobHistoryTable.getAll()
   def getJobHistoryForContentSource(contentSourceId: String, environment: String)(
