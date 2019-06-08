@@ -110,6 +110,7 @@ class ContentSourceApi(
               Future.successful(Ok(s"""{ "IsBulkReindexing": true}"""))
             }
             case NotReindexing => triggerReindex
+            case _ => Future.successful(Ok(s"""{ "IsBulkReindexing": false}"""))
           }
         }
         case None => {
