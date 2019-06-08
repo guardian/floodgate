@@ -7,10 +7,13 @@ import com.amazonaws.auth.{ AWSCredentialsProviderChain, InstanceProfileCredenti
 import com.amazonaws.regions.{ Region, Regions }
 import com.amazonaws.services.dynamodbv2._
 import com.gu.floodgate.contentsource.{ ContentSource, ContentSourceApi, ContentSourceService, ContentSourceTable }
-import com.gu.floodgate.jobhistory.{ JobHistoryApi, JobHistoryService, JobHistoryTable }
+import com.gu.floodgate.jobhistory.{ JobHistory, JobHistoryApi, JobHistoryService, JobHistoryTable }
 import com.gu.floodgate.reindex.{ BulkJobActor, ProgressTrackerController, ReindexService }
 import com.gu.floodgate.runningjob.{ RunningJobApi, RunningJobService, RunningJobTable }
-import com.gu.googleauth.{ AuthAction, GoogleAuthConfig }
+import com.gu.googleauth.{AntiForgeryChecker, AuthAction, GoogleAuthConfig}
+import org.scanamo.{ Scanamo, ScanamoAsync }
+import org.scanamo.joda.JodaFormats.jodaEpochSecondsFormat
+import org.scanamo.auto._
 import play.api.ApplicationLoader.Context
 import play.api.libs.ws.ahc.AhcWSComponents
 import play.api.{ BuiltInComponentsFromContext, NoHttpFiltersComponents }
@@ -41,19 +44,22 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
     builder.build()
   }
 
+  val scanamoSync = Scanamo(dynamoDB)
+  val scanamoAsync = ScanamoAsync(dynamoDB)
+
   val contentSourceTable = {
     val tableName = configuration.getOptional[String]("aws.table.name.contentsource") getOrElse "floodgate-content-source-DEV"
-    new ContentSourceTable(dynamoDB, tableName)
+    new ContentSourceTable(scanamoSync, scanamoAsync, tableName)
   }
 
   val jobHistoryTable = {
     val tableName = configuration.getOptional[String]("aws.table.name.jobhistory") getOrElse "floodgate-job-history-DEV"
-    new JobHistoryTable(dynamoDB, tableName)
+    new JobHistoryTable(scanamoSync, scanamoAsync, tableName)
   }
 
   val runningJobTable = {
     val tableName = configuration.getOptional[String]("aws.table.name.runningjob") getOrElse "floodgate-running-job-DEV"
-    new RunningJobTable(dynamoDB, tableName)
+    new RunningJobTable(scanamoSync, scanamoAsync, tableName)
   }
 
   val runningJobService = new RunningJobService(runningJobTable)
@@ -87,7 +93,7 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
     val clientSecret = configuration.get[String]("google.clientsecret")
     val redirectUrl = configuration.get[String]("google.oauthcallback")
     val domain = "guardian.co.uk"
-    GoogleAuthConfig(clientId, clientSecret, redirectUrl, domain)
+    GoogleAuthConfig(clientId, clientSecret, redirectUrl, domain, antiForgeryChecker = AntiForgeryChecker.borrowSettingsFromPlay(httpConfiguration))
   }
   val authAction = new AuthAction[AnyContent](authConfig, routes.Login.loginAction(), controllerComponents.parsers.default)(executionContext)
 
@@ -99,7 +105,7 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
     contentSourceController, jobHistoryController, runningJobController, assets)
 
   def generateBulkActors(environment: String): ActorRef = {
-    val contentSources = contentSourceTable.getAllSync[ContentSource]()
+    val contentSources = contentSourceTable.getAllSync()
     val idList = contentSources.filter(contentSource => contentSource.environment == environment).toList
     actorSystem.actorOf(BulkJobActor.props(idList, runningJobService, reindexService, jobHistoryService), s"${environment}-bulk-job")
   }

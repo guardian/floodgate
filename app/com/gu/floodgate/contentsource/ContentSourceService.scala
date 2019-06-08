@@ -18,14 +18,14 @@ class ContentSourceService(contentSourceTable: DynamoDBTable[ContentSource]) {
   }
 
   def getContentSource(id: String, environment: String): Either[CustomError, ContentSource] = {
-    contentSourceTable.getItem[ContentSource](id, environment) match {
+    contentSourceTable.getItem(id, environment) match {
       case Some(result) => result.leftMap(err => ContentSourceNotFound(s"A content source with id: $id does not exist."))
       case None => Left(ContentSourceNotFound(s"A content source with id: $id does not exist."))
     }
   }
 
   def createContentSource(contentSource: ContentSource) = contentSourceTable.saveItem(contentSource)
-  def updateContentSource(id: String, environment: String, contentSource: ContentSource) = contentSourceTable.updateItem(id, environment, contentSource)
+  def updateContentSource(id: String, environment: String, contentSource: ContentSource) = contentSourceTable.saveItem(contentSource)
   def deleteContentSource(id: String) = contentSourceTable.deleteItem(id)
 
 }

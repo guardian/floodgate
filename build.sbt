@@ -19,6 +19,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-specs2" % "2.6.23",
   "com.gu" %% "play-googleauth" % "0.7.7",
   "org.scanamo" %% "scanamo" % "1.0.0-M10",
+  "org.scanamo" %% "scanamo-joda" % "1.0.0-M10",
   "org.scalatest" %% "scalatest" % "3.0.4" % "test",
   "org.typelevel" %% "cats-core" % "1.6.1"
 )
