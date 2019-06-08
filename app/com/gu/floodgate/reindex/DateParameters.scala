@@ -1,9 +1,9 @@
 package com.gu.floodgate.reindex
 
-import com.gu.floodgate.{ CustomError, InvalidDateTimeParameter }
+import com.gu.floodgate.{CustomError, InvalidDateTimeParameter}
 import org.joda.time.DateTime
-import org.joda.time.format.{ ISODateTimeFormat, DateTimeFormatter }
-import scala.util.{ Success, Try }
+import org.joda.time.format.{DateTimeFormatter, ISODateTimeFormat}
+import scala.util.{Success, Try}
 
 case class DateParameters(from: Option[DateTime], to: Option[DateTime])
 
@@ -17,7 +17,7 @@ object DateParameters {
 
     (fromDate, toDate) match {
       case (Success(f), Success(t)) => Right(DateParameters(f, t))
-      case _ => Left(InvalidDateTimeParameter(s"Date parameter provided is invalid."))
+      case _                        => Left(InvalidDateTimeParameter(s"Date parameter provided is invalid."))
     }
   }
 

@@ -1,13 +1,17 @@
 package com.gu.floodgate.contentsource
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsync
-import com.amazonaws.services.dynamodbv2.model.{ AttributeValue, AttributeValueUpdate }
+import com.amazonaws.services.dynamodbv2.model.{AttributeValue, AttributeValueUpdate}
 import com.gu.floodgate.DynamoDBTable
 
 import scala.collection.JavaConverters._
-import org.scanamo.{ ScanamoAsync, Scanamo, DynamoFormat }
+import org.scanamo.{DynamoFormat, Scanamo, ScanamoAsync}
 
-class ContentSourceTable(protected val scanamoSync: Scanamo, protected val scanamoAsync: ScanamoAsync, protected val tableName: String)(override implicit val D: DynamoFormat[ContentSource])
+class ContentSourceTable(
+    protected val scanamoSync: Scanamo,
+    protected val scanamoAsync: ScanamoAsync,
+    protected val tableName: String
+)(implicit override val D: DynamoFormat[ContentSource])
     extends DynamoDBTable[ContentSource] {
 
   object fields {

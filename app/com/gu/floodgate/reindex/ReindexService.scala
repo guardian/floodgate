@@ -3,10 +3,10 @@ package com.gu.floodgate.reindex
 import akka.actor.ActorRef
 import cats.syntax.either._
 import com.gu.floodgate._
-import com.gu.floodgate.contentsource.{ ContentSource, ContentSourceService }
+import com.gu.floodgate.contentsource.{ContentSource, ContentSourceService}
 import com.gu.floodgate.jobhistory.JobHistoryService
-import com.gu.floodgate.reindex.ProgressTrackerController.{ LaunchTracker, RemoveTracker }
-import com.gu.floodgate.runningjob.{ RunningJob, RunningJobService }
+import com.gu.floodgate.reindex.ProgressTrackerController.{LaunchTracker, RemoveTracker}
+import com.gu.floodgate.runningjob.{RunningJob, RunningJobService}
 import com.typesafe.scalalogging.StrictLogging
 import play.api.libs.ws.WSClient
 
@@ -22,34 +22,47 @@ class ReindexService(
 ) extends StrictLogging {
 
   /**
-   * @param id - id of content source to initiate reindex upon.
-   */
-  def reindex(id: String, environment: String, dateParameters: DateParameters): Future[Either[CustomError, RunningJob]] = {
+    * @param id - id of content source to initiate reindex upon.
+    */
+  def reindex(
+      id: String,
+      environment: String,
+      dateParameters: DateParameters
+  ): Future[Either[CustomError, RunningJob]] = {
     val contentSourceOrError = contentSourceService.getContentSource(id, environment)
     val isRunning = isReindexRunning(id, environment)
 
     if (isRunning) {
-      Future.successful(Left(ReindexAlreadyRunning("A reindex is already running for this content source. Please try again once it has completed.")))
+      Future.successful(
+        Left(
+          ReindexAlreadyRunning(
+            "A reindex is already running for this content source. Please try again once it has completed."
+          )
+        )
+      )
     } else {
       contentSourceOrError match {
-        case Right(cs) => initiateReindex(contentSource = cs, dateParameters)
+        case Right(cs)   => initiateReindex(contentSource = cs, dateParameters)
         case Left(error) => Future.successful(Left(error))
       }
     }
   }
 
   /**
-   * @param id - id of content source to initiate reindex upon.
-   */
+    * @param id - id of content source to initiate reindex upon.
+    */
   def cancelReindex(id: String, environment: String): Future[Either[CustomError, Happy]] = {
     val contentSourceOrError = contentSourceService.getContentSource(id, environment)
     contentSourceOrError match {
-      case Right(cs) => cancelReindex(contentSource = cs)
+      case Right(cs)   => cancelReindex(contentSource = cs)
       case Left(error) => Future.successful(Left(error))
     }
   }
 
-  private def initiateReindex(contentSource: ContentSource, dateParameters: DateParameters): Future[Either[CustomError, RunningJob]] = {
+  private def initiateReindex(
+      contentSource: ContentSource,
+      dateParameters: DateParameters
+  ): Future[Either[CustomError, RunningJob]] = {
     val reindexUrl: String = contentSource.reindexEndpointWithDateParams(dateParameters)
     ws.url(reindexUrl).post("") flatMap { response =>
       response.status match {
@@ -60,7 +73,8 @@ class ReindexService(
           Future.successful(Right(runningJob))
 
         case _ =>
-          val error: CustomError = ReindexCannotBeInitiated(s"Could not initiate a reindex for ${contentSource.appName}.")
+          val error: CustomError =
+            ReindexCannotBeInitiated(s"Could not initiate a reindex for ${contentSource.appName}.")
           Future.successful(Left(error))
       }
     }
@@ -78,7 +92,8 @@ class ReindexService(
           }
 
         case _ =>
-          val error: CustomError = CancellingReindexFailed(s"Could not cancel the current reindex for ${contentSource.appName}")
+          val error: CustomError =
+            CancellingReindexFailed(s"Could not cancel the current reindex for ${contentSource.appName}")
           Left(error)
 
       }

@@ -2,7 +2,7 @@ package com.gu.floodgate
 
 import com.gu.floodgate.contentsource._
 import com.gu.floodgate.jobhistory._
-import com.gu.floodgate.reindex.BulkJobActor.{ CompletedJobInfo, IsReindexing, PendingJobInfo, RunningJobInfo }
+import com.gu.floodgate.reindex.BulkJobActor.{CompletedJobInfo, IsReindexing, PendingJobInfo, RunningJobInfo}
 import com.gu.floodgate.reindex._
 import com.gu.floodgate.runningjob._
 import play.api.libs.json._
@@ -32,9 +32,12 @@ object Formats {
   implicit object ReindexStatusReads extends Reads[ReindexStatus] {
     def reads(statusJson: JsValue): JsResult[ReindexStatus] = statusJson match {
       case JsString(str) => {
-        ReindexStatus.fromString(str).map { result =>
-          JsSuccess(result)
-        }.getOrElse(JsError("Unknown Reindex Status"))
+        ReindexStatus
+          .fromString(str)
+          .map { result =>
+            JsSuccess(result)
+          }
+          .getOrElse(JsError("Unknown Reindex Status"))
       }
       case _ => JsError("Unknown Reindex Status")
     }

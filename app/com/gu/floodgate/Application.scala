@@ -1,6 +1,6 @@
 package controllers
 
-import com.gu.floodgate.reindex.{ Completed, InProgress, Progress }
+import com.gu.floodgate.reindex.{Completed, InProgress, Progress}
 import com.typesafe.scalalogging.StrictLogging
 import play.api.Configuration
 import play.api.libs.json.Json
@@ -8,10 +8,16 @@ import play.api.mvc.legacy.Controller
 import com.gu.floodgate.views
 import play.api.libs.ws.WSClient
 import com.gu.floodgate.Formats._
-import com.gu.googleauth.{ AuthAction, GoogleAuthConfig }
+import com.gu.googleauth.{AuthAction, GoogleAuthConfig}
 import play.api.mvc.AnyContent
 
-class Application(authAction: AuthAction[AnyContent], authConfig: GoogleAuthConfig, val wsClient: WSClient, val conf: Configuration) extends Controller with StrictLogging {
+class Application(
+    authAction: AuthAction[AnyContent],
+    authConfig: GoogleAuthConfig,
+    val wsClient: WSClient,
+    val conf: Configuration
+) extends Controller
+    with StrictLogging {
 
   def index = authAction {
     Ok(views.html.app("Floodgate"))

@@ -10,7 +10,7 @@ import org.scanamo.syntax._
 import com.typesafe.scalalogging.StrictLogging
 
 import scala.collection.JavaConverters._
-import scala.concurrent.{ ExecutionContext, Future, Promise }
+import scala.concurrent.{ExecutionContext, Future, Promise}
 
 trait DynamoDBTable[T] extends StrictLogging {
 
@@ -23,13 +23,16 @@ trait DynamoDBTable[T] extends StrictLogging {
   protected val table: Table[T] = Table[T](tableName)
   protected val maybeSortKeyName: Option[String] = None
 
-  final private def reportErrors(results: List[Either[DynamoReadError, T]]): List[T] = results.flatMap(_.fold(
-    error => {
-      logger.error(error.toString)
-      None
-    },
-    result => Some(result)
-))
+  final private def reportErrors(results: List[Either[DynamoReadError, T]]): List[T] =
+    results.flatMap(
+      _.fold(
+        error => {
+          logger.error(error.toString)
+          None
+        },
+        result => Some(result)
+      )
+    )
 
   def getAll()(implicit ec: ExecutionContext): Future[Seq[T]] = scanamoAsync.exec(table.scan).map(reportErrors)
 
@@ -41,15 +44,27 @@ trait DynamoDBTable[T] extends StrictLogging {
     } orElse None
   }
 
-  def getItems(id: String)(implicit ec: ExecutionContext): Future[List[T]] = scanamoAsync.exec(table.descending.query(Symbol(keyName) -> id)).map(reportErrors)
+  def getItems(id: String)(implicit ec: ExecutionContext): Future[List[T]] =
+    scanamoAsync.exec(table.descending.query(Symbol(keyName) -> id)).map(reportErrors)
 
-  def getItemsWithFilter(id: String, filterKeyName: String, filterValue: String)(implicit ec: ExecutionContext): Future[List[T]] = 
-    scanamoAsync.exec(table.descending.filter(Condition(Symbol(filterKeyName) -> filterValue)).query(Symbol(keyName) -> id)).map(reportErrors)
+  def getItemsWithFilter(id: String, filterKeyName: String, filterValue: String)(
+      implicit ec: ExecutionContext
+  ): Future[List[T]] =
+    scanamoAsync
+      .exec(table.descending.filter(Condition(Symbol(filterKeyName) -> filterValue)).query(Symbol(keyName) -> id))
+      .map(reportErrors)
 
-  def getLatestItem(id: String, filterKeyName: String, filterValue: String)(implicit ec: ExecutionContext): Future[Option[T]] =
-    scanamoAsync.exec(table.descending.limit(1).filter(Condition(Symbol(filterKeyName) -> filterValue)).query(Symbol(keyName) -> id)).map(reportErrors).map(_.headOption)
+  def getLatestItem(id: String, filterKeyName: String, filterValue: String)(
+      implicit ec: ExecutionContext
+  ): Future[Option[T]] =
+    scanamoAsync
+      .exec(
+        table.descending.limit(1).filter(Condition(Symbol(filterKeyName) -> filterValue)).query(Symbol(keyName) -> id)
+      )
+      .map(reportErrors)
+      .map(_.headOption)
 
-  def saveItem(t: T): Option[Either[DynamoReadError,T]] = scanamoSync.exec(table.put(t))
+  def saveItem(t: T): Option[Either[DynamoReadError, T]] = scanamoSync.exec(table.put(t))
 
   def deleteItem(hashKey: String): Unit = scanamoSync.exec(table.delete(Symbol(keyName) -> hashKey))
 

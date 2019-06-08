@@ -1,7 +1,7 @@
 package com.gu.floodgate
 
 import play.api.libs.logback.LogbackLoggerConfigurator
-import play.api.{ Application, ApplicationLoader }
+import play.api.{Application, ApplicationLoader}
 import play.api.ApplicationLoader.Context
 
 class AppLoader extends ApplicationLoader {

@@ -1,13 +1,17 @@
 package com.gu.floodgate.jobhistory
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsync
-import com.amazonaws.services.dynamodbv2.model.{ AttributeValue, AttributeValueUpdate }
+import com.amazonaws.services.dynamodbv2.model.{AttributeValue, AttributeValueUpdate}
 import com.gu.floodgate.DynamoDBTable
 import com.gu.floodgate.reindex._
 import org.joda.time.DateTime
-import org.scanamo.{ ScanamoAsync, Scanamo, DynamoFormat }
+import org.scanamo.{DynamoFormat, Scanamo, ScanamoAsync}
 
-class JobHistoryTable(protected val scanamoSync: Scanamo, protected val scanamoAsync: ScanamoAsync, protected val tableName: String)(override implicit val D: DynamoFormat[JobHistory])
+class JobHistoryTable(
+    protected val scanamoSync: Scanamo,
+    protected val scanamoAsync: ScanamoAsync,
+    protected val tableName: String
+)(implicit override val D: DynamoFormat[JobHistory])
     extends DynamoDBTable[JobHistory] {
 
   object fields {

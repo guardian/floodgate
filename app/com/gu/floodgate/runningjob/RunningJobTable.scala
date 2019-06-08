@@ -4,9 +4,13 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsync
 import com.amazonaws.services.dynamodbv2.model._
 import com.gu.floodgate.DynamoDBTable
 import org.joda.time.DateTime
-import org.scanamo.{Scanamo, ScanamoAsync, DynamoFormat}
+import org.scanamo.{DynamoFormat, Scanamo, ScanamoAsync}
 
-class RunningJobTable(protected val scanamoSync: Scanamo, protected val scanamoAsync: ScanamoAsync, protected val tableName: String)(override implicit val D: DynamoFormat[RunningJob])
+class RunningJobTable(
+    protected val scanamoSync: Scanamo,
+    protected val scanamoAsync: ScanamoAsync,
+    protected val tableName: String
+)(implicit override val D: DynamoFormat[RunningJob])
     extends DynamoDBTable[RunningJob] {
 
   object fields {

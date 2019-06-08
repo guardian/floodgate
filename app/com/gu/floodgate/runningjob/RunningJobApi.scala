@@ -23,7 +23,7 @@ class RunningJobApi(runningJobService: RunningJobService) extends Controller {
   def getRunningJob(contentSourceId: String, environment: String) = Action { implicit request =>
     runningJobService.getRunningJob(contentSourceId, environment) match {
       case Right(runningJob) => Ok(Json.toJson(SingleRunningJobResponse(runningJob)))
-      case Left(error) => NotFound(Json.toJson(ErrorResponse(error.message)))
+      case Left(error)       => NotFound(Json.toJson(ErrorResponse(error.message)))
     }
   }
 
