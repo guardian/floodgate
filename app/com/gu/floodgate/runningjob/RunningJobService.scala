@@ -9,10 +9,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RunningJobService(runningJobTable: DynamoDBTable[RunningJob]) {
 
-  implicit val dateFormat = DynamoFormat.coercedXmap[DateTime, String, IllegalArgumentException](
-    DateTime.parse(_).withZone(DateTimeZone.UTC)
-  )(_.toString)
-
   def createRunningJob(runningJob: RunningJob): Unit = runningJobTable.saveItem(runningJob)
   def updateRunningJob(id: String, environment: String, runningJob: RunningJob): Unit =
     runningJobTable.saveItem(runningJob)
