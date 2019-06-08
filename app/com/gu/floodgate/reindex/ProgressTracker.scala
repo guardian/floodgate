@@ -13,8 +13,6 @@ import scala.concurrent.duration._
 import scala.util.{Failure, Success, Try}
 import com.gu.floodgate.Formats._
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
 object ProgressTracker {
 
   def props(ws: WSClient, runningJobService: RunningJobService, jobHistoryService: JobHistoryService) =
@@ -31,6 +29,7 @@ class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHis
     with ActorLogging
     with StrictLogging {
   import context.become
+  import context.dispatcher
 
   private val FailedAttemptsToRetrieveProgressLimit = 30
   private val PollInterval = 2.seconds

@@ -10,7 +10,6 @@ import com.gu.floodgate.runningjob.{RunningJob, RunningJobService}
 import com.typesafe.scalalogging.StrictLogging
 import org.joda.time.DateTime
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
@@ -93,6 +92,7 @@ class BulkJobActor(
     with StrictLogging {
 
   import context.become
+  import context.dispatcher
 
   private def sortContentToReindex: List[ContentSource] = {
     val helperMap = contentSources.map(content => content.appName -> content).toMap

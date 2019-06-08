@@ -1,15 +1,14 @@
 package com.gu.floodgate.contentsource
 
 import com.gu.floodgate.{ContentSourceNotFound, CustomError, DynamoDBTable}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import cats.syntax.either._
 
 class ContentSourceService(contentSourceTable: DynamoDBTable[ContentSource]) {
 
-  def getAllContentSources(): Future[Seq[ContentSource]] = contentSourceTable.getAll()
+  def getAllContentSources()(implicit ec: ExecutionContext): Future[Seq[ContentSource]] = contentSourceTable.getAll()
 
-  def getContentSources(id: String): Future[Either[CustomError, Seq[ContentSource]]] = {
+  def getContentSources(id: String)(implicit ec: ExecutionContext): Future[Either[CustomError, Seq[ContentSource]]] = {
     contentSourceTable.getItems(id) map { contentSources =>
       if (contentSources.isEmpty)
         Left(ContentSourceNotFound(s"A content source with id: $id does not exist."))

@@ -2,10 +2,10 @@ package com.gu.floodgate.jobhistory
 
 import play.api.libs.json.Json
 import play.api.mvc.legacy.Controller
-import scala.concurrent.ExecutionContext.Implicits.global
 import com.gu.floodgate.Formats._
+import scala.concurrent.ExecutionContext
 
-class JobHistoryApi(jobHistoryService: JobHistoryService) extends Controller {
+class JobHistoryApi(jobHistoryService: JobHistoryService)(implicit ec: ExecutionContext) extends Controller {
 
   def getJobHistories = Action.async { implicit request =>
     jobHistoryService.getJobHistories() map { jobHistories =>

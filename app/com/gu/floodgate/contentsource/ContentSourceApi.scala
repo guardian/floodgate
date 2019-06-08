@@ -16,8 +16,7 @@ import play.api.libs.json._
 import play.api.mvc.Result
 import play.api.mvc.legacy.Controller
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
 
 class ContentSourceApi(
@@ -26,7 +25,8 @@ class ContentSourceApi(
     jobHistoryService: JobHistoryService,
     runningJobService: RunningJobService,
     bulkJobActorsMap: Map[String, ActorRef]
-) extends Controller
+)(implicit ec: ExecutionContext)
+    extends Controller
     with StrictLogging {
 
   implicit val timeout = Timeout(10.seconds)

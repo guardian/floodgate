@@ -3,10 +3,10 @@ package com.gu.floodgate.runningjob
 import com.gu.floodgate.ErrorResponse
 import play.api.libs.json.Json
 import play.api.mvc.legacy.Controller
-import scala.concurrent.ExecutionContext.Implicits.global
 import com.gu.floodgate.Formats._
+import scala.concurrent.ExecutionContext
 
-class RunningJobApi(runningJobService: RunningJobService) extends Controller {
+class RunningJobApi(runningJobService: RunningJobService)(implicit ec: ExecutionContext) extends Controller {
 
   def getAllRunningJobs = Action.async { implicit request =>
     runningJobService.getAllRunningJobs() map { runningJobs =>

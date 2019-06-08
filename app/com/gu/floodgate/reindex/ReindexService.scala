@@ -9,9 +9,8 @@ import com.gu.floodgate.reindex.ProgressTrackerController.{LaunchTracker, Remove
 import com.gu.floodgate.runningjob.{RunningJob, RunningJobService}
 import com.typesafe.scalalogging.StrictLogging
 import play.api.libs.ws.WSClient
-
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext
 
 class ReindexService(
     contentSourceService: ContentSourceService,
@@ -28,7 +27,7 @@ class ReindexService(
       id: String,
       environment: String,
       dateParameters: DateParameters
-  ): Future[Either[CustomError, RunningJob]] = {
+  )(implicit ec: ExecutionContext): Future[Either[CustomError, RunningJob]] = {
     val contentSourceOrError = contentSourceService.getContentSource(id, environment)
     val isRunning = isReindexRunning(id, environment)
 
@@ -51,7 +50,8 @@ class ReindexService(
   /**
     * @param id - id of content source to initiate reindex upon.
     */
-  def cancelReindex(id: String, environment: String): Future[Either[CustomError, Happy]] = {
+  def cancelReindex(id: String,
+                    environment: String)(implicit ec: ExecutionContext): Future[Either[CustomError, Happy]] = {
     val contentSourceOrError = contentSourceService.getContentSource(id, environment)
     contentSourceOrError match {
       case Right(cs)   => cancelReindex(contentSource = cs)
@@ -62,7 +62,7 @@ class ReindexService(
   private def initiateReindex(
       contentSource: ContentSource,
       dateParameters: DateParameters
-  ): Future[Either[CustomError, RunningJob]] = {
+  )(implicit ec: ExecutionContext): Future[Either[CustomError, RunningJob]] = {
     val reindexUrl: String = contentSource.reindexEndpointWithDateParams(dateParameters)
     ws.url(reindexUrl).post("") flatMap { response =>
       response.status match {
@@ -80,7 +80,9 @@ class ReindexService(
     }
   }
 
-  private def cancelReindex(contentSource: ContentSource): Future[Either[CustomError, Happy]] = {
+  private def cancelReindex(
+      contentSource: ContentSource
+  )(implicit ec: ExecutionContext): Future[Either[CustomError, Happy]] = {
     ws.url(contentSource.reindexEndpoint).delete map { response =>
       response.status match {
         case 200 =>
