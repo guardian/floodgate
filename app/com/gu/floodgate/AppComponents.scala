@@ -12,7 +12,7 @@ import com.gu.floodgate.reindex.{BulkJobActor, ProgressTrackerController, Reinde
 import com.gu.floodgate.runningjob.{RunningJobApi, RunningJobService, RunningJobTable}
 import com.gu.googleauth.{AntiForgeryChecker, AuthAction, GoogleAuthConfig}
 import org.scanamo.{Scanamo, ScanamoAsync}
-import org.scanamo.joda.JodaFormats.jodaEpochSecondsFormat
+import org.scanamo.joda.JodaFormats.jodaStringFormat
 import org.scanamo.auto._
 import play.api.ApplicationLoader.Context
 import play.api.libs.ws.ahc.AhcWSComponents
