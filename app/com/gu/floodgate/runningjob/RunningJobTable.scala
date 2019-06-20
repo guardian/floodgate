@@ -4,8 +4,13 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsync
 import com.amazonaws.services.dynamodbv2.model._
 import com.gu.floodgate.DynamoDBTable
 import org.joda.time.DateTime
+import org.scanamo.{DynamoFormat, Scanamo, ScanamoAsync}
 
-class RunningJobTable(protected val dynamoDB: AmazonDynamoDBAsync, protected val tableName: String)
+class RunningJobTable(
+    protected val scanamoSync: Scanamo,
+    protected val scanamoAsync: ScanamoAsync,
+    protected val tableName: String
+)(implicit override val D: DynamoFormat[RunningJob])
     extends DynamoDBTable[RunningJob] {
 
   object fields {
@@ -20,24 +25,5 @@ class RunningJobTable(protected val dynamoDB: AmazonDynamoDBAsync, protected val
 
   override protected val keyName = fields.ContentSourceId
   override protected val maybeSortKeyName = Some(fields.ContentSourceEnvironment)
-
-  override protected def fromItem(item: Map[String, AttributeValue]): RunningJob = {
-    RunningJob(
-      getItemAttributeValue(fields.ContentSourceId, item).getS,
-      getItemAttributeValue(fields.ContentSourceEnvironment, item).getS,
-      BigDecimal(getItemAttributeValue(fields.DocumentsIndexed, item).getN).toInt,
-      BigDecimal(getItemAttributeValue(fields.DocumentsExpected, item).getN).toInt,
-      new DateTime(getItemAttributeValue(fields.StartTime, item).getS),
-      for (v <- item.get(fields.RangeFrom); s <- Option(v.getS)) yield new DateTime(s),
-      for (v <- item.get(fields.RangeTo); s <- Option(v.getS)) yield new DateTime(s)
-    )
-  }
-
-  override protected def toItemUpdate(runningJob: RunningJob): Map[String, AttributeValueUpdate] =
-    Map(
-      fields.DocumentsIndexed -> new AttributeValueUpdate().withValue(new AttributeValue().withN(runningJob.documentsIndexed.toString)),
-      fields.DocumentsExpected -> new AttributeValueUpdate().withValue(new AttributeValue().withN(runningJob.documentsExpected.toString)),
-      fields.StartTime -> new AttributeValueUpdate().withValue(new AttributeValue(runningJob.startTime.toString))
-    )
 
 }

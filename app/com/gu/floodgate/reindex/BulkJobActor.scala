@@ -1,22 +1,26 @@
 package com.gu.floodgate.reindex
 
-import akka.actor.{ Actor, ActorLogging, Props }
+import akka.actor.{Actor, ActorLogging, Props}
 import akka.pattern.pipe
-import com.gu.floodgate.{ CustomError, RunningJobNotFound }
-import com.gu.floodgate.contentsource.{ ContentSource, ContentSourceSettings }
-import com.gu.floodgate.jobhistory.{ JobHistory, JobHistoryService }
+import com.gu.floodgate.{CustomError, RunningJobNotFound}
+import com.gu.floodgate.contentsource.{ContentSource, ContentSourceSettings}
+import com.gu.floodgate.jobhistory.{JobHistory, JobHistoryService}
 import com.gu.floodgate.reindex.BulkJobActor._
-import com.gu.floodgate.runningjob.{ RunningJob, RunningJobService }
+import com.gu.floodgate.runningjob.{RunningJob, RunningJobService}
 import com.typesafe.scalalogging.StrictLogging
 import org.joda.time.DateTime
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
 object BulkJobActor {
 
-  def props(contentSources: List[ContentSource], runningJobService: RunningJobService, reindexService: ReindexService, jobHistoryService: JobHistoryService) =
+  def props(
+      contentSources: List[ContentSource],
+      runningJobService: RunningJobService,
+      reindexService: ReindexService,
+      jobHistoryService: JobHistoryService
+  ) =
     Props(new BulkJobActor(contentSources, runningJobService, reindexService, jobHistoryService))
 
   //  Incoming messages
@@ -24,12 +28,34 @@ object BulkJobActor {
   case object IsActorReindexing
   case class DropPendingJob(id: String, env: String)
 
-  case class RunningJobInfo(name: String, id: String, env: String, documentsIndexed: Int, documentsExpected: Int, startTime: DateTime, settings: ContentSourceSettings)
+  case class RunningJobInfo(
+      name: String,
+      id: String,
+      env: String,
+      documentsIndexed: Int,
+      documentsExpected: Int,
+      startTime: DateTime,
+      settings: ContentSourceSettings
+  )
   case class PendingJobInfo(name: String, id: String, env: String)
-  case class CompletedJobInfo(name: String, id: String, env: String, startTime: DateTime, finishTime: DateTime, status: ReindexStatus)
+  case class CompletedJobInfo(
+      name: String,
+      id: String,
+      env: String,
+      startTime: DateTime,
+      finishTime: DateTime,
+      status: ReindexStatus
+  )
   object CompletedJobInfo {
     def apply(source: ContentSource, history: JobHistory): CompletedJobInfo = {
-      CompletedJobInfo(source.appName, source.id, source.environment, history.startTime, history.finishTime, history.status)
+      CompletedJobInfo(
+        source.appName,
+        source.id,
+        source.environment,
+        history.startTime,
+        history.finishTime,
+        history.status
+      )
     }
   }
 
@@ -37,7 +63,11 @@ object BulkJobActor {
   sealed trait BulkReindexRequestResult
   case object CanTrigger extends BulkReindexRequestResult
   case object RejectJob extends BulkReindexRequestResult
-  case class IsReindexing(runningJobs: Seq[RunningJobInfo], pendingJobs: List[PendingJobInfo], completedJobs: List[CompletedJobInfo]) extends BulkReindexRequestResult
+  case class IsReindexing(
+      runningJobs: Seq[RunningJobInfo],
+      pendingJobs: List[PendingJobInfo],
+      completedJobs: List[CompletedJobInfo]
+  ) extends BulkReindexRequestResult
   case object NotReindexing extends BulkReindexRequestResult
 
   sealed trait DropPendingJobResult
@@ -52,9 +82,17 @@ object BulkJobActor {
 
 }
 
-class BulkJobActor(contentSources: List[ContentSource], runningJobService: RunningJobService, reindexService: ReindexService, jobHistoryService: JobHistoryService) extends Actor with ActorLogging with StrictLogging {
+class BulkJobActor(
+    contentSources: List[ContentSource],
+    runningJobService: RunningJobService,
+    reindexService: ReindexService,
+    jobHistoryService: JobHistoryService
+) extends Actor
+    with ActorLogging
+    with StrictLogging {
 
   import context.become
+  import context.dispatcher
 
   private def sortContentToReindex: List[ContentSource] = {
     val helperMap = contentSources.map(content => content.appName -> content).toMap
@@ -92,7 +130,7 @@ class BulkJobActor(contentSources: List[ContentSource], runningJobService: Runni
       }
     }
     case IsActorReindexing => sender ! NotReindexing
-    case other => logger.warn(s"Unexpected message received: $other")
+    case other             => logger.warn(s"Unexpected message received: $other")
   }
 
   private def reindexing: Receive = {
@@ -103,15 +141,18 @@ class BulkJobActor(contentSources: List[ContentSource], runningJobService: Runni
     }
     case ReindexError(id, env, error) => {
       pendingReindexes = Nil
-      val failedReindex = contentSources.find(contentSource => (contentSource.id, contentSource.environment) == (id, env))
+      val failedReindex =
+        contentSources.find(contentSource => (contentSource.id, contentSource.environment) == (id, env))
       logger.warn(s"Unable to trigger Reindex for $failedReindex")
       become(notReindexing)
     }
-    case Polling(id, env) => pollRunningReindexes(id, env)
+    case Polling(id, env)  => pollRunningReindexes(id, env)
     case IsActorReindexing => buildReindexInfo pipeTo sender()
     case DropPendingJob(id, env) => {
       pendingReindexes = pendingReindexes.filterNot(source => source.id == id && source.environment == env)
-      if (pendingReindexes.exists(source => source.id == id && source.environment == env) || runningJobService.getRunningJob(id, env).isRight) {
+      if (pendingReindexes.exists(source => source.id == id && source.environment == env) || runningJobService
+            .getRunningJob(id, env)
+            .isRight) {
         sender ! FailedToCancelPendingJob
       } else {
         sender ! CancelledPendingJob
@@ -135,14 +176,20 @@ class BulkJobActor(contentSources: List[ContentSource], runningJobService: Runni
 
   private def getRunningJobs: Future[Seq[RunningJobInfo]] = {
     val env = orderedContentSources.map(source => source.environment).distinct
-    val futureRunningJobs = runningJobService.getAllRunningJobs().map(jobs => jobs.filter(job => env.contains(job.contentSourceEnvironment)))
+    val futureRunningJobs =
+      runningJobService.getAllRunningJobs().map(jobs => jobs.filter(job => env.contains(job.contentSourceEnvironment)))
     futureRunningJobs.map { runningJobs =>
       runningJobs.map { job =>
         val name = idNameMap.getOrElse(job.contentSourceId, s"Name not found for ID: ${job.contentSourceId}")
-        val contentSource = orderedContentSources.find(contentSource => (contentSource.id, contentSource.environment) == (job.contentSourceId, job.contentSourceEnvironment))
+        val contentSource = orderedContentSources.find(
+          contentSource =>
+            (contentSource.id, contentSource.environment) == (job.contentSourceId, job.contentSourceEnvironment)
+        )
         contentSource match {
           case None => {
-            logger.warn(s"Unable to find corresponding contentSource for $name. Set settings to false, you will be unable to cancel.")
+            logger.warn(
+              s"Unable to find corresponding contentSource for $name. Set settings to false, you will be unable to cancel."
+            )
             RunningJobInfo(
               name,
               job.contentSourceId,
@@ -153,15 +200,16 @@ class BulkJobActor(contentSources: List[ContentSource], runningJobService: Runni
               ContentSourceSettings(false, false)
             )
           }
-          case Some(source) => RunningJobInfo(
-            name,
-            job.contentSourceId,
-            job.contentSourceEnvironment,
-            job.documentsIndexed,
-            job.documentsExpected,
-            job.startTime,
-            source.contentSourceSettings
-          )
+          case Some(source) =>
+            RunningJobInfo(
+              name,
+              job.contentSourceId,
+              job.contentSourceEnvironment,
+              job.documentsIndexed,
+              job.documentsExpected,
+              job.startTime,
+              source.contentSourceSettings
+            )
         }
       }
     }
@@ -182,7 +230,8 @@ class BulkJobActor(contentSources: List[ContentSource], runningJobService: Runni
     result.map(l => l.flatten)
   }
 
-  private def getPendingJobs: List[PendingJobInfo] = pendingReindexes.map(source => PendingJobInfo(source.appName, source.id, source.environment))
+  private def getPendingJobs: List[PendingJobInfo] =
+    pendingReindexes.map(source => PendingJobInfo(source.appName, source.id, source.environment))
 
   private def reindexNextContentSource: Unit = {
     pendingReindexes match {
@@ -190,7 +239,8 @@ class BulkJobActor(contentSources: List[ContentSource], runningJobService: Runni
       case source :: xs => {
         reindexService.reindex(source.id, source.environment, new DateParameters(None, None)).map {
           case Left(error) => self ! ReindexError(source.id, source.environment, error)
-          case Right(runningJob) => self ! ReindexStarted(runningJob.contentSourceId, runningJob.contentSourceEnvironment)
+          case Right(runningJob) =>
+            self ! ReindexStarted(runningJob.contentSourceId, runningJob.contentSourceEnvironment)
         }
       }
     }
@@ -199,8 +249,8 @@ class BulkJobActor(contentSources: List[ContentSource], runningJobService: Runni
   private def pollRunningReindexes(id: String, environment: String): Unit = {
     runningJobService.getRunningJob(id, environment) match {
       case Left(RunningJobNotFound(_)) => self ! ReindexNext
-      case Left(error: CustomError) => logger.warn(s"Job present in table, but failed to read: ${error.message}")
-      case Right(job) => context.system.scheduler.scheduleOnce(PollInterval, self, Polling(id, environment))
+      case Left(error: CustomError)    => logger.warn(s"Job present in table, but failed to read: ${error.message}")
+      case Right(job)                  => context.system.scheduler.scheduleOnce(PollInterval, self, Polling(id, environment))
     }
   }
 
@@ -208,7 +258,7 @@ class BulkJobActor(contentSources: List[ContentSource], runningJobService: Runni
     val maybeRunningJob = contentSources.find { contentSource =>
       runningJobService.getRunningJob(contentSource.id, contentSource.environment) match {
         case Left(RunningJobNotFound(_)) => false
-        case _ => true
+        case _                           => true
       }
     }
     maybeRunningJob.isEmpty

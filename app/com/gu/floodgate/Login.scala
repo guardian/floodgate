@@ -9,11 +9,14 @@ import play.api.mvc.legacy.Controller
 
 import scala.concurrent.ExecutionContext
 
-class Login(val authConfig: GoogleAuthConfig, val wsClient: WSClient, val conf: Configuration)(implicit executionContext: ExecutionContext) extends Controller with LoginSupport {
+class Login(val authConfig: GoogleAuthConfig, val wsClient: WSClient, val conf: Configuration)(
+    implicit executionContext: ExecutionContext
+) extends Controller
+    with LoginSupport {
 
   /**
-   * Shows UI for login button and logout error feedback
-   */
+    * Shows UI for login button and logout error feedback
+    */
   def login = Action { request =>
     val error = request.flash.get("error")
     Ok(views.html.login(error))

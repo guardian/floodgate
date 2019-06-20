@@ -1,19 +1,17 @@
 package com.gu.floodgate.reindex
 
-import akka.actor.{ Actor, ActorLogging, Cancellable, Props }
+import akka.actor.{Actor, ActorLogging, Cancellable, Props}
 import com.gu.floodgate.contentsource.ContentSource
-import com.gu.floodgate.jobhistory.{ JobHistory, JobHistoryService }
-import com.gu.floodgate.reindex.ProgressTracker.{ Cancel, TrackProgress, UpdateProgress }
-import com.gu.floodgate.runningjob.{ RunningJob, RunningJobService }
+import com.gu.floodgate.jobhistory.{JobHistory, JobHistoryService}
+import com.gu.floodgate.reindex.ProgressTracker.{Cancel, TrackProgress, UpdateProgress}
+import com.gu.floodgate.runningjob.{RunningJob, RunningJobService}
 import com.typesafe.scalalogging.StrictLogging
-import org.joda.time.{ DateTime, Minutes }
-import play.api.libs.ws.{ WSClient, WSResponse }
+import org.joda.time.{DateTime, Minutes}
+import play.api.libs.ws.{WSClient, WSResponse}
 
 import scala.concurrent.duration._
-import scala.util.{ Failure, Success, Try }
+import scala.util.{Failure, Success, Try}
 import com.gu.floodgate.Formats._
-
-import scala.concurrent.ExecutionContext.Implicits.global
 
 object ProgressTracker {
 
@@ -26,8 +24,12 @@ object ProgressTracker {
 
 }
 
-class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHistoryService: JobHistoryService) extends Actor with ActorLogging with StrictLogging {
+class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHistoryService: JobHistoryService)
+    extends Actor
+    with ActorLogging
+    with StrictLogging {
   import context.become
+  import context.dispatcher
 
   private val FailedAttemptsToRetrieveProgressLimit = 30
   private val PollInterval = 2.seconds
@@ -42,7 +44,7 @@ class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHis
       become(waitingForProgress)
 
     case Cancel(contentSource, runningJob) => completeProgressTracking(Cancelled, contentSource, runningJob)
-    case other => logger.warn(s"Unexpected message received while sleeping: $other")
+    case other                             => logger.warn(s"Unexpected message received while sleeping: $other")
   }
 
   private def waitingForProgress: Receive = {
@@ -50,20 +52,24 @@ class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHis
       updateProgress(result, contentSource, runningJob)
       become(sleeping) // no matter whether the result is good or bad, we should go back to sleeping
 
-    case Cancel => become(waitingForFinalProgress) // don't stop ourselves until we have received the final response (just to avoid a dead letter)
+    case Cancel =>
+      become(waitingForFinalProgress) // don't stop ourselves until we have received the final response (just to avoid a dead letter)
     case other => logger.warn(s"Unexpected message received while waiting for response: $other")
   }
 
   private def waitingForFinalProgress: Receive = {
     case UpdateProgress(_, contentSource, runningJob) =>
       completeProgressTracking(Cancelled, contentSource, runningJob) // we've received our last message, so now we can stop (we ignore the response)
-    case Cancel => log.debug("Ignoring a Cancel message because we're already planning to stop after we receive the final response")
+    case Cancel =>
+      log.debug("Ignoring a Cancel message because we're already planning to stop after we receive the final response")
     case other => logger.warn(s"Unexpected message received while waiting for final response: $other")
   }
 
   private def askForProgress(contentSource: ContentSource, runningJob: RunningJob): Unit = {
     val myself = self // make this a val to fix its value, because the onComplete will occur later in a different thread
-    ws.url(contentSource.reindexEndpoint).get() onComplete { result => myself ! UpdateProgress(result, contentSource, runningJob) }
+    ws.url(contentSource.reindexEndpoint).get() onComplete { result =>
+      myself ! UpdateProgress(result, contentSource, runningJob)
+    }
   }
 
   private def updateProgress(result: Try[WSResponse], contentSource: ContentSource, runningJob: RunningJob): Unit = {
@@ -71,20 +77,24 @@ class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHis
       case Success(response) =>
         response.status match {
           case 200 => onSuccess(response, contentSource, runningJob)
-          case _ => onFailure(contentSource, runningJob)
+          case _   => onFailure(contentSource, runningJob)
         }
       case Failure(e) => onFailure(contentSource, runningJob)
     }
   }
 
   private def onSuccess(response: WSResponse, contentSource: ContentSource, runningJob: RunningJob): Unit = {
-    response.json.validate[Progress].fold(
-      error => {
-        logger.warn(s"Content source with id: ${contentSource.id} appears to be returning progress updates in an incorrect format. Marking reindex as cancelled and stop monitoring reindex.")
-        completeProgressTracking(Cancelled, contentSource, runningJob)
-      },
-      progress => actOnProgress(progress, contentSource, runningJob)
-    )
+    response.json
+      .validate[Progress]
+      .fold(
+        error => {
+          logger.warn(
+            s"Content source with id: ${contentSource.id} appears to be returning progress updates in an incorrect format. Marking reindex as cancelled and stop monitoring reindex."
+          )
+          completeProgressTracking(Cancelled, contentSource, runningJob)
+        },
+        progress => actOnProgress(progress, contentSource, runningJob)
+      )
   }
 
   private def onFailure(contentSource: ContentSource, runningJob: RunningJob): Unit = {
@@ -100,13 +110,29 @@ class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHis
   private def actOnProgress(progress: Progress, contentSource: ContentSource, runningJob: RunningJob) = {
     progress.status match {
       case Completed =>
-        val runningJobUpdate = RunningJob(runningJob.contentSourceId, runningJob.contentSourceEnvironment, progress.documentsIndexed, progress.documentsExpected, runningJob.startTime, runningJob.rangeFrom, runningJob.rangeTo)
+        val runningJobUpdate = RunningJob(
+          runningJob.contentSourceId,
+          runningJob.contentSourceEnvironment,
+          progress.documentsIndexed,
+          progress.documentsExpected,
+          runningJob.startTime,
+          runningJob.rangeFrom,
+          runningJob.rangeTo
+        )
         completeProgressTracking(Completed, contentSource, runningJobUpdate)
 
       case Failed => completeProgressTracking(Failed, contentSource, runningJob)
 
       case InProgress =>
-        val runningJobUpdate = RunningJob(runningJob.contentSourceId, runningJob.contentSourceEnvironment, progress.documentsIndexed, progress.documentsExpected, runningJob.startTime, runningJob.rangeFrom, runningJob.rangeTo)
+        val runningJobUpdate = RunningJob(
+          runningJob.contentSourceId,
+          runningJob.contentSourceEnvironment,
+          progress.documentsIndexed,
+          progress.documentsExpected,
+          runningJob.startTime,
+          runningJob.rangeFrom,
+          runningJob.rangeTo
+        )
         val periodIndexing = Minutes.minutesBetween(runningJobUpdate.startTime, DateTime.now())
 
         val jobHasStalled: Boolean = runningJobUpdate.documentsIndexed == 0 && (periodIndexing.getMinutes - 10) >= 0
@@ -114,21 +140,40 @@ class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHis
         if (jobHasStalled) {
           completeProgressTracking(Failed, contentSource, runningJobUpdate)
         } else {
-          runningJobService.updateRunningJob(runningJob.contentSourceId, runningJob.contentSourceEnvironment, runningJobUpdate)
+          runningJobService.updateRunningJob(
+            runningJob.contentSourceId,
+            runningJob.contentSourceEnvironment,
+            runningJobUpdate
+          )
           scheduleNextUpdate(contentSource, runningJob)
         }
-      case _ => logger.warn(s"Incorrect status sent from client: ${progress.status.toString} for content source: ${contentSource.id}")
+      case _ =>
+        logger.warn(
+          s"Incorrect status sent from client: ${progress.status.toString} for content source: ${contentSource.id}"
+        )
     }
   }
 
-  private def completeProgressTracking(status: ReindexStatus, contentSource: ContentSource, runningJob: RunningJob): Unit = {
+  private def completeProgressTracking(
+      status: ReindexStatus,
+      contentSource: ContentSource,
+      runningJob: RunningJob
+  ): Unit = {
 
     def cleanupAndStop(): Unit = {
       nextPollSchedule foreach { _.cancel() } // cancel any schedule that we might have set up
       context.stop(self)
     }
 
-    val jobHistory = JobHistory(runningJob.contentSourceId, runningJob.startTime, new DateTime(), status, runningJob.contentSourceEnvironment, runningJob.rangeFrom, runningJob.rangeTo)
+    val jobHistory = JobHistory(
+      runningJob.contentSourceId,
+      runningJob.startTime,
+      new DateTime(),
+      status,
+      runningJob.contentSourceEnvironment,
+      runningJob.rangeFrom,
+      runningJob.rangeTo
+    )
     runningJobService.removeRunningJob(runningJob.contentSourceId, runningJob.contentSourceEnvironment)
     jobHistoryService.createJobHistory(jobHistory)
 
@@ -141,4 +186,3 @@ class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHis
   }
 
 }
-

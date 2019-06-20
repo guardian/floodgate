@@ -2,7 +2,7 @@ package com.gu.floodgate.contentsource
 
 import com.gu.floodgate.reindex.DateParameters
 import org.joda.time.DateTime
-import org.scalatest.{ Matchers, FlatSpec }
+import org.scalatest.{FlatSpec, Matchers}
 
 class ContentSourceReindexUrlTest extends FlatSpec with Matchers {
 

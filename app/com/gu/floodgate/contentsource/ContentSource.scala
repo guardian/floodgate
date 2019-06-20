@@ -10,12 +10,12 @@ import com.gu.floodgate.reindex.DateParameters
  */
 
 case class ContentSourceWithoutId(
-  appName: String,
-  description: String,
-  reindexEndpoint: String,
-  environment: String,
-  authType: String,
-  contentSourceSettings: ContentSourceSettings
+    appName: String,
+    description: String,
+    reindexEndpoint: String,
+    environment: String,
+    authType: String,
+    contentSourceSettings: ContentSourceSettings
 )
 
 case class ContentSourcesResponse(contentSources: Seq[ContentSource])
@@ -40,8 +40,10 @@ object ContentSourceSettings {
   }
 
   def apply(settings: Map[String, AttributeValue]): ContentSourceSettings = {
-    val supportsToFromParams = settings.getOrElse(ContentSourceSettings.fields.SupportsToFromParams, new AttributeValue("true")).getBOOL
-    val supportsCancelReindex = settings.getOrElse(ContentSourceSettings.fields.SupportsCancelReindex, new AttributeValue("true")).getBOOL
+    val supportsToFromParams =
+      settings.getOrElse(ContentSourceSettings.fields.SupportsToFromParams, new AttributeValue("true")).getBOOL
+    val supportsCancelReindex =
+      settings.getOrElse(ContentSourceSettings.fields.SupportsCancelReindex, new AttributeValue("true")).getBOOL
 
     ContentSourceSettings(supportsToFromParams, supportsCancelReindex)
   }
@@ -78,11 +80,11 @@ case class ContentSource(
  * the DB.
  */
 case class ContentWithoutIdAndEnvironment(
-  appName: String,
-  description: String,
-  reindexEndpoint: String,
-  authType: String,
-  contentSourceSettings: ContentSourceSettings
+    appName: String,
+    description: String,
+    reindexEndpoint: String,
+    authType: String,
+    contentSourceSettings: ContentSourceSettings
 )
 
 object ContentSource {
@@ -93,12 +95,27 @@ object ContentSource {
   }
 
   def apply(id: String, contentSourceWithoutId: ContentSourceWithoutId): ContentSource = {
-    ContentSource(id, contentSourceWithoutId.appName, contentSourceWithoutId.description,
-      contentSourceWithoutId.reindexEndpoint, contentSourceWithoutId.environment, contentSourceWithoutId.authType, contentSourceWithoutId.contentSourceSettings)
+    ContentSource(
+      id,
+      contentSourceWithoutId.appName,
+      contentSourceWithoutId.description,
+      contentSourceWithoutId.reindexEndpoint,
+      contentSourceWithoutId.environment,
+      contentSourceWithoutId.authType,
+      contentSourceWithoutId.contentSourceSettings
+    )
   }
 
   def apply(id: String, environment: String, contentSource: ContentWithoutIdAndEnvironment): ContentSource = {
     val id = UUID.randomUUID().toString
-    ContentSource(id, contentSource.appName, contentSource.description, contentSource.reindexEndpoint, environment, contentSource.authType, contentSource.contentSourceSettings)
+    ContentSource(
+      id,
+      contentSource.appName,
+      contentSource.description,
+      contentSource.reindexEndpoint,
+      environment,
+      contentSource.authType,
+      contentSource.contentSourceSettings
+    )
   }
 }
