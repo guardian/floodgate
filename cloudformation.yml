@@ -29,6 +29,10 @@ Parameters:
     SSLCertificate:
         Description: 'The ARN of the SSL certificate to use for the ELB'
         Type: String
+    BuiltVersion:
+        Description: 'The version number of the compiled .tgz'
+        Type: String
+        Default: "0.1.0-SNAPSHOT"
 Resources:
     RootRole:
         Type: AWS::IAM::Role
@@ -144,10 +148,10 @@ Resources:
                         echo 'STAGE=${Stage}' > /etc/gu/install_vars
                         aws s3 cp s3://content-api-dist/${Stack}/${Stage}/content-api-floodgate/content-api-floodgate.service /etc/systemd/system/floodgate.service
                         aws s3 cp s3://content-api-config/content-api-floodgate/${Stage}/floodgate.conf /etc/gu/floodgate.conf
-                        aws s3 cp s3://content-api-dist/${Stack}/${Stage}/content-api-floodgate/content-api-floodgate-0.1-SNAPSHOT.tgz .
+                        aws s3 cp s3://content-api-dist/${Stack}/${Stage}/content-api-floodgate/content-api-floodgate-${BuiltVersion}.tgz .
 
-                        tar xfv content-api-floodgate-0.1-SNAPSHOT.tgz
-                        mv content-api-floodgate-0.1-SNAPSHOT floodgate
+                        tar xfv content-api-floodgate-${BuiltVersion}.tgz
+                        mv content-api-floodgate-${BuiltVersion} floodgate
 
                         chown -R content-api /home/content-api /etc/gu
                         chgrp -R content-api /home/content-api /etc/gu
