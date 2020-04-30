@@ -9,7 +9,7 @@
     "babel-preset-es2015": "^6.0.15",
     "babel-preset-react": "^6.0.15",
     "history": "1.17.0",
-    "jquery": "^1.11.3",
+    "jquery": "^3.5.0",
     "moment": "^2.19.x",
     "node-sass": "^3.3.3",
     "ramda": "^0.19.1",
