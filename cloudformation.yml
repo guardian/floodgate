@@ -129,7 +129,7 @@ Resources:
             AssociatePublicIpAddress: true
             SecurityGroups:
                 - !Ref ApplicationSecurityGroup
-            InstanceType: t3.nano
+            InstanceType: t3.small
             IamInstanceProfile: !Ref InstanceProfile
             UserData:
                 Fn::Base64:
