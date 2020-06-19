@@ -29,6 +29,28 @@ table tbody tr .navbar-brand {
     padding: 0;
 }
 
+#job-history
+    .in-progress-orange {
+        color: white;
+        background-color: orange;
+    }
+    .in-progress-yellow {
+        color: black;
+        background-color: yellow;
+    }
+    .in-progress-green {
+        color: black;
+        background-color: lightgreen;
+    }
+    .completed, .cancelled, .stopped {
+        color: black;
+        background-color: #d9d9d9;
+    }
+    .failed {
+        color: white;
+        background-color: red;
+    }
+
 .margin-bottom-10 {
     margin-bottom: 10px;
 }

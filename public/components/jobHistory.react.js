@@ -12,8 +12,21 @@ export default class JobHistory extends React.Component {
 
     render () {
         const jobHistoryNodes = this.props.data.map(jobHistory => {
+            const now = new Date().valueOf();
+            const started = new Date(jobHistory.startTime).valueOf();
+            const elapsedMins = (now - started) / 60000;
+            const yellowMins = 15;
+            const orangeMins = 20;
+            const rowClassName = jobHistory.status === "in progress"
+              ? (elapsedMins >= orangeMins)
+                ? "in-progress-orange"
+                : (elapsedMins >= yellowMins)
+                  ? "in-progress-yellow"
+                  : "in-progress-green"
+              : jobHistory.status;
+
             return (
-                <tr key={jobHistory.startTime}>
+                <tr key={jobHistory.startTime} className={rowClassName}>
                     <td>{jobHistory.status}</td>
                     <td><JobHistoryDateRange rangeFrom={jobHistory.rangeFrom} rangeTo={jobHistory.rangeTo} /></td>
                     <td>{ new Date(jobHistory.startTime).toUTCString() }</td>
@@ -27,7 +40,7 @@ export default class JobHistory extends React.Component {
                 {R.isEmpty(jobHistoryNodes) ?
                     <p>No reindex history. Have you initiated a reindex for this content via Floodgate before?</p>
                     :
-                    <Table striped hover>
+                    <Table hover>
                         <thead>
                             <tr>
                                 <th>Status</th>
