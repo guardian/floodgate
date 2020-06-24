@@ -39,9 +39,6 @@ export default class NavigationComponent extends React.Component {
                         </NavDropdown>
                     </Nav>
                 </Navbar.Collapse>
-                <Navbar.Header>
-                    <Navbar.Brand>WARNING: YOU ARE USING A BRANCH BUILD</Navbar.Brand>
-                </Navbar.Header>
             </Navbar>
         );
     }
