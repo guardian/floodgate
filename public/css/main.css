@@ -29,6 +29,22 @@ table tbody tr .navbar-brand {
     padding: 0;
 }
 
+#job-history {
+    color: black;
+}
+
+#job-history
+    .completed {
+        background-color: lightgreen;
+    }
+    .cancelled {
+        background-color: orange;
+    }
+    .stopped, .failed {
+        color: white;
+        background-color: palevioletred;
+    }
+
 .margin-bottom-10 {
     margin-bottom: 10px;
 }

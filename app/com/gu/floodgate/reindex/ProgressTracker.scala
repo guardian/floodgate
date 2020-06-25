@@ -91,6 +91,7 @@ class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHis
           logger.warn(
             s"Content source with id: ${contentSource.id} appears to be returning progress updates in an incorrect format. Marking reindex as cancelled and stop monitoring reindex."
           )
+          // TODO: try to cancel the reindex op on the source, rather than just stop paying any attention to it
           completeProgressTracking(Cancelled, contentSource, runningJob)
         },
         progress => actOnProgress(progress, contentSource, runningJob)
@@ -133,20 +134,14 @@ class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHis
           runningJob.rangeFrom,
           runningJob.rangeTo
         )
-        val periodIndexing = Minutes.minutesBetween(runningJobUpdate.startTime, DateTime.now())
 
-        val jobHasStalled: Boolean = runningJobUpdate.documentsIndexed == 0 && (periodIndexing.getMinutes - 10) >= 0
+        runningJobService.updateRunningJob(
+          runningJob.contentSourceId,
+          runningJob.contentSourceEnvironment,
+          runningJobUpdate
+        )
+        scheduleNextUpdate(contentSource, runningJob)
 
-        if (jobHasStalled) {
-          completeProgressTracking(Failed, contentSource, runningJobUpdate)
-        } else {
-          runningJobService.updateRunningJob(
-            runningJob.contentSourceId,
-            runningJob.contentSourceEnvironment,
-            runningJobUpdate
-          )
-          scheduleNextUpdate(contentSource, runningJob)
-        }
       case _ =>
         logger.warn(
           s"Incorrect status sent from client: ${progress.status.toString} for content source: ${contentSource.id}"
