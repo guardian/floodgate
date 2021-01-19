@@ -8,10 +8,12 @@ enablePlugins(PlayScala, RiffRaffArtifact)
 
 resolvers += "Sonatype releases" at "https://oss.sonatype.org/content/repositories/releases"
 
+val awsClientVersion = "1.11.939"
+
 libraryDependencies ++= Seq(
   ws,
-  "com.amazonaws"              % "aws-java-sdk-kinesis"  % "1.11.568",
-  "com.amazonaws"              % "aws-java-sdk-dynamodb" % "1.11.568",
+  "com.amazonaws"              % "aws-java-sdk-kinesis"  % awsClientVersion,
+  "com.amazonaws"              % "aws-java-sdk-dynamodb" % awsClientVersion,
   "com.typesafe.scala-logging" %% "scala-logging"        % "3.9.2",
   "com.typesafe.play"          %% "play-json"            % "2.6.13",
   "com.typesafe.play"          %% "play-json-joda"       % "2.6.13",
