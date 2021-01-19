@@ -25,7 +25,7 @@ class ReindexService(
       environment: String,
       dateParameters: DateParameters
   )(implicit ec: ExecutionContext): Future[Either[CustomError, RunningJob]] = {
-    logger.info("Reindex requested for content source: $id")
+    logger.info(s"Reindex requested for content source: $id")
     val contentSourceOrError = contentSourceService.getContentSource(id, environment)
     val isRunning = isReindexRunning(id, environment)
 
