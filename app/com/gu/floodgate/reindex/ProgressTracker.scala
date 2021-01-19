@@ -132,7 +132,10 @@ class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHis
         )
         completeProgressTracking(Completed, contentSource, runningJobUpdate)
 
-      case Failed => completeProgressTracking(Failed, contentSource, runningJob)
+      case Failed => {
+        logger.warn(s"Completing progress tracking after failed process update status from: ${contentSource.id}")
+        completeProgressTracking(Failed, contentSource, runningJob)
+      }
 
       case InProgress =>
         val runningJobUpdate = RunningJob(
