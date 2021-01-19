@@ -91,9 +91,19 @@ class ContentSourceApi(
           case Right(dp: DateParameters) =>
             reindexService.reindex(id, environment, dp) map {
               case Right(runningJob) => Ok(Json.toJson(runningJob))
-              case Left(error)       => BadRequest(Json.toJson(ErrorResponse(error.message)))
+              case Left(customError) => {
+                logger.warn(
+                  s"Content source with id: $id returned custom error in response to a reindex request: ${customError.message}"
+                )
+                BadRequest(Json.toJson(ErrorResponse(customError.message)))
+              }
             }
-          case Left(error) => Future.successful(BadRequest(Json.toJson(ErrorResponse(error.message))))
+          case Left(error) => {
+            logger.error(
+              s"Content source with id: $id returned error in response to a reindex request: ${error.message}"
+            )
+            Future.successful(BadRequest(Json.toJson(ErrorResponse(error.message))))
+          }
         }
       }
 
