@@ -62,7 +62,7 @@ class ReindexService(
       dateParameters: DateParameters
   )(implicit ec: ExecutionContext): Future[Either[CustomError, RunningJob]] = {
     val reindexUrl: String = contentSource.reindexEndpointWithDateParams(dateParameters)
-    logger.info(s"Requesting reindex from urL: ${reindexUrl}")
+    logger.info(s"Requesting reindex from url: ${reindexUrl}")
     ws.url(reindexUrl).post("") flatMap { response =>
       response.status match {
         case 200 | 201 =>
