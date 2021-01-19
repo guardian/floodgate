@@ -77,9 +77,19 @@ class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHis
       case Success(response) =>
         response.status match {
           case 200 => onSuccess(response, contentSource, runningJob)
-          case _   => onFailure(contentSource, runningJob)
+          case _   => {
+            logger.warn(
+              s"Content source with id: ${contentSource.id} returned a http ${response.status} response to a progress request: ${response.body}"
+            )
+            onFailure(contentSource, runningJob)
+          }
         }
-      case Failure(e) => onFailure(contentSource, runningJob)
+      case Failure(e) => {
+        logger.error(
+          s"Failure while calling content source: ${contentSource.id} for progress request: ${e.getMessage}"
+        )
+        onFailure(contentSource, runningJob)
+      }
     }
   }
 
