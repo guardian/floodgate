@@ -1,9 +1,8 @@
 package com.gu.floodgate.reindex
 
 import akka.actor.ActorRef
-Limport com.gu.floodgate._
+import com.gu.floodgate._
 import com.gu.floodgate.contentsource.{ContentSource, ContentSourceService}
-import com.gu.floodgate.jobhistory.JobHistoryService
 import com.gu.floodgate.reindex.ProgressTrackerController.{LaunchTracker, RemoveTracker}
 import com.gu.floodgate.runningjob.{RunningJob, RunningJobService}
 import com.typesafe.scalalogging.StrictLogging
@@ -14,7 +13,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class ReindexService(
     contentSourceService: ContentSourceService,
     runningJobService: RunningJobService,
-    jobHistoryService: JobHistoryService,
     reindexProgressMonitor: ActorRef,
     ws: WSClient
 ) extends StrictLogging {
