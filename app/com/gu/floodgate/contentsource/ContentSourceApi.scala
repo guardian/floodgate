@@ -90,7 +90,9 @@ class ContentSourceApi(
         DateParameters(from, to) match {
           case Right(dp: DateParameters) =>
             reindexService.reindex(id, environment, dp) map {
-              case Right(runningJob) => Ok(Json.toJson(runningJob))
+              case Right(runningJob) =>
+                logger.info(s"Returning running job for: ${runningJob.contentSourceId}")
+                Ok(Json.toJson(runningJob))
               case Left(customError) => {
                 logger.warn(
                   s"Content source with id: $id returned custom error in response to a reindex request: ${customError.message}"
