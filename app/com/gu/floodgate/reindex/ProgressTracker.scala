@@ -170,7 +170,7 @@ class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHis
       context.stop(self)
     }
 
-    logger.info(s"Completing progress tracking for jon from '${contentSource.id}' with reindex status: ${status}")
+    logger.info(s"Completing progress tracking for job from '${contentSource.id}' with reindex status: ${status}")
     val jobHistory = JobHistory(
       runningJob.contentSourceId,
       runningJob.startTime,
