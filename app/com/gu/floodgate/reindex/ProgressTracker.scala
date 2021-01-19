@@ -111,6 +111,7 @@ class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHis
   private def onFailure(contentSource: ContentSource, runningJob: RunningJob): Unit = {
     if (FailedAttemptsToRetrieveProgressLimit == failedAttemptsToRetrieveProgress) {
       failedAttemptsToRetrieveProgress = 0
+      logger.warn(s"Failing reindex after $failedAttemptsToRetrieveProgress failed attempts to get progress")
       completeProgressTracking(Failed, contentSource, runningJob)
     } else {
       failedAttemptsToRetrieveProgress += 1
@@ -132,7 +133,10 @@ class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHis
         )
         completeProgressTracking(Completed, contentSource, runningJobUpdate)
 
-      case Failed => completeProgressTracking(Failed, contentSource, runningJob)
+      case Failed => {
+        logger.warn(s"Failing reindex failed progress update from content source")
+        completeProgressTracking(Failed, contentSource, runningJob)
+      }
 
       case InProgress =>
         val runningJobUpdate = RunningJob(
