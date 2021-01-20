@@ -134,7 +134,10 @@ class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHis
         completeProgressTracking(Completed, contentSource, runningJobUpdate)
 
       case Failed => {
-        logger.warn(s"Failing reindex failed progress update from content source")
+        logger.warn(s"Failing reindex after failed progress update from content source: " +
+          s"Documents expected: ${progress.documentsExpected}, " +
+          s"Documents indexed: ${progress.documentsIndexed}," +
+          s"Status: ${progress.status}")
         completeProgressTracking(Failed, contentSource, runningJob)
       }
 
