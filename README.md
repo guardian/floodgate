@@ -28,3 +28,25 @@ $ sbt test
 ## Integrating with Floodgate
 
 If you are implementing a new content source and you want to reindex your content using Floodgate, please refer to [this doc](docs/implementing-a-content-source.md)
+
+
+## Requesting a reindex
+
+Floodgate can be used to request a bulk reindex of an entire stack or a partial reindex from a specific content source.
+
+### Bulk reindex
+
+Will request reindexing of all content from all registered content sources for given stack.
+
+Click Bulk Reindexer and select a Stack / Stage pair.
+
+![Bulk reindexer UI](docs/bulk.png)
+
+### Partial reindex
+
+Select a content source from the Content Sources dropdown.
+Select the stack.
+Set the date range to filter the range of content to be reindexed.
+
+
+![Partial reindex UI](docs/partial.png)
