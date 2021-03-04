@@ -78,7 +78,6 @@ class AppComponents(context: Context)
   val reindexService = new ReindexService(
     contentSourceService,
     runningJobService,
-    jobHistoryService,
     progressTrackerControllerActor,
     wsClient
   )

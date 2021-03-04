@@ -1,21 +1,18 @@
 package com.gu.floodgate.reindex
 
 import akka.actor.ActorRef
-import cats.syntax.either._
 import com.gu.floodgate._
 import com.gu.floodgate.contentsource.{ContentSource, ContentSourceService}
-import com.gu.floodgate.jobhistory.JobHistoryService
 import com.gu.floodgate.reindex.ProgressTrackerController.{LaunchTracker, RemoveTracker}
 import com.gu.floodgate.runningjob.{RunningJob, RunningJobService}
 import com.typesafe.scalalogging.StrictLogging
 import play.api.libs.ws.WSClient
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class ReindexService(
     contentSourceService: ContentSourceService,
     runningJobService: RunningJobService,
-    jobHistoryService: JobHistoryService,
     reindexProgressMonitor: ActorRef,
     ws: WSClient
 ) extends StrictLogging {
@@ -28,6 +25,7 @@ class ReindexService(
       environment: String,
       dateParameters: DateParameters
   )(implicit ec: ExecutionContext): Future[Either[CustomError, RunningJob]] = {
+    logger.info(s"Reindex requested for content source: $id")
     val contentSourceOrError = contentSourceService.getContentSource(id, environment)
     val isRunning = isReindexRunning(id, environment)
 
@@ -64,6 +62,7 @@ class ReindexService(
       dateParameters: DateParameters
   )(implicit ec: ExecutionContext): Future[Either[CustomError, RunningJob]] = {
     val reindexUrl: String = contentSource.reindexEndpointWithDateParams(dateParameters)
+    logger.info(s"Requesting reindex from url: ${reindexUrl}")
     ws.url(reindexUrl).post("") flatMap { response =>
       response.status match {
         case 200 | 201 =>

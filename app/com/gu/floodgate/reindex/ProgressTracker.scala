@@ -111,6 +111,7 @@ class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHis
   private def onFailure(contentSource: ContentSource, runningJob: RunningJob): Unit = {
     if (FailedAttemptsToRetrieveProgressLimit == failedAttemptsToRetrieveProgress) {
       failedAttemptsToRetrieveProgress = 0
+      logger.warn(s"Failing reindex after $failedAttemptsToRetrieveProgress failed attempts to get progress")
       completeProgressTracking(Failed, contentSource, runningJob)
     } else {
       failedAttemptsToRetrieveProgress += 1
@@ -132,7 +133,13 @@ class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHis
         )
         completeProgressTracking(Completed, contentSource, runningJobUpdate)
 
-      case Failed => completeProgressTracking(Failed, contentSource, runningJob)
+      case Failed => {
+        logger.warn(s"Failing reindex after failed progress update from content source: " +
+          s"Documents expected: ${progress.documentsExpected}, " +
+          s"Documents indexed: ${progress.documentsIndexed}," +
+          s"Status: ${progress.status}")
+        completeProgressTracking(Failed, contentSource, runningJob)
+      }
 
       case InProgress =>
         val runningJobUpdate = RunningJob(
@@ -170,6 +177,7 @@ class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHis
       context.stop(self)
     }
 
+    logger.info(s"Completing progress tracking for job from '${contentSource.id}' with reindex status: ${status}")
     val jobHistory = JobHistory(
       runningJob.contentSourceId,
       runningJob.startTime,
