@@ -14,7 +14,7 @@ deployments:
     type: ami-cloudformation-parameter
     parameters:
       amiTags:
-        Recipe: ubuntu-xenial-java8
+        Recipe: ubuntu-bionic-capi
         AmigoStage: PROD
       cloudFormationStackName: content-api-floodgate
       prependStackToCloudFormationStackName: false
