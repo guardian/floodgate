@@ -11,7 +11,7 @@
     "history": "1.17.0",
     "jquery": "^1.11.3",
     "moment": "^2.19.x",
-    "node-sass": "^3.3.3",
+    "node-sass": "^3.13.1",
     "ramda": "^0.19.1",
     "react": "^0.14.7",
     "react-addons-update": "^0.14.7",
