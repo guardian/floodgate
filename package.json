@@ -20,7 +20,8 @@
     "react-interval": "^1.2.1",
     "react-router": "^1.0.0",
     "reqwest": "^2.0.5",
-    "webpack": "^5.37.0"
+    "webpack": "^5.37.0",
+    "webpack-cli": "^4.7.0"
   },
   "scripts": {
     "build": "webpack ./public/app.js ./public/build/app.js --config ./public/build_config/webpack.prod.conf.js",
