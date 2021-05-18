@@ -1,4 +1,5 @@
 var webpack = require('webpack');
+var path = require('path');
 
 module.exports = {
   module: {
@@ -28,7 +29,9 @@ module.exports = {
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
   ],
   resolve: {
-    modules: ['node_modules'],
     extensions: ['.js', '.jsx', '.json']
-  }
+  },
+  resolveLoader: {
+    roots: [path.join(__dirname, '..', 'node_modules')]
+  },
 };
