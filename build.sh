@@ -24,5 +24,11 @@ else
 fi
 
 nvm use
+
+test $(which yarn)
+if [ $? != "0" ]; then
+    npm install -g yarn
+fi
+
 yarn install
 yarn build
