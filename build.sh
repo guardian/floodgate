@@ -24,6 +24,5 @@ else
 fi
 
 nvm use
-npm install
-npm run build
-
+yarn install
+yarn build

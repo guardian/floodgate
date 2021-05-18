@@ -1,13 +1,21 @@
 var webpack = require('webpack');
-var path = require('path');
 
 module.exports = {
   module: {
-    loaders: [
+    rules: [
       {
         test:    /\.js$/,
         exclude: /node_modules/,
-        loaders: ['babel?presets[]=es2015&presets[]=react&plugins[]=transform-object-assign']
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+                ['@babel/preset-env', { targets: "defaults" }],
+                ['@babel/preset-react']
+            ],
+            plugins: ["transform-object-assign"]
+          }
+        }
       }
     ]
   },
@@ -18,18 +26,9 @@ module.exports = {
       }
     }),
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-    new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      }
-    })
   ],
-  resolveLoader: {
-    root: path.join(__dirname, '..', 'node_modules')
-  },
-
   resolve: {
-    extensions: ['', '.js', '.jsx', '.json']
+    modules: ['node_modules'],
+    extensions: ['.js', '.jsx', '.json']
   }
 };
