@@ -1,6 +1,10 @@
 var path = require('path');
 
 module.exports = {
+  entry: "./public/app.js",
+  output: {
+    filename: "./public/build/app.js"
+  },
   devtool: 'source-map',
   module: {
     rules: [

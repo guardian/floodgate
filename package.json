@@ -25,7 +25,7 @@
     "webpack-cli": "^4.7.0"
   },
   "scripts": {
-    "build": "webpack --mode=production ./public/app.js ./public/build/app.js --config ./public/build_config/webpack.prod.conf.js",
-    "build-dev": "webpack --mode=production ./public/app.js ./public/build/app.js --config ./public/build_config/webpack.dev.conf.js --watch"
+    "build": "webpack --mode=production --config ./public/build_config/webpack.prod.conf.js",
+    "build-dev": "webpack --mode=production --config ./public/build_config/webpack.dev.conf.js --watch"
   }
 }
