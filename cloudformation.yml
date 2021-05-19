@@ -85,7 +85,7 @@ Resources:
                           - ec2:DescribeTags
                       Resource: "*"
             Roles:
-                - !Ref: RootRole
+                - !Ref RootRole
 
     Ec2DescribeAutoScalingGroupsPolicy:
         Type: AWS::IAM::Policy
