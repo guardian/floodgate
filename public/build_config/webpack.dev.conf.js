@@ -1,25 +1,46 @@
 var path = require('path');
 
 module.exports = {
+  entry: "./public/app.js",
+  output: {
+    filename: "./public/build/app.js"
+  },
   devtool: 'source-map',
   module: {
-    loaders: [
+    rules: [
       {
         test:    /\.js$/,
         exclude: /node_modules/,
-        loaders: ['babel?presets[]=es2015&presets[]=react&plugins[]=transform-object-assign']
-      }
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              ['@babel/preset-env', { targets: "defaults" }],
+              ['@babel/preset-react']
+            ],
+            plugins: ["transform-object-assign"]
+          }
+        }
+      },
+      {
+        test: /\.s[ac]ss$/i,
+        use: [
+          "style-loader",
+          "css-loader",
+          {
+            loader: "sass-loader",
+            options: {
+              sassOptions: {
+                includePaths: [path.resolve(__dirname, '../style')],
+              },
+            },
+          },
+        ],
+      },
     ]
   },
-  resolveLoader: {
-    root: path.join(__dirname, '..', 'node_modules')
-  },
-
-  sassLoader: {
-    includePaths: [path.resolve(__dirname, '../style')]
-  },
-
   resolve: {
-    extensions: ['', '.js', '.jsx', '.json', '.scss']
+    modules: ['node_modules'],
+    extensions: ['.js', '.jsx', '.json', '.scss']
   }
 };
