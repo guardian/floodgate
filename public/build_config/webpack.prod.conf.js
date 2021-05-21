@@ -1,10 +1,11 @@
-var webpack = require('webpack');
-var path = require('path');
+const webpack = require('webpack');
+const path = require('path');
 
 module.exports = {
   entry: "./public/app.js",
   output: {
-    filename: "./public/build/app.js"
+    filename: "app.js",
+    path: path.resolve("./public/build")
   },
   module: {
     rules: [

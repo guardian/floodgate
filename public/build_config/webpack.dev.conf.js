@@ -1,9 +1,10 @@
-var path = require('path');
+const path = require('path');
 
 module.exports = {
   entry: "./public/app.js",
   output: {
-    filename: "./public/build/app.js"
+    filename: "app.js",
+    path: path.resolve("./public/build")
   },
   devtool: 'source-map',
   module: {
