@@ -214,9 +214,9 @@ Resources:
             VpcId: !Ref VPC
             SecurityGroupEgress:
                 - IpProtocol: tcp
-                FromPort: 1514
-                ToPort: 1515
-                CidrIp: 0.0.0.0/0
+                  FromPort: 1514
+                  ToPort: 1515
+                  CidrIp: 0.0.0.0/0
 
 Outputs:
     LoadBalancer:
