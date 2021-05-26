@@ -16,6 +16,7 @@ deployments:
       amiTags:
         Recipe: ubuntu-bionic-capi
         AmigoStage: PROD
+      amiEncrypted: true
       cloudFormationStackName: content-api-floodgate
       prependStackToCloudFormationStackName: false
       cloudFormationStackByTags: false
