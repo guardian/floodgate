@@ -113,7 +113,7 @@ class AppComponents(context: Context)
     )
   }
   val authAction =
-    new AuthAction[AnyContent](authConfig, routes.Login.loginAction(), controllerComponents.parsers.default)(
+    new AuthAction[AnyContent](authConfig, routes.Login.loginAction, controllerComponents.parsers.default)(
       executionContext
     )
 
