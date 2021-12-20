@@ -40,9 +40,9 @@ class Login(val authConfig: GoogleAuthConfig, val wsClient: WSClient, val conf: 
   }
 
   def logout = Action { implicit request =>
-    Redirect(routes.Application.index()).withNewSession
+    Redirect(routes.Application.index).withNewSession
   }
 
-  override val failureRedirectTarget: Call = routes.Login.login()
-  override val defaultRedirectTarget: Call = routes.Application.index()
+  override val failureRedirectTarget: Call = routes.Login.login
+  override val defaultRedirectTarget: Call = routes.Application.index
 }
