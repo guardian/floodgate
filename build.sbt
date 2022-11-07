@@ -8,22 +8,25 @@ enablePlugins(PlayScala, RiffRaffArtifact)
 
 resolvers += "Sonatype releases" at "https://oss.sonatype.org/content/repositories/releases"
 
-val awsClientVersion = "1.11.939"
+val awsClientVersion = "1.12.332"
 
 libraryDependencies ++= Seq(
   ws,
   "com.amazonaws"              % "aws-java-sdk-kinesis"  % awsClientVersion,
   "com.amazonaws"              % "aws-java-sdk-dynamodb" % awsClientVersion,
-  "com.typesafe.scala-logging" %% "scala-logging"        % "3.9.2",
-  "com.typesafe.play"          %% "play-json"            % "2.6.13",
-  "com.typesafe.play"          %% "play-json-joda"       % "2.6.13",
-  "com.typesafe.play"          %% "play-logback"         % "2.6.23",
-  "com.typesafe.play"          %% "play-specs2"          % "2.6.23",
+  "com.typesafe.scala-logging" %% "scala-logging"        % "3.9.5",
+  "com.typesafe.play"          %% "play-json"            % "2.9.3",
+  "com.typesafe.play"          %% "play-json-joda"       % "2.9.3",
+  "com.typesafe.play"          %% "play-logback"         % "2.8.18",
+  "com.typesafe.play"          %% "play-specs2"          % "2.8.18",
   "com.gu"                     %% "play-googleauth"      % "0.7.7",
   "org.scanamo"                %% "scanamo"              % "1.0.0-M10",
   "org.scanamo"                %% "scanamo-joda"         % "1.0.0-M10",
   "org.scalatest"              %% "scalatest"            % "3.0.4" % "test",
-  "org.typelevel"              %% "cats-core"            % "1.6.1"
+  "org.typelevel"              %% "cats-core"            % "1.6.1",
+
+  //required to make jackson work
+  "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.12.7"
 )
 
 routesGenerator := InjectedRoutesGenerator
@@ -33,7 +36,3 @@ riffRaffUploadArtifactBucket := Option("riffraff-artifact")
 riffRaffUploadManifestBucket := Option("riffraff-builds")
 riffRaffManifestProjectName := "Content Platforms::floodgate"
 
-initialize := {
-  val _ = initialize.value
-  assert(sys.props("java.specification.version") == "1.8", "Java 8 is required for this project.")
-}
