@@ -1,3 +1,6 @@
+import com.typesafe.sbt.packager.archetypes.systemloader.ServerLoader.Systemd
+enablePlugins(JavaServerAppPackaging, SystemdPlugin)
+
 name := "content-api-floodgate"
 organization := "com.gu"
 description := "The Content API reindexing control panel"
@@ -31,8 +34,13 @@ libraryDependencies ++= Seq(
 
 routesGenerator := InjectedRoutesGenerator
 
-riffRaffPackageType := (packageZipTarball in Universal).value
-riffRaffUploadArtifactBucket := Option("riffraff-artifact")
-riffRaffUploadManifestBucket := Option("riffraff-builds")
-riffRaffManifestProjectName := "Content Platforms::floodgate"
+Universal / packageName := normalizedName.value
+maintainer := "Guardian Content Platforms <content-platforms.dev@theguardian.com>"
+
+Debian / serverLoading := Some(Systemd)
+Debian / daemonUser := "content-api"
+Debian / daemonGroup := "content-api"
+
+//riffRaffManifestProjectName := "Content Platforms::floodgate"
+
 
