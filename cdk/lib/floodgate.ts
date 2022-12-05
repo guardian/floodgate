@@ -45,6 +45,7 @@ export class Floodgate extends GuStack {
       app: "floodgate",
       applicationLogging: {
         enabled: true,
+        systemdUnitName: "content-api-floodgate"
       },
       roleConfiguration: {
         additionalPolicies: [

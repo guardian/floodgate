@@ -120,7 +120,7 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
           {
             "Key": "SystemdUnit",
             "PropagateAtLaunch": true,
-            "Value": "floodgate.service",
+            "Value": "content-api-floodgate.service",
           },
         ],
         "TargetGroupARNs": [
@@ -186,17 +186,19 @@ mkdir -p /etc/gu
 mkdir logs
 
 echo 'STAGE=TEST' > /etc/gu/install_vars
-aws s3 cp s3://content-api-dist/content-api-floodgate/TEST/content-api-floodgate/content-api-floodgate.service /etc/systemd/system/floodgate.service
 aws s3 cp s3://content-api-config/content-api-floodgate/TEST/floodgate.conf /etc/gu/floodgate.conf
-aws s3 cp s3://content-api-dist/content-api-floodgate/TEST/content-api-floodgate/content-api-floodgate-0.1.0-SNAPSHOT.tgz .
+aws s3 cp s3://content-api-dist/content-api-floodgate/TEST/content-api-floodgate/content-api-floodgate_1.0_all.deb .
 
-tar xfv content-api-floodgate-0.1.0-SNAPSHOT.tgz
-mv content-api-floodgate-0.1.0-SNAPSHOT floodgate
+dpkg -i content-api-floodgate_1.0_all.deb
+
+echo JAVA_OPTS=\\"-Dpidfile.path=/var/run/floodgate/floodgate.pid -Dconfig.file=/etc/gu/floodgate.conf\\" >> /etc/default/floodgate
 
 chown -R content-api /home/content-api /etc/gu
 chgrp -R content-api /home/content-api /etc/gu
 
-systemctl start floodgate",
+systemctl start content-api-floodgate
+
+ln -s /usr/share/content-api-floodgate floodgate",
         },
       },
       "Type": "AWS::AutoScaling::LaunchConfiguration",

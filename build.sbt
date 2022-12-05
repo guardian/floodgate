@@ -8,8 +8,6 @@ scalaVersion := "2.12.8"
 scalacOptions ++= Seq("-feature", "-deprecation", "-unchecked", "-target:jvm-1.8")
 version := "1.0"
 
-enablePlugins(PlayScala, RiffRaffArtifact)
-
 resolvers += "Sonatype releases" at "https://oss.sonatype.org/content/repositories/releases"
 
 val awsClientVersion = "1.12.332"
@@ -28,6 +26,7 @@ libraryDependencies ++= Seq(
   "org.scanamo"                %% "scanamo-joda"         % "1.0.0-M10",
   "org.scalatest"              %% "scalatest"            % "3.0.4" % "test",
   "org.typelevel"              %% "cats-core"            % "1.6.1",
+  "net.logstash.logback" % "logstash-logback-encoder" % "7.2",
 
   //required to make jackson work
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.12.7"

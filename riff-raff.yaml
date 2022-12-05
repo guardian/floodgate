@@ -9,14 +9,17 @@ deployments:
     type: autoscaling
     parameters:
       bucketSsmLookup: true
-    dependencies: [ content-api-floodgate-ami-update ]
-  content-api-floodgate-ami-update:
-    type: ami-cloudformation-parameter
+    dependencies: [ cloudformation ]
+  cloudformation:
+    type: cloud-formation
+    app: content-api-floodgate
     parameters:
-      amiTags:
-        Recipe: ubuntu-bionic-capi
-        AmigoStage: PROD
+      templateStagePaths:
+        CODE: Floodgate-CODE.template.json
+        PROD: Floodgate-PROD.template.json
+      amiParameter: AMIFloodgate
       amiEncrypted: true
-      cloudFormationStackName: content-api-floodgate
-      prependStackToCloudFormationStackName: false
-      cloudFormationStackByTags: false
+      amiTags:
+        Recipe: ubuntu-focal-capi-x86-jdk11
+        AmigoStage: PROD
+        BuiltBy: amigo
