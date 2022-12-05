@@ -6,6 +6,7 @@ organization := "com.gu"
 description := "The Content API reindexing control panel"
 scalaVersion := "2.12.8"
 scalacOptions ++= Seq("-feature", "-deprecation", "-unchecked", "-target:jvm-1.8")
+version := "1.0"
 
 enablePlugins(PlayScala, RiffRaffArtifact)
 
@@ -34,13 +35,12 @@ libraryDependencies ++= Seq(
 
 routesGenerator := InjectedRoutesGenerator
 
-Universal / packageName := normalizedName.value
+Universal / packageName := "floodgate"
 maintainer := "Guardian Content Platforms <content-platforms.dev@theguardian.com>"
 
 Debian / serverLoading := Some(Systemd)
 Debian / daemonUser := "content-api"
 Debian / daemonGroup := "content-api"
 
-//riffRaffManifestProjectName := "Content Platforms::floodgate"
 
 
