@@ -1,5 +1,6 @@
 import com.typesafe.sbt.packager.archetypes.systemloader.ServerLoader.Systemd
-enablePlugins(JavaServerAppPackaging, SystemdPlugin)
+enablePlugins(JavaServerAppPackaging, SystemdPlugin, PlayScala, PlayAkkaHttpServer)
+disablePlugins(PlayNettyServer)
 
 name := "content-api-floodgate"
 organization := "com.gu"
@@ -29,7 +30,7 @@ libraryDependencies ++= Seq(
   "net.logstash.logback" % "logstash-logback-encoder" % "7.2",
 
   //required to make jackson work
-  "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.12.7"
+  "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.13.4"
 )
 
 routesGenerator := InjectedRoutesGenerator

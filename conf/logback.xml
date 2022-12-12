@@ -7,8 +7,6 @@
         <appender-ref ref="STDOUT" />
     </appender>
 
-    <logger name="com.gu.contentapi.sanity" level="INFO"/>
-
     <root level="WARN">
         <appender-ref ref="ASYNCSTDOUT"/>
     </root>

@@ -42,7 +42,7 @@ export class Floodgate extends GuStack {
         scope: AccessScope.RESTRICTED,
         cidrRanges: [Peer.ipv4("77.91.248.0/21")],
       },
-      app: "floodgate",
+      app: "content-api-floodgate",
       applicationLogging: {
         enabled: true,
         systemdUnitName: "content-api-floodgate"

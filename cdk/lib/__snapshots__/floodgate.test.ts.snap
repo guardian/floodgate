@@ -30,19 +30,19 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
     "gu:cdk:version": "TEST",
   },
   "Outputs": {
-    "LoadBalancerFloodgateDnsName": {
-      "Description": "DNS entry for LoadBalancerFloodgate",
+    "LoadBalancerContentapifloodgateDnsName": {
+      "Description": "DNS entry for LoadBalancerContentapifloodgate",
       "Value": {
         "Fn::GetAtt": [
-          "LoadBalancerFloodgateDC327D05",
+          "LoadBalancerContentapifloodgate340F3FB8",
           "DNSName",
         ],
       },
     },
   },
   "Parameters": {
-    "AMIFloodgate": {
-      "Description": "Amazon Machine Image ID for the app floodgate. Use this in conjunction with AMIgo to keep AMIs up to date.",
+    "AMIContentapifloodgate": {
+      "Description": "Amazon Machine Image ID for the app content-api-floodgate. Use this in conjunction with AMIgo to keep AMIs up to date.",
       "Type": "AWS::EC2::Image::Id",
     },
     "DistributionBucketName": {
@@ -70,12 +70,12 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
     },
   },
   "Resources": {
-    "AutoScalingGroupFloodgateASG36ADDFA4": {
+    "AutoScalingGroupContentapifloodgateASG6CE00146": {
       "Properties": {
         "HealthCheckGracePeriod": 120,
         "HealthCheckType": "ELB",
         "LaunchConfigurationName": {
-          "Ref": "AutoScalingGroupFloodgateLaunchConfig2A8AAE88",
+          "Ref": "AutoScalingGroupContentapifloodgateLaunchConfig73476C5B",
         },
         "MaxSize": "2",
         "MinSize": "1",
@@ -83,7 +83,7 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
           {
             "Key": "App",
             "PropagateAtLaunch": true,
-            "Value": "floodgate",
+            "Value": "content-api-floodgate",
           },
           {
             "Key": "gu:cdk:version",
@@ -105,7 +105,7 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
           {
             "Key": "Name",
             "PropagateAtLaunch": true,
-            "Value": "Floodgate/AutoScalingGroupFloodgate",
+            "Value": "Floodgate/AutoScalingGroupContentapifloodgate",
           },
           {
             "Key": "Stack",
@@ -125,7 +125,7 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
         ],
         "TargetGroupARNs": [
           {
-            "Ref": "TargetGroupFloodgate092E952B",
+            "Ref": "TargetGroupContentapifloodgateD7BCA3D5",
           },
         ],
         "VPCZoneIdentifier": {
@@ -134,26 +134,26 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
       },
       "Type": "AWS::AutoScaling::AutoScalingGroup",
     },
-    "AutoScalingGroupFloodgateInstanceProfile73078994": {
+    "AutoScalingGroupContentapifloodgateInstanceProfileF0AFD620": {
       "Properties": {
         "Roles": [
           {
-            "Ref": "InstanceRoleFloodgateD40815ED",
+            "Ref": "InstanceRoleContentapifloodgate4A6AA3CB",
           },
         ],
       },
       "Type": "AWS::IAM::InstanceProfile",
     },
-    "AutoScalingGroupFloodgateLaunchConfig2A8AAE88": {
+    "AutoScalingGroupContentapifloodgateLaunchConfig73476C5B": {
       "DependsOn": [
-        "InstanceRoleFloodgateD40815ED",
+        "InstanceRoleContentapifloodgate4A6AA3CB",
       ],
       "Properties": {
         "IamInstanceProfile": {
-          "Ref": "AutoScalingGroupFloodgateInstanceProfile73078994",
+          "Ref": "AutoScalingGroupContentapifloodgateInstanceProfileF0AFD620",
         },
         "ImageId": {
-          "Ref": "AMIFloodgate",
+          "Ref": "AMIContentapifloodgate",
         },
         "InstanceType": "t3.small",
         "MetadataOptions": {
@@ -162,7 +162,7 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
         "SecurityGroups": [
           {
             "Fn::GetAtt": [
-              "GuHttpsEgressSecurityGroupFloodgate35233042",
+              "GuHttpsEgressSecurityGroupContentapifloodgateE68A17B8",
               "GroupId",
             ],
           },
@@ -174,11 +174,19 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
           },
         ],
         "UserData": {
-          "Fn::Base64": "#!/bin/bash -ev
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash -ev
 
 adduser --disabled-password content-api
 
-aws configure set region \${Region}
+aws configure set region ",
+                {
+                  "Ref": "AWS::Region",
+                },
+                "
 
 cd /home/content-api
 
@@ -191,7 +199,7 @@ aws s3 cp s3://content-api-dist/content-api-floodgate/TEST/content-api-floodgate
 
 dpkg -i content-api-floodgate_1.0_all.deb
 
-echo JAVA_OPTS=\\"-Dpidfile.path=/var/run/floodgate/floodgate.pid -Dconfig.file=/etc/gu/floodgate.conf\\" >> /etc/default/floodgate
+echo JAVA_OPTS=\\"-Dpidfile.path=/var/run/content-api-floodgate/floodgate.pid -Dconfig.file=/etc/gu/floodgate.conf\\" >> /etc/default/content-api-floodgate
 
 chown -R content-api /home/content-api /etc/gu
 chgrp -R content-api /home/content-api /etc/gu
@@ -199,11 +207,14 @@ chgrp -R content-api /home/content-api /etc/gu
 systemctl start content-api-floodgate
 
 ln -s /usr/share/content-api-floodgate floodgate",
+              ],
+            ],
+          },
         },
       },
       "Type": "AWS::AutoScaling::LaunchConfiguration",
     },
-    "CertificateFloodgateEB86D1AF": {
+    "CertificateContentapifloodgate4F5519F6": {
       "DeletionPolicy": "Retain",
       "Properties": {
         "DomainName": "floodgate,capi.gutools.co.uk",
@@ -218,7 +229,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
         "Tags": [
           {
             "Key": "App",
-            "Value": "floodgate",
+            "Value": "content-api-floodgate",
           },
           {
             "Key": "gu:cdk:version",
@@ -230,7 +241,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
           },
           {
             "Key": "Name",
-            "Value": "Floodgate/CertificateFloodgate",
+            "Value": "Floodgate/CertificateContentapifloodgate",
           },
           {
             "Key": "Stack",
@@ -266,7 +277,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
         "PolicyName": "describe-ec2-policy",
         "Roles": [
           {
-            "Ref": "InstanceRoleFloodgateD40815ED",
+            "Ref": "InstanceRoleContentapifloodgate4A6AA3CB",
           },
         ],
       },
@@ -313,13 +324,13 @@ ln -s /usr/share/content-api-floodgate floodgate",
         "PolicyName": "FloodgatePolicyBB34B612",
         "Roles": [
           {
-            "Ref": "InstanceRoleFloodgateD40815ED",
+            "Ref": "InstanceRoleContentapifloodgate4A6AA3CB",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "GetDistributablePolicyFloodgateBD730B62": {
+    "GetDistributablePolicyContentapifloodgateDF61A68E": {
       "Properties": {
         "PolicyDocument": {
           "Statement": [
@@ -334,7 +345,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
                     {
                       "Ref": "DistributionBucketName",
                     },
-                    "/content-api-floodgate/TEST/floodgate/*",
+                    "/content-api-floodgate/TEST/content-api-floodgate/*",
                   ],
                 ],
               },
@@ -342,16 +353,16 @@ ln -s /usr/share/content-api-floodgate floodgate",
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "GetDistributablePolicyFloodgateBD730B62",
+        "PolicyName": "GetDistributablePolicyContentapifloodgateDF61A68E",
         "Roles": [
           {
-            "Ref": "InstanceRoleFloodgateD40815ED",
+            "Ref": "InstanceRoleContentapifloodgate4A6AA3CB",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "GuHttpsEgressSecurityGroupFloodgate35233042": {
+    "GuHttpsEgressSecurityGroupContentapifloodgateE68A17B8": {
       "Properties": {
         "GroupDescription": "Allow all outbound HTTPS traffic",
         "SecurityGroupEgress": [
@@ -366,7 +377,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
         "Tags": [
           {
             "Key": "App",
-            "Value": "floodgate",
+            "Value": "content-api-floodgate",
           },
           {
             "Key": "gu:cdk:version",
@@ -391,20 +402,20 @@ ln -s /usr/share/content-api-floodgate floodgate",
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "GuHttpsEgressSecurityGroupFloodgatefromFloodgateLoadBalancerFloodgateSecurityGroupC253F5F290004B5744D3": {
+    "GuHttpsEgressSecurityGroupContentapifloodgatefromFloodgateLoadBalancerContentapifloodgateSecurityGroup7ECF569F9000A46CE07E": {
       "Properties": {
         "Description": "Load balancer to target",
         "FromPort": 9000,
         "GroupId": {
           "Fn::GetAtt": [
-            "GuHttpsEgressSecurityGroupFloodgate35233042",
+            "GuHttpsEgressSecurityGroupContentapifloodgateE68A17B8",
             "GroupId",
           ],
         },
         "IpProtocol": "tcp",
         "SourceSecurityGroupId": {
           "Fn::GetAtt": [
-            "LoadBalancerFloodgateSecurityGroupA93A6D43",
+            "LoadBalancerContentapifloodgateSecurityGroup6BAE37E7",
             "GroupId",
           ],
         },
@@ -412,20 +423,20 @@ ln -s /usr/share/content-api-floodgate floodgate",
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
-    "GuHttpsEgressSecurityGroupFloodgatefromFloodgateRestrictedIngressSecurityGroupFloodgateFD0F7BC69000FD7433ED": {
+    "GuHttpsEgressSecurityGroupContentapifloodgatefromFloodgateRestrictedIngressSecurityGroupContentapifloodgate923A4F0790008DBFFA25": {
       "Properties": {
         "Description": "Load balancer to target",
         "FromPort": 9000,
         "GroupId": {
           "Fn::GetAtt": [
-            "GuHttpsEgressSecurityGroupFloodgate35233042",
+            "GuHttpsEgressSecurityGroupContentapifloodgateE68A17B8",
             "GroupId",
           ],
         },
         "IpProtocol": "tcp",
         "SourceSecurityGroupId": {
           "Fn::GetAtt": [
-            "RestrictedIngressSecurityGroupFloodgate68059A19",
+            "RestrictedIngressSecurityGroupContentapifloodgate7B667D75",
             "GroupId",
           ],
         },
@@ -469,13 +480,13 @@ ln -s /usr/share/content-api-floodgate floodgate",
         "PolicyName": "GuLogShippingPolicy981BFE5A",
         "Roles": [
           {
-            "Ref": "InstanceRoleFloodgateD40815ED",
+            "Ref": "InstanceRoleContentapifloodgate4A6AA3CB",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "High5xxPercentageAlarmFloodgateC32F9CF7": {
+    "High5xxPercentageAlarmContentapifloodgate8B57A90E": {
       "Properties": {
         "ActionsEnabled": true,
         "AlarmActions": [
@@ -496,15 +507,15 @@ ln -s /usr/share/content-api-floodgate floodgate",
             ],
           },
         ],
-        "AlarmDescription": "floodgate exceeded 0% error rate",
-        "AlarmName": "High 5XX error % from floodgate in TEST",
+        "AlarmDescription": "content-api-floodgate exceeded 0% error rate",
+        "AlarmName": "High 5XX error % from content-api-floodgate in TEST",
         "ComparisonOperator": "GreaterThanThreshold",
         "EvaluationPeriods": 2,
         "Metrics": [
           {
             "Expression": "100*(m1+m2)/m3",
             "Id": "expr_1",
-            "Label": "% of 5XX responses served for floodgate (load balancer and instances combined)",
+            "Label": "% of 5XX responses served for content-api-floodgate (load balancer and instances combined)",
           },
           {
             "Id": "m1",
@@ -515,7 +526,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
                     "Name": "LoadBalancer",
                     "Value": {
                       "Fn::GetAtt": [
-                        "LoadBalancerFloodgateDC327D05",
+                        "LoadBalancerContentapifloodgate340F3FB8",
                         "LoadBalancerFullName",
                       ],
                     },
@@ -538,7 +549,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
                     "Name": "LoadBalancer",
                     "Value": {
                       "Fn::GetAtt": [
-                        "LoadBalancerFloodgateDC327D05",
+                        "LoadBalancerContentapifloodgate340F3FB8",
                         "LoadBalancerFullName",
                       ],
                     },
@@ -561,7 +572,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
                     "Name": "LoadBalancer",
                     "Value": {
                       "Fn::GetAtt": [
-                        "LoadBalancerFloodgateDC327D05",
+                        "LoadBalancerContentapifloodgate340F3FB8",
                         "LoadBalancerFullName",
                       ],
                     },
@@ -581,7 +592,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "InstanceRoleFloodgateD40815ED": {
+    "InstanceRoleContentapifloodgate4A6AA3CB": {
       "Properties": {
         "AssumeRolePolicyDocument": {
           "Statement": [
@@ -599,7 +610,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
         "Tags": [
           {
             "Key": "App",
-            "Value": "floodgate",
+            "Value": "content-api-floodgate",
           },
           {
             "Key": "gu:cdk:version",
@@ -621,32 +632,32 @@ ln -s /usr/share/content-api-floodgate floodgate",
       },
       "Type": "AWS::IAM::Role",
     },
-    "ListenerFloodgate7D35F67E": {
+    "ListenerContentapifloodgate6128E3C3": {
       "Properties": {
         "Certificates": [
           {
             "CertificateArn": {
-              "Ref": "CertificateFloodgateEB86D1AF",
+              "Ref": "CertificateContentapifloodgate4F5519F6",
             },
           },
         ],
         "DefaultActions": [
           {
             "TargetGroupArn": {
-              "Ref": "TargetGroupFloodgate092E952B",
+              "Ref": "TargetGroupContentapifloodgateD7BCA3D5",
             },
             "Type": "forward",
           },
         ],
         "LoadBalancerArn": {
-          "Ref": "LoadBalancerFloodgateDC327D05",
+          "Ref": "LoadBalancerContentapifloodgate340F3FB8",
         },
         "Port": 443,
         "Protocol": "HTTPS",
       },
       "Type": "AWS::ElasticLoadBalancingV2::Listener",
     },
-    "LoadBalancerFloodgateDC327D05": {
+    "LoadBalancerContentapifloodgate340F3FB8": {
       "Properties": {
         "LoadBalancerAttributes": [
           {
@@ -658,13 +669,13 @@ ln -s /usr/share/content-api-floodgate floodgate",
         "SecurityGroups": [
           {
             "Fn::GetAtt": [
-              "LoadBalancerFloodgateSecurityGroupA93A6D43",
+              "LoadBalancerContentapifloodgateSecurityGroup6BAE37E7",
               "GroupId",
             ],
           },
           {
             "Fn::GetAtt": [
-              "RestrictedIngressSecurityGroupFloodgate68059A19",
+              "RestrictedIngressSecurityGroupContentapifloodgate7B667D75",
               "GroupId",
             ],
           },
@@ -675,7 +686,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
         "Tags": [
           {
             "Key": "App",
-            "Value": "floodgate",
+            "Value": "content-api-floodgate",
           },
           {
             "Key": "gu:cdk:version",
@@ -698,13 +709,13 @@ ln -s /usr/share/content-api-floodgate floodgate",
       },
       "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
     },
-    "LoadBalancerFloodgateSecurityGroupA93A6D43": {
+    "LoadBalancerContentapifloodgateSecurityGroup6BAE37E7": {
       "Properties": {
-        "GroupDescription": "Automatically created Security Group for ELB FloodgateLoadBalancerFloodgateAE14D250",
+        "GroupDescription": "Automatically created Security Group for ELB FloodgateLoadBalancerContentapifloodgate81852B8B",
         "Tags": [
           {
             "Key": "App",
-            "Value": "floodgate",
+            "Value": "content-api-floodgate",
           },
           {
             "Key": "gu:cdk:version",
@@ -729,19 +740,19 @@ ln -s /usr/share/content-api-floodgate floodgate",
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "LoadBalancerFloodgateSecurityGrouptoFloodgateGuHttpsEgressSecurityGroupFloodgate4A948E3F90004A551974": {
+    "LoadBalancerContentapifloodgateSecurityGrouptoFloodgateGuHttpsEgressSecurityGroupContentapifloodgateFC06BEAD900074DA25D8": {
       "Properties": {
         "Description": "Load balancer to target",
         "DestinationSecurityGroupId": {
           "Fn::GetAtt": [
-            "GuHttpsEgressSecurityGroupFloodgate35233042",
+            "GuHttpsEgressSecurityGroupContentapifloodgateE68A17B8",
             "GroupId",
           ],
         },
         "FromPort": 9000,
         "GroupId": {
           "Fn::GetAtt": [
-            "LoadBalancerFloodgateSecurityGroupA93A6D43",
+            "LoadBalancerContentapifloodgateSecurityGroup6BAE37E7",
             "GroupId",
           ],
         },
@@ -750,7 +761,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "ParameterStoreReadFloodgateBAB1C028": {
+    "ParameterStoreReadContentapifloodgate1428C357": {
       "Properties": {
         "PolicyDocument": {
           "Statement": [
@@ -769,7 +780,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
                     {
                       "Ref": "AWS::AccountId",
                     },
-                    ":parameter/TEST/content-api-floodgate/floodgate",
+                    ":parameter/TEST/content-api-floodgate/content-api-floodgate",
                   ],
                 ],
               },
@@ -792,7 +803,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
                     {
                       "Ref": "AWS::AccountId",
                     },
-                    ":parameter/TEST/content-api-floodgate/floodgate/*",
+                    ":parameter/TEST/content-api-floodgate/content-api-floodgate/*",
                   ],
                 ],
               },
@@ -803,13 +814,13 @@ ln -s /usr/share/content-api-floodgate floodgate",
         "PolicyName": "parameter-store-read-policy",
         "Roles": [
           {
-            "Ref": "InstanceRoleFloodgateD40815ED",
+            "Ref": "InstanceRoleContentapifloodgate4A6AA3CB",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "RestrictedIngressSecurityGroupFloodgate68059A19": {
+    "RestrictedIngressSecurityGroupContentapifloodgate7B667D75": {
       "Properties": {
         "GroupDescription": "Allow restricted ingress from CIDR ranges",
         "SecurityGroupIngress": [
@@ -824,7 +835,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
         "Tags": [
           {
             "Key": "App",
-            "Value": "floodgate",
+            "Value": "content-api-floodgate",
           },
           {
             "Key": "gu:cdk:version",
@@ -849,19 +860,19 @@ ln -s /usr/share/content-api-floodgate floodgate",
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "RestrictedIngressSecurityGroupFloodgatetoFloodgateGuHttpsEgressSecurityGroupFloodgate4A948E3F9000DBBE2B8F": {
+    "RestrictedIngressSecurityGroupContentapifloodgatetoFloodgateGuHttpsEgressSecurityGroupContentapifloodgateFC06BEAD9000BBA59A73": {
       "Properties": {
         "Description": "Load balancer to target",
         "DestinationSecurityGroupId": {
           "Fn::GetAtt": [
-            "GuHttpsEgressSecurityGroupFloodgate35233042",
+            "GuHttpsEgressSecurityGroupContentapifloodgateE68A17B8",
             "GroupId",
           ],
         },
         "FromPort": 9000,
         "GroupId": {
           "Fn::GetAtt": [
-            "RestrictedIngressSecurityGroupFloodgate68059A19",
+            "RestrictedIngressSecurityGroupContentapifloodgate7B667D75",
             "GroupId",
           ],
         },
@@ -900,13 +911,13 @@ ln -s /usr/share/content-api-floodgate floodgate",
         "PolicyName": "ssm-run-command-policy",
         "Roles": [
           {
-            "Ref": "InstanceRoleFloodgateD40815ED",
+            "Ref": "InstanceRoleContentapifloodgate4A6AA3CB",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "TargetGroupFloodgate092E952B": {
+    "TargetGroupContentapifloodgateD7BCA3D5": {
       "Properties": {
         "HealthCheckIntervalSeconds": 10,
         "HealthCheckPath": "/healthcheck",
@@ -918,7 +929,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
         "Tags": [
           {
             "Key": "App",
-            "Value": "floodgate",
+            "Value": "content-api-floodgate",
           },
           {
             "Key": "gu:cdk:version",
@@ -955,7 +966,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
       },
       "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
     },
-    "UnhealthyInstancesAlarmFloodgateD9582721": {
+    "UnhealthyInstancesAlarmContentapifloodgateF84E1A07": {
       "Properties": {
         "ActionsEnabled": true,
         "AlarmActions": [
@@ -976,12 +987,12 @@ ln -s /usr/share/content-api-floodgate floodgate",
             ],
           },
         ],
-        "AlarmDescription": "floodgate's instances have failed healthchecks several times over the last 1 hour.
+        "AlarmDescription": "content-api-floodgate's instances have failed healthchecks several times over the last 1 hour.
       This typically results in the AutoScaling Group cycling instances and can lead to problems with deployment,
       scaling or handling traffic spikes.
 
-      Check floodgate's application logs or ssh onto an unhealthy instance in order to debug these problems.",
-        "AlarmName": "Unhealthy instances for floodgate in TEST",
+      Check content-api-floodgate's application logs or ssh onto an unhealthy instance in order to debug these problems.",
+        "AlarmName": "Unhealthy instances for content-api-floodgate in TEST",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
         "DatapointsToAlarm": 30,
         "Dimensions": [
@@ -998,7 +1009,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
                         "Fn::Split": [
                           "/",
                           {
-                            "Ref": "ListenerFloodgate7D35F67E",
+                            "Ref": "ListenerContentapifloodgate6128E3C3",
                           },
                         ],
                       },
@@ -1012,7 +1023,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
                         "Fn::Split": [
                           "/",
                           {
-                            "Ref": "ListenerFloodgate7D35F67E",
+                            "Ref": "ListenerContentapifloodgate6128E3C3",
                           },
                         ],
                       },
@@ -1026,7 +1037,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
                         "Fn::Split": [
                           "/",
                           {
-                            "Ref": "ListenerFloodgate7D35F67E",
+                            "Ref": "ListenerContentapifloodgate6128E3C3",
                           },
                         ],
                       },
@@ -1040,7 +1051,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
             "Name": "TargetGroup",
             "Value": {
               "Fn::GetAtt": [
-                "TargetGroupFloodgate092E952B",
+                "TargetGroupContentapifloodgateD7BCA3D5",
                 "TargetGroupFullName",
               ],
             },

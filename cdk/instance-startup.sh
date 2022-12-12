@@ -15,7 +15,7 @@ aws s3 cp s3://content-api-dist/${Stack}/${Stage}/content-api-floodgate/content-
 
 dpkg -i content-api-floodgate_1.0_all.deb
 
-echo JAVA_OPTS=\"-Dpidfile.path=/var/run/floodgate/floodgate.pid -Dconfig.file=/etc/gu/floodgate.conf\" >> /etc/default/floodgate
+echo JAVA_OPTS=\"-Dpidfile.path=/var/run/content-api-floodgate/floodgate.pid -Dconfig.file=/etc/gu/floodgate.conf\" >> /etc/default/content-api-floodgate
 
 chown -R content-api /home/content-api /etc/gu
 chgrp -R content-api /home/content-api /etc/gu
