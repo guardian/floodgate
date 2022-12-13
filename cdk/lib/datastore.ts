@@ -1,6 +1,6 @@
 import {Construct} from "constructs";
 import {GuStack} from "@guardian/cdk/lib/constructs/core";
-import {AttributeType, ITable, Table, TableEncryption} from "aws-cdk-lib/aws-dynamodb";
+import {AttributeType, BillingMode, ITable, Table, TableEncryption} from "aws-cdk-lib/aws-dynamodb";
 
 export class Datastore extends Construct {
     contentSourceTable: ITable;
@@ -20,6 +20,7 @@ export class Datastore extends Construct {
                 name: "environment",
                 type: AttributeType.STRING,
             },
+            billingMode: BillingMode.PAY_PER_REQUEST,
             tableName: `floodgate-content-source-${scope.stage}`,
         });
 
@@ -33,6 +34,7 @@ export class Datastore extends Construct {
                 name: "startTime",
                 type: AttributeType.STRING,
             },
+            billingMode: BillingMode.PAY_PER_REQUEST,
             tableName: `floodgate-job-history-${scope.stage}`
         });
 
@@ -46,6 +48,7 @@ export class Datastore extends Construct {
                 name: "contentSourceEnvironment",
                 type: AttributeType.STRING,
             },
+            billingMode: BillingMode.PAY_PER_REQUEST,
             tableName: `floodgate-running-job-${scope.stage}`
         });
     }

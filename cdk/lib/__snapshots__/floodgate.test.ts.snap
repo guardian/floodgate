@@ -271,6 +271,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
             "AttributeType": "S",
           },
         ],
+        "BillingMode": "PAY_PER_REQUEST",
         "KeySchema": [
           {
             "AttributeName": "id",
@@ -281,10 +282,6 @@ ln -s /usr/share/content-api-floodgate floodgate",
             "KeyType": "RANGE",
           },
         ],
-        "ProvisionedThroughput": {
-          "ReadCapacityUnits": 5,
-          "WriteCapacityUnits": 5,
-        },
         "SSESpecification": {
           "SSEEnabled": true,
         },
@@ -707,6 +704,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
             "AttributeType": "S",
           },
         ],
+        "BillingMode": "PAY_PER_REQUEST",
         "KeySchema": [
           {
             "AttributeName": "contentSourceId",
@@ -717,10 +715,6 @@ ln -s /usr/share/content-api-floodgate floodgate",
             "KeyType": "RANGE",
           },
         ],
-        "ProvisionedThroughput": {
-          "ReadCapacityUnits": 5,
-          "WriteCapacityUnits": 5,
-        },
         "SSESpecification": {
           "SSEEnabled": true,
         },
@@ -1009,6 +1003,7 @@ ln -s /usr/share/content-api-floodgate floodgate",
             "AttributeType": "S",
           },
         ],
+        "BillingMode": "PAY_PER_REQUEST",
         "KeySchema": [
           {
             "AttributeName": "contentSourceId",
@@ -1019,10 +1014,6 @@ ln -s /usr/share/content-api-floodgate floodgate",
             "KeyType": "RANGE",
           },
         ],
-        "ProvisionedThroughput": {
-          "ReadCapacityUnits": 5,
-          "WriteCapacityUnits": 5,
-        },
         "SSESpecification": {
           "SSEEnabled": true,
         },
