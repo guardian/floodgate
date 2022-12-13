@@ -41,6 +41,7 @@ maintainer := "Guardian Content Platforms <content-platforms.dev@theguardian.com
 Debian / serverLoading := Some(Systemd)
 Debian / daemonUser := "content-api"
 Debian / daemonGroup := "content-api"
+Debian / serviceAutostart := false  //we don't want to start immediately after installation, we want to customise the setup first
 
 
 

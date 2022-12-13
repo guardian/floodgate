@@ -20,7 +20,6 @@ echo JAVA_OPTS=\"-Dpidfile.path=/var/run/content-api-floodgate/floodgate.pid -Dc
 chown -R content-api /home/content-api /etc/gu
 chgrp -R content-api /home/content-api /etc/gu
 
-sleep 5s
-systemctl restart content-api-floodgate #we need to re-start in order for it to pick up the updated JAVA_OPTS above
+systemctl start content-api-floodgate
 
 ln -s /usr/share/content-api-floodgate floodgate

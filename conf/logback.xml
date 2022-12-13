@@ -7,7 +7,7 @@
         <appender-ref ref="STDOUT" />
     </appender>
 
-    <root level="WARN">
+    <root level="INFO">
         <appender-ref ref="ASYNCSTDOUT"/>
     </root>
 
