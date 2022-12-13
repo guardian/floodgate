@@ -6,7 +6,7 @@ name := "content-api-floodgate"
 organization := "com.gu"
 description := "The Content API reindexing control panel"
 scalaVersion := "2.12.8"
-scalacOptions ++= Seq("-feature", "-deprecation", "-unchecked", "-target:jvm-1.8")
+scalacOptions ++= Seq("-feature", "-deprecation", "-unchecked", "-release","11")
 version := "1.0"
 
 resolvers += "Sonatype releases" at "https://oss.sonatype.org/content/repositories/releases"
