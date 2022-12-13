@@ -217,10 +217,10 @@ ln -s /usr/share/content-api-floodgate floodgate",
     "CertificateContentapifloodgate4F5519F6": {
       "DeletionPolicy": "Retain",
       "Properties": {
-        "DomainName": "floodgate,capi.gutools.co.uk",
+        "DomainName": "floodgate.capi.gutools.co.uk",
         "DomainValidationOptions": [
           {
-            "DomainName": "floodgate,capi.gutools.co.uk",
+            "DomainName": "floodgate.capi.gutools.co.uk",
             "HostedZoneId": {
               "Ref": "SsmParameterValueaccountservicescapigutoolsTESThostedzoneidC96584B6F00A464EAD1953AFF4B05118Parameter",
             },
@@ -255,6 +255,59 @@ ln -s /usr/share/content-api-floodgate floodgate",
         "ValidationMethod": "DNS",
       },
       "Type": "AWS::CertificateManager::Certificate",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ContentSourceF49C0C0D": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "id",
+            "AttributeType": "S",
+          },
+          {
+            "AttributeName": "environment",
+            "AttributeType": "S",
+          },
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "id",
+            "KeyType": "HASH",
+          },
+          {
+            "AttributeName": "environment",
+            "KeyType": "RANGE",
+          },
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5,
+        },
+        "SSESpecification": {
+          "SSEEnabled": true,
+        },
+        "TableName": "floodgate-content-source-TEST",
+        "Tags": [
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/floodgate",
+          },
+          {
+            "Key": "Stack",
+            "Value": "content-api-floodgate",
+          },
+          {
+            "Key": "Stage",
+            "Value": "TEST",
+          },
+        ],
+      },
+      "Type": "AWS::DynamoDB::Table",
       "UpdateReplacePolicy": "Retain",
     },
     "DescribeEC2PolicyFF5F9295": {
@@ -295,18 +348,26 @@ ln -s /usr/share/content-api-floodgate floodgate",
             {
               "Action": "dynamodb:*",
               "Effect": "Allow",
-              "Resource": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:aws:dynamodb:*:",
-                    {
-                      "Ref": "AWS::AccountId",
-                    },
-                    ":table/floodgate-*-TEST",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "JobHistory01AD0917",
+                    "Arn",
                   ],
-                ],
-              },
+                },
+                {
+                  "Fn::GetAtt": [
+                    "ContentSourceF49C0C0D",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Fn::GetAtt": [
+                    "RunningJob4D26EAC6",
+                    "Arn",
+                  ],
+                },
+              ],
             },
             {
               "Action": [
@@ -632,6 +693,59 @@ ln -s /usr/share/content-api-floodgate floodgate",
       },
       "Type": "AWS::IAM::Role",
     },
+    "JobHistory01AD0917": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "contentSourceId",
+            "AttributeType": "S",
+          },
+          {
+            "AttributeName": "startTime",
+            "AttributeType": "S",
+          },
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "contentSourceId",
+            "KeyType": "HASH",
+          },
+          {
+            "AttributeName": "startTime",
+            "KeyType": "RANGE",
+          },
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5,
+        },
+        "SSESpecification": {
+          "SSEEnabled": true,
+        },
+        "TableName": "floodgate-job-history-TEST",
+        "Tags": [
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/floodgate",
+          },
+          {
+            "Key": "Stack",
+            "Value": "content-api-floodgate",
+          },
+          {
+            "Key": "Stage",
+            "Value": "TEST",
+          },
+        ],
+      },
+      "Type": "AWS::DynamoDB::Table",
+      "UpdateReplacePolicy": "Retain",
+    },
     "ListenerContentapifloodgate6128E3C3": {
       "Properties": {
         "Certificates": [
@@ -880,6 +994,59 @@ ln -s /usr/share/content-api-floodgate floodgate",
         "ToPort": 9000,
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
+    },
+    "RunningJob4D26EAC6": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "contentSourceId",
+            "AttributeType": "S",
+          },
+          {
+            "AttributeName": "contentSourceEnvironment",
+            "AttributeType": "S",
+          },
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "contentSourceId",
+            "KeyType": "HASH",
+          },
+          {
+            "AttributeName": "contentSourceEnvironment",
+            "KeyType": "RANGE",
+          },
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5,
+        },
+        "SSESpecification": {
+          "SSEEnabled": true,
+        },
+        "TableName": "floodgate-running-job-TEST",
+        "Tags": [
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/floodgate",
+          },
+          {
+            "Key": "Stack",
+            "Value": "content-api-floodgate",
+          },
+          {
+            "Key": "Stage",
+            "Value": "TEST",
+          },
+        ],
+      },
+      "Type": "AWS::DynamoDB::Table",
+      "UpdateReplacePolicy": "Retain",
     },
     "SSMRunCommandPolicy244E1613": {
       "Properties": {

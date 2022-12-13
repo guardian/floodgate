@@ -9,6 +9,7 @@ import fs from "fs";
 import {GuVpc} from "@guardian/cdk/lib/constructs/ec2";
 import {GuPolicy} from "@guardian/cdk/lib/constructs/iam";
 import {Effect, PolicyStatement} from "aws-cdk-lib/aws-iam";
+import {Datastore} from "./datastore";
 
 export class Floodgate extends GuStack {
   constructor(scope: App, id: string, props: GuStackProps) {
@@ -28,6 +29,8 @@ export class Floodgate extends GuStack {
     });
     const deploymentSubnets = GuVpc.subnets(this, subnetsList.valueAsList);
 
+    const datastore = new Datastore(this, "Datastore");
+
     const dnsZone = aws_ssm.StringParameter.valueForStringParameter(this, `/account/services/capi.gutools/${this.stage}/hostedzoneid`);
 
     const userDataRaw = fs.readFileSync("instance-startup.sh").toString('utf-8');
@@ -35,7 +38,7 @@ export class Floodgate extends GuStack {
         .replace(/\$\{Stage}/g, this.stage)
         .replace(/\$\{Stack}/g, this.stack)
         .replace(/\$\{AWS::Region}/g, Stack.of(this).region)
-        .replace(/\$\{BuiltVersion}/g, "0.1.0-SNAPSHOT");
+        .replace(/\$\{BuiltVersion}/g, "1.0");
 
     new GuEc2App(this, {
       access: {
@@ -63,7 +66,9 @@ export class Floodgate extends GuStack {
                   effect: Effect.ALLOW,
                   actions: ["dynamodb:*"],
                   resources: [
-                      `arn:aws:dynamodb:*:${this.account}:table/floodgate-*-${this.stage}`
+                      datastore.jobHistoryTable.tableArn,
+                      datastore.contentSourceTable.tableArn,
+                      datastore.runningJobTable.tableArn,
                   ]
                 }),
                   new PolicyStatement({
@@ -82,7 +87,7 @@ export class Floodgate extends GuStack {
       },
       applicationPort: 9000,
       certificateProps: {
-        domainName: this.stage==="CODE" ? "floodgate.capi.code.dev-gutools.co.uk" : "floodgate,capi.gutools.co.uk",
+        domainName: this.stage==="CODE" ? "floodgate.capi.code.dev-gutools.co.uk" : "floodgate.capi.gutools.co.uk",
         hostedZoneId: dnsZone,
       },
       instanceType: InstanceType.of(InstanceClass.T3, InstanceSize.SMALL),
