@@ -43,5 +43,7 @@ Debian / daemonUser := "content-api"
 Debian / daemonGroup := "content-api"
 Debian / serviceAutostart := false  //we don't want to start immediately after installation, we want to customise the setup first
 
+Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-u", sys.env.getOrElse("SBT_JUNIT_OUTPUT", "junit"))
+
 
 
