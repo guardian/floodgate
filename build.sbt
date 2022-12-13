@@ -12,6 +12,7 @@ version := "1.0"
 resolvers += "Sonatype releases" at "https://oss.sonatype.org/content/repositories/releases"
 
 val awsClientVersion = "1.12.332"
+val prometheusVersion = "0.16.0"
 
 libraryDependencies ++= Seq(
   ws,
@@ -28,7 +29,9 @@ libraryDependencies ++= Seq(
   "org.scalatest"              %% "scalatest"            % "3.0.4" % "test",
   "org.typelevel"              %% "cats-core"            % "1.6.1",
   "net.logstash.logback" % "logstash-logback-encoder" % "7.2",
-
+  "io.prometheus" % "simpleclient" % prometheusVersion,
+  "io.prometheus" % "simpleclient_hotspot" % prometheusVersion,
+  "io.prometheus" % "simpleclient_common" % prometheusVersion,
   //required to make jackson work
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.13.4"
 )
