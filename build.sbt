@@ -11,7 +11,7 @@ version := "1.0"
 
 resolvers += "Sonatype releases" at "https://oss.sonatype.org/content/repositories/releases"
 
-val awsClientVersion = "1.12.332"
+val awsClientVersion = "1.12.351"
 val prometheusVersion = "0.16.0"
 
 libraryDependencies ++= Seq(
@@ -23,10 +23,10 @@ libraryDependencies ++= Seq(
   "com.typesafe.play"          %% "play-json-joda"       % "2.9.3",
   "com.typesafe.play"          %% "play-logback"         % "2.8.18",
   "com.typesafe.play"          %% "play-specs2"          % "2.8.18",
-  "com.gu"                     %% "play-googleauth"      % "0.7.7",
+  "com.gu"                     %% "play-googleauth"      % "0.7.9",
   "org.scanamo"                %% "scanamo"              % "1.0.0-M10",
   "org.scanamo"                %% "scanamo-joda"         % "1.0.0-M10",
-  "org.scalatest"              %% "scalatest"            % "3.0.4" % "test",
+  "org.scalatest"              %% "scalatest"            % "3.2.14" % "test",
   "org.typelevel"              %% "cats-core"            % "1.6.1",
   "net.logstash.logback" % "logstash-logback-encoder" % "7.2",
   "io.prometheus" % "simpleclient" % prometheusVersion,

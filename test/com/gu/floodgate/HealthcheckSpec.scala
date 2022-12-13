@@ -1,11 +1,12 @@
 package controllers
 
 import com.gu.floodgate.AppLoader
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 import play.api.test.{FakeRequest, WithApplicationLoader}
 import play.api.test.Helpers._
 
-class HealthcheckSpec extends FlatSpec with Matchers {
+class HealthcheckSpec extends AnyFlatSpec with Matchers {
 
   val healthcheck = new Healthcheck
   val appLoader = new AppLoader
