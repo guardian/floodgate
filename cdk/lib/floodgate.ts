@@ -11,6 +11,8 @@ import {GuPolicy} from "@guardian/cdk/lib/constructs/iam";
 import {Effect, PolicyStatement} from "aws-cdk-lib/aws-iam";
 import {Datastore} from "./datastore";
 
+const useArm = true;
+
 export class Floodgate extends GuStack {
   constructor(scope: App, id: string, props: GuStackProps) {
     super(scope, id, props);
@@ -104,7 +106,7 @@ export class Floodgate extends GuStack {
         domainName: this.stage==="CODE" ? "floodgate.capi.code.dev-gutools.co.uk" : "floodgate.capi.gutools.co.uk",
         hostedZoneId: dnsZone,
       },
-      instanceType: InstanceType.of(InstanceClass.T3, InstanceSize.SMALL),
+      instanceType: useArm ? InstanceType.of(InstanceClass.T4G, InstanceSize.SMALL) : InstanceType.of(InstanceClass.T3, InstanceSize.SMALL),
       monitoringConfiguration: {
         snsTopicName: `floogate-monitoring-${this.stage}`,
         http5xxAlarm: {
