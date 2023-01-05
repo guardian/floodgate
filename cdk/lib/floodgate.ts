@@ -112,11 +112,7 @@ export class Floodgate extends GuStack {
 
   getAccountPath(elementName: string) {
     const basePath = "/account/vpc";
-    if(this.stack.includes("preview")) {
-      return this.stage=="CODE" ? `${basePath}/CODE-preview/${elementName}` : `${basePath}/PROD-preview/${elementName}`;
-    } else {
-      return this.stage=="CODE" ? `${basePath}/CODE-live/${elementName}` : `${basePath}/PROD-live/${elementName}`;
-    }
+    return `${basePath}/${this.stage}-generic/${elementName}`;
   }
 
   getVpcIdPath() {
