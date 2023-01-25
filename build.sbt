@@ -1,10 +1,13 @@
+import com.typesafe.sbt.packager.archetypes.systemloader.ServerLoader.Systemd
+enablePlugins(JavaServerAppPackaging, SystemdPlugin, PlayScala, PlayAkkaHttpServer)
+disablePlugins(PlayNettyServer)
+
 name := "content-api-floodgate"
 organization := "com.gu"
 description := "The Content API reindexing control panel"
 scalaVersion := "2.12.8"
 scalacOptions ++= Seq("-feature", "-deprecation", "-unchecked", "-target:jvm-1.8")
-
-enablePlugins(PlayScala, RiffRaffArtifact)
+version := "1.0"
 
 resolvers += "Sonatype releases" at "https://oss.sonatype.org/content/repositories/releases"
 
@@ -24,15 +27,23 @@ libraryDependencies ++= Seq(
   "org.scanamo"                %% "scanamo-joda"         % "1.0.0-M10",
   "org.scalatest"              %% "scalatest"            % "3.0.4" % "test",
   "org.typelevel"              %% "cats-core"            % "1.6.1",
+  "net.logstash.logback" % "logstash-logback-encoder" % "7.2",
 
   //required to make jackson work
-  "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.12.7"
+  "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.13.4"
 )
 
 routesGenerator := InjectedRoutesGenerator
 
-riffRaffPackageType := (packageZipTarball in Universal).value
-riffRaffUploadArtifactBucket := Option("riffraff-artifact")
-riffRaffUploadManifestBucket := Option("riffraff-builds")
-riffRaffManifestProjectName := "Content Platforms::floodgate"
+Universal / packageName := "floodgate"
+maintainer := "Guardian Content Platforms <content-platforms.dev@theguardian.com>"
+
+Debian / serverLoading := Some(Systemd)
+Debian / daemonUser := "content-api"
+Debian / daemonGroup := "content-api"
+Debian / serviceAutostart := false  //we don't want to start immediately after installation, we want to customise the setup first
+
+Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-u", sys.env.getOrElse("SBT_JUNIT_OUTPUT", "junit"))
+
+
 
