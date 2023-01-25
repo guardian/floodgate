@@ -17,7 +17,7 @@ deployments:
       templateStagePaths:
         CODE: Floodgate-CODE.template.json
         PROD: Floodgate-PROD.template.json
-      amiParameter: AMIFloodgate
+      amiParameter: AMIContentapifloodgate
       amiEncrypted: true
       amiTags:
         Recipe: ubuntu-focal-capi-x86-jdk11
