@@ -42,8 +42,7 @@ export class Floodgate extends GuStack {
 
     new GuEc2App(this, {
       access: {
-        scope: AccessScope.RESTRICTED,
-        cidrRanges: [Peer.ipv4("77.91.248.0/21")],
+        scope: AccessScope.PUBLIC,
       },
       app: "content-api-floodgate",
       applicationLogging: {
