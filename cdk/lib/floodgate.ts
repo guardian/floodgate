@@ -110,11 +110,13 @@ export class Floodgate extends GuStack {
 
     app.autoScalingGroup.addSecurityGroup(new GuSecurityGroup(this, "InstanceOutboundSG", {
       app: "content-api-floodgate",
+      allowAllOutbound: false,
+      allowAllIpv6Outbound: false,
       egresses: [
         {
           range: Peer.ipv4("10.248.0.0/16"),
-          port: Port.tcp(80),
-          description: "Outgoing to port 80 on internal infrastructure"
+          port: Port.tcp(8080),
+          description: "Outgoing to port 8080 on internal infrastructure"
         }
       ],
       vpc,
