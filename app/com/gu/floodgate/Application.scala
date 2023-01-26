@@ -1,5 +1,6 @@
 package controllers
 
+import akka.util.ByteString
 import com.gu.floodgate.reindex.{Completed, InProgress, Progress}
 import com.typesafe.scalalogging.StrictLogging
 import play.api.Configuration
@@ -9,7 +10,12 @@ import com.gu.floodgate.views
 import play.api.libs.ws.WSClient
 import com.gu.floodgate.Formats._
 import com.gu.googleauth.{AuthAction, GoogleAuthConfig}
-import play.api.mvc.AnyContent
+import io.prometheus.client.CollectorRegistry
+import io.prometheus.client.exporter.common.TextFormat
+import play.api.http.HttpEntity
+import play.api.mvc.{AnyContent, ResponseHeader, Result}
+
+import java.io.StringWriter
 
 class Application(
     authAction: AuthAction[AnyContent],
@@ -21,6 +27,14 @@ class Application(
 
   def index = authAction {
     Ok(views.html.app("Floodgate"))
+  }
+
+  def metrics = Action {
+    val writer = new StringWriter()
+    TextFormat.write004(writer, CollectorRegistry.defaultRegistry.metricFamilySamples())
+    Result(
+      ResponseHeader(200),
+      HttpEntity.Strict(ByteString(writer.toString), Some("text/plain; version=0.0.4; charset=UTF-8")))
   }
 
   /*

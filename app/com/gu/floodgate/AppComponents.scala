@@ -18,7 +18,8 @@ import play.api.ApplicationLoader.Context
 import play.api.libs.ws.ahc.AhcWSComponents
 import play.api.{BuiltInComponentsFromContext, NoHttpFiltersComponents}
 import play.api.routing.Router
-import controllers.{routes, Application, AssetsComponents, Healthcheck, Login}
+import controllers.{Application, AssetsComponents, Healthcheck, Login, routes}
+import io.prometheus.client.hotspot.DefaultExports
 import play.api.mvc.AnyContent
 import play.api.mvc.legacy.Controller
 import router.Routes
@@ -39,6 +40,9 @@ class AppComponents(context: Context)
   val configEnvironment = configuration.get[String]("env")
   val region = Region getRegion Regions.fromName(configuration.getOptional[String]("aws.region") getOrElse "eu-west-1")
   val clientConfiguration = new ClientConfiguration()
+
+  //set up the default metrics
+  DefaultExports.initialize()
 
   val dynamoDB: AmazonDynamoDBAsync = {
     val builder = AmazonDynamoDBAsyncClientBuilder.standard()

@@ -4,6 +4,7 @@
 
 # Handled by client side code
 GET         /                                                             controllers.Application.index
+GET        /metrics                                                         controllers.Application.metrics
 
 # Healthcheck
 GET        /healthcheck                                                   controllers.Healthcheck.healthcheck

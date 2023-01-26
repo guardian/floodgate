@@ -11,6 +11,8 @@ import {GuPolicy} from "@guardian/cdk/lib/constructs/iam";
 import {Effect, PolicyStatement} from "aws-cdk-lib/aws-iam";
 import {Datastore} from "./datastore";
 
+const useArm = false;
+
 export class Floodgate extends GuStack {
   constructor(scope: App, id: string, props: GuStackProps) {
     super(scope, id, props);
@@ -33,11 +35,19 @@ export class Floodgate extends GuStack {
 
     const dnsZone = aws_ssm.StringParameter.valueForStringParameter(this, `/account/services/capi.gutools/${this.stage}/hostedzoneid`);
 
+    const prometheusRemoteWriteUrl = new GuParameter(this, "PromRemoteWrite", {
+      description: "SSM path pointing to the parameter which gives an Amazon Managed Prometheus endpoint to push metrics to",
+      fromSSM: true,
+      type: "String",
+      default: "/account/content-api-common/metrics/prometheus_remote_write_url"
+    });
+
     const userDataRaw = fs.readFileSync("instance-startup.sh").toString('utf-8');
     const userData = userDataRaw
         .replace(/\$\{Stage}/g, this.stage)
         .replace(/\$\{Stack}/g, this.stack)
         .replace(/\$\{AWS::Region}/g, Stack.of(this).region)
+        .replace(/\$\{PrometheusRemoteWriteUrl}/g, prometheusRemoteWriteUrl.valueAsString)
         .replace(/\$\{BuiltVersion}/g, "1.0");
 
     const app = new GuEc2App(this, {
@@ -80,6 +90,13 @@ export class Floodgate extends GuStack {
                     ],
                     resources: ["*"]
                   }),
+                  new PolicyStatement({
+                    effect: Effect.ALLOW,
+                    actions: [
+                        "aps:RemoteWrite"
+                    ],
+                    resources: ["*"]
+                  })
               ]
             })
         ]
@@ -89,7 +106,7 @@ export class Floodgate extends GuStack {
         domainName: this.stage==="CODE" ? "floodgate.capi.code.dev-gutools.co.uk" : "floodgate.capi.gutools.co.uk",
         hostedZoneId: dnsZone,
       },
-      instanceType: InstanceType.of(InstanceClass.T3, InstanceSize.SMALL),
+      instanceType: useArm ? InstanceType.of(InstanceClass.T4G, InstanceSize.SMALL) : InstanceType.of(InstanceClass.T3, InstanceSize.SMALL),
       monitoringConfiguration: {
         snsTopicName: `floogate-monitoring-${this.stage}`,
         http5xxAlarm: {

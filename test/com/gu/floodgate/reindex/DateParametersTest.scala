@@ -2,10 +2,11 @@ package com.gu.floodgate.reindex
 
 import com.gu.floodgate.CustomError
 import org.joda.time.DateTime
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 import cats.syntax.either._
 
-class DateParametersTest extends FlatSpec with Matchers {
+class DateParametersTest extends AnyFlatSpec with Matchers {
 
   behavior of "DateParameters"
 

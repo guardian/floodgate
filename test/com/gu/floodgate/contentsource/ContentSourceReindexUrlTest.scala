@@ -2,9 +2,10 @@ package com.gu.floodgate.contentsource
 
 import com.gu.floodgate.reindex.DateParameters
 import org.joda.time.DateTime
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class ContentSourceReindexUrlTest extends FlatSpec with Matchers {
+class ContentSourceReindexUrlTest extends AnyFlatSpec with Matchers {
 
   val contentSourceWithApiKeyAuth =
     ContentSource(

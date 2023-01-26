@@ -1,23 +1,19 @@
 package controllers
 
-import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
 import com.gu.floodgate.AppLoader
 import com.gu.floodgate.reindex.{Completed, InProgress, Progress}
-import org.scalatest.{FlatSpec, Matchers}
 import play.api.mvc.Call
 import play.api.test.{FakeRequest, WithApplicationLoader}
 import play.api.test.Helpers._
-import play.api.Configuration
-import play.api.Environment
-import play.api.libs.ws.ahc.AhcWSClient
 import com.gu.floodgate.Formats._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 /**
   * These tests are provided as a way of demonstrating how we expect the reindex endpoints on a particular content
   * source to behave in order to have integration with Floodgate.
   */
-class FloodgateIntegrationSpec extends FlatSpec with Matchers {
+class FloodgateIntegrationSpec extends AnyFlatSpec with Matchers {
 
   val reindexRoute = "/reindex"
   val initiateReindexRequest = new Call("POST", reindexRoute)
