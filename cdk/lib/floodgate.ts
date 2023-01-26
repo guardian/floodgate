@@ -4,9 +4,9 @@ import type {App} from "aws-cdk-lib";
 import {aws_ssm, Stack} from "aws-cdk-lib";
 import {GuEc2App} from "@guardian/cdk";
 import {AccessScope} from "@guardian/cdk/lib/constants";
-import {InstanceClass, InstanceSize, InstanceType, Peer, Vpc} from "aws-cdk-lib/aws-ec2";
+import {InstanceClass, InstanceSize, InstanceType, Peer, Port, Vpc} from "aws-cdk-lib/aws-ec2";
 import fs from "fs";
-import {GuVpc} from "@guardian/cdk/lib/constructs/ec2";
+import {GuSecurityGroup, GuVpc} from "@guardian/cdk/lib/constructs/ec2";
 import {GuPolicy} from "@guardian/cdk/lib/constructs/iam";
 import {Effect, PolicyStatement} from "aws-cdk-lib/aws-iam";
 import {Datastore} from "./datastore";
@@ -40,7 +40,7 @@ export class Floodgate extends GuStack {
         .replace(/\$\{AWS::Region}/g, Stack.of(this).region)
         .replace(/\$\{BuiltVersion}/g, "1.0");
 
-    new GuEc2App(this, {
+    const app = new GuEc2App(this, {
       access: {
         scope: AccessScope.PUBLIC,
       },
@@ -106,7 +106,21 @@ export class Floodgate extends GuStack {
       },
       userData: userData,
       vpc,
-    })
+    });
+
+    app.autoScalingGroup.addSecurityGroup(new GuSecurityGroup(this, "InstanceOutboundSG", {
+      app: "content-api-floodgate",
+      allowAllOutbound: false,
+      allowAllIpv6Outbound: false,
+      egresses: [
+        {
+          range: Peer.ipv4("10.248.0.0/16"),
+          port: Port.tcp(8080),
+          description: "Outgoing to port 8080 on internal infrastructure"
+        }
+      ],
+      vpc,
+    }))
   }
 
   getAccountPath(elementName: string) {

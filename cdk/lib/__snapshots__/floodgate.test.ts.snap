@@ -25,6 +25,7 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
       "GuHttpsApplicationListener",
       "GuAlb5xxPercentageAlarm",
       "GuUnhealthyInstancesAlarm",
+      "GuSecurityGroup",
     ],
     "gu:cdk:version": "TEST",
   },
@@ -168,6 +169,12 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
           {
             "Fn::GetAtt": [
               "WazuhSecurityGroup",
+              "GroupId",
+            ],
+          },
+          {
+            "Fn::GetAtt": [
+              "InstanceOutboundSGContentapifloodgate22B30938",
               "GroupId",
             ],
           },
@@ -627,6 +634,46 @@ ln -s /usr/share/content-api-floodgate floodgate",
         "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
+    },
+    "InstanceOutboundSGContentapifloodgate22B30938": {
+      "Properties": {
+        "GroupDescription": "Floodgate/InstanceOutboundSGContentapifloodgate",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "10.248.0.0/16",
+            "Description": "Outgoing to port 8080 on internal infrastructure",
+            "FromPort": 8080,
+            "IpProtocol": "tcp",
+            "ToPort": 8080,
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "App",
+            "Value": "content-api-floodgate",
+          },
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/floodgate",
+          },
+          {
+            "Key": "Stack",
+            "Value": "content-api-floodgate",
+          },
+          {
+            "Key": "Stage",
+            "Value": "TEST",
+          },
+        ],
+        "VpcId": {
+          "Ref": "SsmParameterValueaccountvpcTESTgenericidC96584B6F00A464EAD1953AFF4B05118Parameter",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
     },
     "InstanceRoleContentapifloodgate4A6AA3CB": {
       "Properties": {
