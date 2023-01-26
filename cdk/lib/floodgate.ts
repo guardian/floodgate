@@ -11,7 +11,7 @@ import {GuPolicy} from "@guardian/cdk/lib/constructs/iam";
 import {Effect, PolicyStatement} from "aws-cdk-lib/aws-iam";
 import {Datastore} from "./datastore";
 
-const useArm = true;
+const useArm = false;
 
 export class Floodgate extends GuStack {
   constructor(scope: App, id: string, props: GuStackProps) {

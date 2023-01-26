@@ -161,7 +161,7 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
         "ImageId": {
           "Ref": "AMIContentapifloodgate",
         },
-        "InstanceType": "t4g.small",
+        "InstanceType": "t3.small",
         "MetadataOptions": {
           "HttpTokens": "required",
         },
