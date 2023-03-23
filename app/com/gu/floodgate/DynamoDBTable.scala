@@ -52,7 +52,7 @@ trait DynamoDBTable[T] extends StrictLogging {
   ): Future[List[T]] =
     scanamoAsync
       .exec(table.descending.filter(Condition(Symbol(filterKeyName) -> filterValue)).query(Symbol(keyName) -> id))
-      .map(reportErrors)
+      .map(reportErrors _)
 
   def getLatestItem(id: String, filterKeyName: String, filterValue: String)(
       implicit ec: ExecutionContext
@@ -61,7 +61,7 @@ trait DynamoDBTable[T] extends StrictLogging {
       .exec(
         table.descending.limit(1).filter(Condition(Symbol(filterKeyName) -> filterValue)).query(Symbol(keyName) -> id)
       )
-      .map(reportErrors)
+      .map(reportErrors _)
       .map(_.headOption)
 
   def saveItem(t: T): Option[Either[DynamoReadError, T]] = scanamoSync.exec(table.put(t))

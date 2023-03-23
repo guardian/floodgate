@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite 
+errors="0" failures="0" hostname=".gnm.int" name="controllers.FloodgateIntegrationSpec" tests="6" time="1.566" timestamp="2023-03-23T16:07:20">
+  <properties>
+    <property name="jline.esc.timeout" value="0"/>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="java.vm.version" value="11.0.16.1+9-LTS"/>
+    <property
+    name="sun.boot.library.path" value="/Users/Rowanne_Kabalan/.asdf/installs/java/corretto-11.0.16.9.1/lib"/>
+    <property name="gopherProxySet" value="false"/>
+    <property name="java.vm.vendor" value="Amazon.com Inc."/>
+    <property name="java.vendor.url" value="https://aws.amazon.com/corretto/"/>
+    <property name="path.separator" value=":"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="sun.os.patch.level" value="unknown"/>
+    <property name="user.country" value="GB"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="jna.nosys" value="true"/>
+    <property
+    name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="user.dir" value="/Users/Rowanne_Kabalan/code/floodgate"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="java.runtime.version" value="11.0.16.1+9-LTS"/>
+    <property
+    name="java.awt.graphicsenv" value="sun.awt.CGraphicsEnvironment"/>
+    <property name="os.arch" value="aarch64"/>
+    <property
+    name="java.io.tmpdir" value="/var/folders/9h/csxj6jtx6k10m10rmhksq4t80000gp/T/"/>
+    <property name="line.separator" value=" "/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="log4j.ignoreTCL" value="true"/>
+    <property name="os.name" value="Mac OS X"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property
+    name="scala.ext.dirs" value="/Users/Rowanne_Kabalan/.sbt/1.0/java9-rt-ext-amazon_com_inc__11_0_16_1"/>
+    <property
+    name="java.library.path" value="/Users/Rowanne_Kabalan/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:."/>
+    <property name="jdk.debug" value="release"/>
+    <property name="java.class.version" value="55.0"/>
+    <property
+    name="java.specification.name" value="Java Platform API Specification"/>
+    <property
+    name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property
+    name="sbt.ipcsocket.tmpdir" value="/var/folders/9h/csxj6jtx6k10m10rmhksq4t80000gp/T/.sbt3e95079b/ipcsocket"/>
+    <property name="os.version" value="12.5.1"/>
+    <property
+    name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="user.home" value="/Users/Rowanne_Kabalan"/>
+    <property
+    name="swoval.tmpdir" value="/var/folders/9h/csxj6jtx6k10m10rmhksq4t80000gp/T/.sbt3e95079b/swoval"/>
+    <property name="user.timezone" value="Europe/London"/>
+    <property name="java.awt.printerjob" value="sun.lwawt.macosx.CPrinterJob"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.specification.version" value="11"/>
+    <property name="user.name" value="Rowanne_Kabalan"/>
+    <property
+    name="java.class.path" value="/opt/homebrew/Cellar/sbt/1.7.1/libexec/bin/sbt-launch.jar"/>
+    <property name="jline.shutdownhook" value="false"/>
+    <property name="java.vm.specification.version" value="11"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property
+    name="sun.java.command" value="/opt/homebrew/Cellar/sbt/1.7.1/libexec/bin/sbt-launch.jar test"/>
+    <property
+    name="java.home" value="/Users/Rowanne_Kabalan/.asdf/installs/java/corretto-11.0.16.9.1"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="awt.toolkit" value="sun.lwawt.macosx.LWCToolkit"/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="java.version" value="11.0.16.1"/>
+    <property name="java.vendor" value="Amazon.com Inc."/>
+    <property name="file.separator" value="/"/>
+    <property name="java.version.date" value="2022-08-12"/>
+    <property
+    name="java.vendor.url.bug" value="https://github.com/corretto/corretto-11/issues/"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="java.vendor.version" value="Corretto-11.0.16.9.1"/>
+    <property
+    name="sbt.script" value="/opt/homebrew/Cellar/sbt/1.7.1/libexec/bin/sbt"/>
+    <property
+    name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property
+    name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
+    <property name="sun.cpu.isalist" value=""/>
+  </properties>
+  <testcase 
+  name="initiating a reindex should return a 200 or 201 when a reindex is initiated" classname="controllers.FloodgateIntegrationSpec" time="1.284">
+</testcase>
+  <testcase 
+  name="initiating a reindex should return a 403 (forbidden) when a reindex is initiated but one is already in progress" classname="controllers.FloodgateIntegrationSpec" time="0.062">
+</testcase>
+  <testcase 
+  name="cancelling a reindex should return a 200 when a reindex is cancelled" classname="controllers.FloodgateIntegrationSpec" time="0.044">
+</testcase>
+  <testcase 
+  name="retrieving progress for a reindex should return a 404 if there has never been a reindex initiated before" classname="controllers.FloodgateIntegrationSpec" time="0.044">
+</testcase>
+  <testcase 
+  name="retrieving progress for a reindex should return a 200 and a progress update when asked for progress and there is a reindex running" classname="controllers.FloodgateIntegrationSpec" time="0.052">
+</testcase>
+  <testcase 
+  name="retrieving progress for a reindex should return a 200 and a progress update showing progress completed or failed when asked for progressand the last running reindex has just finished. This should be shown until such a time when another reindex is initiated." classname="controllers.FloodgateIntegrationSpec" time="0.044">
+</testcase>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
