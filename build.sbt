@@ -5,7 +5,7 @@ disablePlugins(PlayNettyServer)
 name := "content-api-floodgate"
 organization := "com.gu"
 description := "The Content API reindexing control panel"
-scalaVersion := "2.12.8"
+scalaVersion := "2.13.10"
 scalacOptions ++= Seq("-feature", "-deprecation", "-unchecked", "-release","11")
 version := "1.0"
 
@@ -19,22 +19,29 @@ libraryDependencies ++= Seq(
   "com.amazonaws"              % "aws-java-sdk-kinesis"  % awsClientVersion,
   "com.amazonaws"              % "aws-java-sdk-dynamodb" % awsClientVersion,
   "com.typesafe.scala-logging" %% "scala-logging"        % "3.9.5",
-  "com.typesafe.play"          %% "play-json"            % "2.9.3",
-  "com.typesafe.play"          %% "play-json-joda"       % "2.9.3",
+  "com.typesafe.play"          %% "play-json"            % "2.9.4",
+  "com.typesafe.play"          %% "play-json-joda"       % "2.9.4",
   "com.typesafe.play"          %% "play-logback"         % "2.8.18",
-  "com.typesafe.play"          %% "play-specs2"          % "2.8.18",
-  "com.gu"                     %% "play-googleauth"      % "0.7.9",
-  "org.scanamo"                %% "scanamo"              % "1.0.0-M10",
-  "org.scanamo"                %% "scanamo-joda"         % "1.0.0-M10",
-  "org.scalatest"              %% "scalatest"            % "3.2.14" % "test",
-  "org.typelevel"              %% "cats-core"            % "1.6.1",
-  "net.logstash.logback" % "logstash-logback-encoder" % "7.2",
+  "com.typesafe.play"          %% "play-specs2"          % "2.8.19",
+  "com.gu.play-googleauth"     %% "play-v27"             % "1.0.3",
+  "org.scanamo"                %% "scanamo"              % "1.0.0-M11",
+  "org.scanamo"                %% "scanamo-joda"         % "1.0.0-M11",
+  "org.scalatest"              %% "scalatest"            % "3.2.15" % "test",
+  "org.typelevel"              %% "cats-core"            % "2.9.0",
+  "net.logstash.logback" % "logstash-logback-encoder" % "7.3",
   "io.prometheus" % "simpleclient" % prometheusVersion,
   "io.prometheus" % "simpleclient_hotspot" % prometheusVersion,
   "io.prometheus" % "simpleclient_common" % prometheusVersion,
   //required to make jackson work
-  "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.13.4"
+  "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.14.2"
 )
+
+ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-java8-compat" % VersionScheme.Always
+
+dependencyOverrides ++=  Seq(
+  "com.google.oauth-client" % "google-oauth-client" % "1.33.3",
+  "org.seleniumhq.selenium" % "htmlunit-driver" % "4.8.0"
+  )
 
 routesGenerator := InjectedRoutesGenerator
 
