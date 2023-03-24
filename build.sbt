@@ -5,7 +5,7 @@ disablePlugins(PlayNettyServer)
 name := "content-api-floodgate"
 organization := "com.gu"
 description := "The Content API reindexing control panel"
-scalaVersion := "2.12.10"
+scalaVersion := "2.13.10"
 scalacOptions ++= Seq("-feature", "-deprecation", "-unchecked", "-release","11")
 version := "1.0"
 
@@ -24,10 +24,10 @@ libraryDependencies ++= Seq(
   "com.typesafe.play"          %% "play-logback"         % "2.8.18",
   "com.typesafe.play"          %% "play-specs2"          % "2.8.19",
   "com.gu.play-googleauth"     %% "play-v27"             % "1.0.3",
-  "org.scanamo"                %% "scanamo"              % "1.0.0-M10",
-  "org.scanamo"                %% "scanamo-joda"         % "1.0.0-M10",
+  "org.scanamo"                %% "scanamo"              % "1.0.0-M11",
+  "org.scanamo"                %% "scanamo-joda"         % "1.0.0-M11",
   "org.scalatest"              %% "scalatest"            % "3.2.15" % "test",
-  "org.typelevel"              %% "cats-core"            % "1.6.1",
+  "org.typelevel"              %% "cats-core"            % "2.9.0",
   "net.logstash.logback" % "logstash-logback-encoder" % "7.3",
   "io.prometheus" % "simpleclient" % prometheusVersion,
   "io.prometheus" % "simpleclient_hotspot" % prometheusVersion,

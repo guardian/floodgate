@@ -40,18 +40,18 @@ trait DynamoDBTable[T] extends StrictLogging {
 
   def getItem(hashKey: String, sortKey: String): Option[Either[DynamoReadError, T]] = {
     maybeSortKeyName flatMap { sortKeyName =>
-      scanamoSync.exec(table.get((Symbol(keyName) -> hashKey) and (Symbol(sortKeyName) -> sortKey)))
+      scanamoSync.exec(table.get(keyName -> hashKey and sortKeyName -> sortKey))
     } orElse None
   }
 
   def getItems(id: String)(implicit ec: ExecutionContext): Future[List[T]] =
-    scanamoAsync.exec(table.descending.query(Symbol(keyName) -> id)).map(reportErrors)
+    scanamoAsync.exec(table.descending.query(keyName -> id)).map(reportErrors)
 
   def getItemsWithFilter(id: String, filterKeyName: String, filterValue: String)(
       implicit ec: ExecutionContext
   ): Future[List[T]] =
     scanamoAsync
-      .exec(table.descending.filter(Condition(Symbol(filterKeyName) -> filterValue)).query(Symbol(keyName) -> id))
+      .exec(table.descending.filter(Condition(filterKeyName -> filterValue)).query(keyName -> id))
       .map(reportErrors _)
 
   def getLatestItem(id: String, filterKeyName: String, filterValue: String)(
@@ -59,18 +59,18 @@ trait DynamoDBTable[T] extends StrictLogging {
   ): Future[Option[T]] =
     scanamoAsync
       .exec(
-        table.descending.limit(1).filter(Condition(Symbol(filterKeyName) -> filterValue)).query(Symbol(keyName) -> id)
+        table.descending.limit(1).filter(Condition(filterKeyName -> filterValue)).query(keyName -> id)
       )
       .map(reportErrors _)
       .map(_.headOption)
 
   def saveItem(t: T): Option[Either[DynamoReadError, T]] = scanamoSync.exec(table.put(t))
 
-  def deleteItem(hashKey: String): Unit = scanamoSync.exec(table.delete(Symbol(keyName) -> hashKey))
+  def deleteItem(hashKey: String): Unit = scanamoSync.exec(table.delete(keyName -> hashKey))
 
   def deleteItem(hashKey: String, sortKey: String): Unit = {
     maybeSortKeyName map { sortKeyName =>
-      scanamoSync.exec(table.delete((Symbol(keyName) -> hashKey) and (Symbol(sortKeyName) -> sortKey)))
+      scanamoSync.exec(table.delete(keyName-> hashKey and sortKeyName -> sortKey))
     }
   }
 }
