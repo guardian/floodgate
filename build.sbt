@@ -22,7 +22,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.play"          %% "play-json"            % "2.9.4",
   "com.typesafe.play"          %% "play-json-joda"       % "2.9.4",
   "com.typesafe.play"          %% "play-logback"         % "2.8.18",
-  "com.typesafe.play"          %% "play-specs2"          % "2.8.18",
+  "com.typesafe.play"          %% "play-specs2"          % "2.8.19",
   "com.gu.play-googleauth"     %% "play-v27"             % "1.0.3",
   "org.scanamo"                %% "scanamo"              % "1.0.0-M10",
   "org.scanamo"                %% "scanamo-joda"         % "1.0.0-M10",
@@ -37,6 +37,9 @@ libraryDependencies ++= Seq(
 )
 
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-java8-compat" % VersionScheme.Always
+
+dependencyOverrides ++=  Seq(
+  "com.google.oauth-client" % "google-oauth-client" % "1.33.3")
 
 routesGenerator := InjectedRoutesGenerator
 
