@@ -21,8 +21,8 @@
     "react-interval": "^1.2.1",
     "react-router": "^1.0.0",
     "reqwest": "^2.0.5",
-    "webpack": "^5.37.0",
-    "webpack-cli": "^4.7.0"
+    "webpack": "^5.76.3",
+    "webpack-cli": "^5.0.1"
   },
   "scripts": {
     "build": "webpack --mode=production --config ./public/build_config/webpack.prod.conf.js",
