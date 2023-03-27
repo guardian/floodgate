@@ -1,5 +1,5 @@
 import React from 'react';
-import R from 'ramda';
+import * as R from 'ramda';
 import { Button, ButtonToolbar, Alert, Input, Row, Col } from 'react-bootstrap';
 import Moment from 'moment';
 

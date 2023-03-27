@@ -1,5 +1,5 @@
 import React from 'react';
-import R from 'ramda';
+import * as R from 'ramda';
 import ContentSource from './contentSource.react';
 import ContentSourceEdit from './contentSourceEdit.react';
 import JobHistory from './jobHistory.react';

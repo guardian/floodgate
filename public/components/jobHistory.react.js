@@ -1,5 +1,5 @@
 import React from 'react';
-import R from 'ramda';
+import * as R from 'ramda';
 import { Table } from 'react-bootstrap';
 import JobHistoryDateRange from './jobHistoryDateRange.react';
 

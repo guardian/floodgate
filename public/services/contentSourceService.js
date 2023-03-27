@@ -1,5 +1,5 @@
 import Reqwest from 'reqwest';
-import R from 'ramda';
+import * as R from 'ramda';
 
 export default {
 
