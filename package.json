@@ -3,10 +3,10 @@
   "version": "0.0.1",
   "description": "Floodgate - The Content API reindexing control panel",
   "dependencies": {
-    "@babel/core": "^7.21.3",
-    "@babel/preset-env": "^7.20.2",
+    "@babel/core": "^7.22.6",
+    "@babel/preset-env": "^7.22.6",
     "@babel/preset-react": "^7.18.6",
-    "babel-loader": "^9.1.2",
+    "babel-loader": "^9.1.3",
     "babel-plugin-transform-object-assign": "^6.0.14",
     "babel-preset-react": "^6.0.15",
     "history": "1.17.0",
