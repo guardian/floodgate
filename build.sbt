@@ -13,6 +13,7 @@ resolvers += "Sonatype releases" at "https://oss.sonatype.org/content/repositori
 
 val awsClientVersion = "1.12.351"
 val prometheusVersion = "0.16.0"
+val PekkoVersion = "1.0.1"
 
 libraryDependencies ++= Seq(
   ws,
@@ -32,6 +33,10 @@ libraryDependencies ++= Seq(
   "io.prometheus" % "simpleclient" % prometheusVersion,
   "io.prometheus" % "simpleclient_hotspot" % prometheusVersion,
   "io.prometheus" % "simpleclient_common" % prometheusVersion,
+
+  "org.apache.pekko" %% "pekko-actor" % PekkoVersion,
+  "org.apache.pekko" %% "pekko-testkit" % PekkoVersion % Test,
+
   //required to make jackson work
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.14.2"
 )

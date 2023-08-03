@@ -1,7 +1,7 @@
 package com.gu.floodgate.reindex
 
-import akka.actor.{Actor, ActorLogging, Props}
-import akka.pattern.pipe
+import org.apache.pekko.actor.{Actor, ActorLogging, Props}
+import org.apache.pekko.pattern.pipe
 import com.gu.floodgate.{CustomError, RunningJobNotFound}
 import com.gu.floodgate.contentsource.{ContentSource, ContentSourceSettings}
 import com.gu.floodgate.jobhistory.{JobHistory, JobHistoryService}

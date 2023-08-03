@@ -1,6 +1,9 @@
 package com.gu.floodgate
 
-import akka.actor.ActorRef
+import org.scanamo._
+import org.scanamo.joda.JodaFormats.jodaStringFormat
+import org.scanamo.auto._
+import org.apache.pekko.actor.{ActorRef, ActorSystem}
 import com.amazonaws.ClientConfiguration
 import com.amazonaws.auth.profile.ProfileCredentialsProvider
 import com.amazonaws.auth.{AWSCredentialsProviderChain, InstanceProfileCredentialsProvider}
@@ -11,9 +14,6 @@ import com.gu.floodgate.jobhistory.{JobHistory, JobHistoryApi, JobHistoryService
 import com.gu.floodgate.reindex.{BulkJobActor, ProgressTrackerController, ReindexService}
 import com.gu.floodgate.runningjob.{RunningJobApi, RunningJobService, RunningJobTable}
 import com.gu.googleauth.{AntiForgeryChecker, AuthAction, GoogleAuthConfig}
-import org.scanamo.{Scanamo, ScanamoAsync}
-import org.scanamo.joda.JodaFormats.jodaStringFormat
-import org.scanamo.auto._
 import play.api.ApplicationLoader.Context
 import play.api.libs.ws.ahc.AhcWSComponents
 import play.api.{BuiltInComponentsFromContext, NoHttpFiltersComponents}
@@ -29,6 +29,8 @@ class AppComponents(context: Context)
     with NoHttpFiltersComponents
     with AhcWSComponents
     with AssetsComponents {
+
+  private val pekkoActorSystem = ActorSystem("floodgate")
 
   Controller.init(controllerComponents)
 
@@ -74,7 +76,7 @@ class AppComponents(context: Context)
   val contentSourceService = new ContentSourceService(contentSourceTable)
   val jobHistoryService = new JobHistoryService(jobHistoryTable)
 
-  val progressTrackerControllerActor = actorSystem.actorOf(
+  val progressTrackerControllerActor = pekkoActorSystem.actorOf(
     ProgressTrackerController.props(wsClient, runningJobService, jobHistoryService),
     "progress-tracker-controller"
   )
@@ -139,7 +141,7 @@ class AppComponents(context: Context)
   def generateBulkActors(environment: String): ActorRef = {
     val contentSources = contentSourceTable.getAllSync()
     val idList = contentSources.filter(contentSource => contentSource.environment == environment).toList
-    actorSystem.actorOf(
+    pekkoActorSystem.actorOf(
       BulkJobActor.props(idList, runningJobService, reindexService, jobHistoryService),
       s"${environment}-bulk-job"
     )

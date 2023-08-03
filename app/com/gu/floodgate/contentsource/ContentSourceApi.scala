@@ -2,9 +2,9 @@ package com.gu.floodgate.contentsource
 
 import java.util.UUID
 
-import akka.actor.ActorRef
-import akka.pattern.ask
-import akka.util.Timeout
+import org.apache.pekko.actor.ActorRef
+import org.apache.pekko.pattern.ask
+import org.apache.pekko.util.Timeout
 import com.gu.floodgate.{BulkReindexInProcess, ErrorResponse}
 import com.gu.floodgate.Formats._
 import com.gu.floodgate.jobhistory.{JobHistoriesResponse, JobHistoryService}

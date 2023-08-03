@@ -1,6 +1,6 @@
 package controllers
 
-import akka.util.ByteString
+import org.apache.pekko.util.ByteString
 import com.gu.floodgate.reindex.{Completed, InProgress, Progress}
 import com.typesafe.scalalogging.StrictLogging
 import play.api.Configuration

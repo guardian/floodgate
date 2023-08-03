@@ -1,6 +1,6 @@
 package com.gu.floodgate.reindex
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import org.apache.pekko.actor.{Actor, ActorLogging, ActorRef, Props}
 import com.gu.floodgate.contentsource.ContentSource
 import com.gu.floodgate.jobhistory.JobHistoryService
 import com.gu.floodgate.reindex.ProgressTracker.{Cancel, TrackProgress}
