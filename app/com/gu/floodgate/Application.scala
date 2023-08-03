@@ -34,7 +34,7 @@ class Application(
     TextFormat.write004(writer, CollectorRegistry.defaultRegistry.metricFamilySamples())
     Result(
       ResponseHeader(200),
-      HttpEntity.Strict(ByteString(writer.toString), Some("text/plain; version=0.0.4; charset=UTF-8")))
+      HttpEntity.Strict(akka.util.ByteString(writer.toString), Some("text/plain; version=0.0.4; charset=UTF-8")))
   }
 
   /*
