@@ -125,7 +125,7 @@ export class Floodgate extends GuStack {
       vpc,
     });
 
-    app.autoScalingGroup.addSecurityGroup(new GuSecurityGroup(this, "InstanceOutboundSG", {
+    app.autoScalingGroup.connections.addSecurityGroup(new GuSecurityGroup(this, "InstanceOutboundSG", {
       app: "content-api-floodgate",
       allowAllOutbound: false,
       allowAllIpv6Outbound: false,
