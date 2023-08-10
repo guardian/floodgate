@@ -1,6 +1,6 @@
 package controllers
 
-import akka.util.ByteString
+import org.apache.pekko.util.ByteString
 import com.gu.floodgate.reindex.{Completed, InProgress, Progress}
 import com.typesafe.scalalogging.StrictLogging
 import play.api.Configuration
@@ -34,7 +34,10 @@ class Application(
     TextFormat.write004(writer, CollectorRegistry.defaultRegistry.metricFamilySamples())
     Result(
       ResponseHeader(200),
-      HttpEntity.Strict(ByteString(writer.toString), Some("text/plain; version=0.0.4; charset=UTF-8")))
+     //in order to force the MIME type here, we need to use Play's `HttpEntity.Strict` which requires converting any response body into
+     //an akka.util.ByteString.  This should count as "fair use" and allowed regardless of Akka version becase its only purpose is to feed Play
+     //and it is therefore covered under Play's license terms
+      HttpEntity.Strict(akka.util.ByteString(writer.toString), Some("text/plain; version=0.0.4; charset=UTF-8")))
   }
 
   /*

@@ -1,10 +1,6 @@
 package com.gu.floodgate.contentsource
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBAsync
-import com.amazonaws.services.dynamodbv2.model.{AttributeValue, AttributeValueUpdate}
 import com.gu.floodgate.DynamoDBTable
-
-import scala.collection.JavaConverters._
 import org.scanamo.{DynamoFormat, Scanamo, ScanamoAsync}
 
 class ContentSourceTable(

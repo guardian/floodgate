@@ -1,6 +1,6 @@
 package com.gu.floodgate.reindex
 
-import akka.actor.ActorRef
+import org.apache.pekko.actor.ActorRef
 import com.gu.floodgate._
 import com.gu.floodgate.contentsource.{ContentSource, ContentSourceService}
 import com.gu.floodgate.reindex.ProgressTrackerController.{LaunchTracker, RemoveTracker}
