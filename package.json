@@ -28,5 +28,5 @@
     "build": "webpack --mode=production --config ./public/build_config/webpack.prod.conf.js",
     "build-dev": "webpack --mode=development --config ./public/build_config/webpack.dev.conf.js --watch"
   },
-  "packageManager": "yarn@3.5.0"
+  "packageManager": "yarn@1.22.19"
 }
