@@ -24,6 +24,8 @@ jobs:
           cache: 'yarn'
           cache-dependency-path: cdk/yarn.lock
 
+      - run: yarn set version 1.22.19
+        name: Set yarn version
       - run: yarn install --frozen-lockfile
         name: Prepare for CDK infrastructure build
         working-directory: cdk
