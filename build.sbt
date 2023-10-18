@@ -46,7 +46,8 @@ ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-java8
 dependencyOverrides ++=  Seq(
   "com.google.oauth-client" % "google-oauth-client" % "1.33.3",
   "org.seleniumhq.selenium" % "htmlunit-driver" % "4.8.1",
-  "com.squareup.okhttp3" % "okhttp" % "4.10.0"
+  "com.squareup.okhttp3" % "okhttp" % "4.10.0",
+  "org.eclipse.jetty" % "jetty-http" % "9.4.53.v20231009"
   )
 
 routesGenerator := InjectedRoutesGenerator
