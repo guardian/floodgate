@@ -1,6 +1,8 @@
+import type {GuStack} from "@guardian/cdk/lib/constructs/core";
+import {Tags} from "aws-cdk-lib";
+import type { ITable} from "aws-cdk-lib/aws-dynamodb";
+import {AttributeType, BillingMode, Table, TableEncryption} from "aws-cdk-lib/aws-dynamodb";
 import {Construct} from "constructs";
-import {GuStack} from "@guardian/cdk/lib/constructs/core";
-import {AttributeType, BillingMode, ITable, Table, TableEncryption} from "aws-cdk-lib/aws-dynamodb";
 
 export class Datastore extends Construct {
     contentSourceTable: ITable;
@@ -51,5 +53,11 @@ export class Datastore extends Construct {
             billingMode: BillingMode.PAY_PER_REQUEST,
             tableName: `floodgate-running-job-${scope.stage}`
         });
+
+        // Enable automated backups for all DynamoDB tables via https://github.com/guardian/aws-backup
+        [this.contentSourceTable, this.jobHistoryTable, this.runningJobTable].map((table) => {
+            Tags.of(table).add("devx-backup-enabled", "true");
+        })
+
     }
 }
