@@ -54,10 +54,13 @@ export class Datastore extends Construct {
             tableName: `floodgate-running-job-${scope.stage}`
         });
 
-        // Enable automated backups for all DynamoDB tables via https://github.com/guardian/aws-backup
-        [this.contentSourceTable, this.jobHistoryTable, this.runningJobTable].map((table) => {
+        // Enable automated backups for DynamoDB tables that we may need to restore (via https://github.com/guardian/aws-backup)
+        [this.contentSourceTable, this.jobHistoryTable, ].map((table) => {
             Tags.of(table).add("devx-backup-enabled", "true");
         })
+
+        // Explicitly opt-out of backups for runningJobTable as it's unlikely that we'd ever want to restore this
+        Tags.of(this.runningJobTable).add("devx-backup-enabled", "false");
 
     }
 }
