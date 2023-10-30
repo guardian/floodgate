@@ -215,6 +215,10 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
         "TableName": "floodgate-content-source-TEST",
         "Tags": [
           {
+            "Key": "devx-backup-enabled",
+            "Value": "true",
+          },
+          {
             "Key": "gu:cdk:version",
             "Value": "TEST",
           },
@@ -707,6 +711,10 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
         "TableName": "floodgate-job-history-TEST",
         "Tags": [
           {
+            "Key": "devx-backup-enabled",
+            "Value": "true",
+          },
+          {
             "Key": "gu:cdk:version",
             "Value": "TEST",
           },
@@ -989,6 +997,10 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
         },
         "TableName": "floodgate-running-job-TEST",
         "Tags": [
+          {
+            "Key": "devx-backup-enabled",
+            "Value": "false",
+          },
           {
             "Key": "gu:cdk:version",
             "Value": "TEST",
