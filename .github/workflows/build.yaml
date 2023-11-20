@@ -27,6 +27,8 @@ jobs:
       - run: yarn install --frozen-lockfile
         name: Prepare for CDK infrastructure build
         working-directory: cdk
+      - run: yarn --version
+        working-directory: cdk
       - run: yarn test
         name: Test CDK infrastructure integrity
         working-directory: cdk
