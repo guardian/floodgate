@@ -68,6 +68,5 @@
       ".eslintrc.js",
       "jest.config.js"
     ]
-  },
-  "packageManager": "yarn@3.5.0"
+  }
 }
