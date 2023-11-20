@@ -21,8 +21,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-          cache: 'yarn'
-          cache-dependency-path: cdk/yarn.lock
 
       - run: yarn set version 3.5.0
         name: Set yarn version
