@@ -482,7 +482,7 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
           },
         ],
         "AlarmDescription": "content-api-floodgate exceeded 0% error rate",
-        "AlarmName": "High 5XX error % from content-api-floodgate in TEST",
+        "AlarmName": "High 5XX error percentage from content-api-floodgate in TEST",
         "ComparisonOperator": "GreaterThanThreshold",
         "EvaluationPeriods": 2,
         "Metrics": [
