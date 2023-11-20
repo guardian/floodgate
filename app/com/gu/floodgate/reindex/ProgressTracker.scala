@@ -185,7 +185,9 @@ class ProgressTracker(ws: WSClient, runningJobService: RunningJobService, jobHis
       status,
       runningJob.contentSourceEnvironment,
       runningJob.rangeFrom,
-      runningJob.rangeTo
+      runningJob.rangeTo,
+      Some(runningJob.documentsExpected),
+      Some(runningJob.documentsIndexed)
     )
     runningJobService.removeRunningJob(runningJob.contentSourceId, runningJob.contentSourceEnvironment)
     jobHistoryService.createJobHistory(jobHistory)
