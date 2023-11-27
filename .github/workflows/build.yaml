@@ -20,12 +20,10 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 18.x
           cache: 'yarn'
           cache-dependency-path: cdk/yarn.lock
 
-      - run: yarn set version 1.22.19
-        name: Set yarn version
       - run: yarn install --frozen-lockfile
         name: Prepare for CDK infrastructure build
         working-directory: cdk

@@ -6,7 +6,6 @@
     "@babel/core": "^7.22.6",
     "@babel/preset-env": "^7.22.6",
     "@babel/preset-react": "^7.18.6",
-    "@babel/traverse": "7.23.2",
     "babel-loader": "^9.1.3",
     "babel-plugin-transform-object-assign": "^6.0.14",
     "babel-preset-react": "^6.0.15",
@@ -27,6 +26,5 @@
   "scripts": {
     "build": "webpack --mode=production --config ./public/build_config/webpack.prod.conf.js",
     "build-dev": "webpack --mode=development --config ./public/build_config/webpack.dev.conf.js --watch"
-  },
-  "packageManager": "yarn@1.22.19"
+  }
 }

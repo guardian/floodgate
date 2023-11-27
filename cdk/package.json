@@ -12,7 +12,6 @@
     "diff": "cdk diff --path-metadata false --version-reporting false"
   },
   "devDependencies": {
-    "@babel/traverse": "7.23.2",
     "@guardian/cdk": "50.10.6",
     "@guardian/eslint-config-typescript": "2.0.0",
     "@guardian/prettier": "1.0.0",
@@ -68,6 +67,5 @@
       ".eslintrc.js",
       "jest.config.js"
     ]
-  },
-  "packageManager": "yarn@3.5.0"
+  }
 }
