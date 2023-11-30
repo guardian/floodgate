@@ -44,7 +44,9 @@ object BulkJobActor {
       env: String,
       startTime: DateTime,
       finishTime: DateTime,
-      status: ReindexStatus
+      status: ReindexStatus,
+      documentsIndexed: Option[Int],
+      documentsExpected: Option[Int]
   )
   object CompletedJobInfo {
     def apply(source: ContentSource, history: JobHistory): CompletedJobInfo = {
@@ -54,7 +56,9 @@ object BulkJobActor {
         source.environment,
         history.startTime,
         history.finishTime,
-        history.status
+        history.status,
+        history.documentsExpected,
+        history.documentsIndexed
       )
     }
   }

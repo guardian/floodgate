@@ -18,6 +18,7 @@ export default class JobHistory extends React.Component {
                     <td><JobHistoryDateRange rangeFrom={jobHistory.rangeFrom} rangeTo={jobHistory.rangeTo} /></td>
                     <td>{ new Date(jobHistory.startTime).toUTCString() }</td>
                     <td>{ new Date(jobHistory.finishTime).toUTCString() }</td>
+                    <td>{jobHistory.documentsIndexed} / {jobHistory.documentsExpected}</td>
                 </tr>
             );
         });
@@ -34,6 +35,7 @@ export default class JobHistory extends React.Component {
                                 <th>Date Range</th>
                                 <th>Start Time</th>
                                 <th>Finish Time</th>
+                                <th>Documents Indexed</th>
                             </tr>
                         </thead>
                         <tbody>

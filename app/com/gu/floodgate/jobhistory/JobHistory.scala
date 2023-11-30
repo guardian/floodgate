@@ -10,7 +10,9 @@ case class JobHistory(
     status: ReindexStatus,
     environment: String,
     rangeFrom: Option[DateTime],
-    rangeTo: Option[DateTime]
+    rangeTo: Option[DateTime],
+    documentsExpected: Option[Int],
+    documentsIndexed: Option[Int]
 )
 
 case class JobHistoriesResponse(jobHistories: Seq[JobHistory])
