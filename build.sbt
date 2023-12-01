@@ -19,11 +19,8 @@ libraryDependencies ++= Seq(
   ws,
   "com.amazonaws"              % "aws-java-sdk-kinesis"  % awsClientVersion,
   "com.amazonaws"              % "aws-java-sdk-dynamodb" % awsClientVersion,
-  "com.typesafe.scala-logging" %% "scala-logging"        % "3.9.5",
-  "com.typesafe.play"          %% "play-json"            % "2.9.4",
-  "com.typesafe.play"          %% "play-json-joda"       % "2.9.4",
-  "com.typesafe.play"          %% "play-logback"         % "2.8.18",
-  "com.typesafe.play"          %% "play-specs2"          % "2.8.19",
+  "com.typesafe.play"          %% "play-json-joda"       % "2.10.3",
+  "com.typesafe.play"          %% "play-specs2"          % "2.8.21",
   "com.gu.play-googleauth"     %% "play-v27"             % "1.0.3",
   "org.scanamo"                %% "scanamo"              % "1.0.0-M11",
   "org.scanamo"                %% "scanamo-joda"         % "1.0.0-M11",
@@ -64,6 +61,3 @@ Debian / daemonGroup := "content-api"
 Debian / serviceAutostart := false  //we don't want to start immediately after installation, we want to customise the setup first
 
 Test / testOptions += Tests.Argument(TestFrameworks.ScalaTest, "-u", sys.env.getOrElse("SBT_JUNIT_OUTPUT", "junit"))
-
-
-
