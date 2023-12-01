@@ -8,3 +8,4 @@ npm-debug.log
 public/build
 .ensime*
 dist/
+junit/
