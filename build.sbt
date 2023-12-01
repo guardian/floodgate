@@ -36,9 +36,6 @@ libraryDependencies ++= Seq(
 
   //required to make jackson work
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.14.2",
-
-  //required to pass the failing test after jetty-http is placed in dependency override. jetty-http is placed due to fix snyk high vuln.
-  "ch.qos.logback" % "logback-classic" % "1.4.7"
 )
 
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-java8-compat" % VersionScheme.Always
@@ -47,8 +44,9 @@ dependencyOverrides ++=  Seq(
   "com.google.oauth-client" % "google-oauth-client" % "1.33.3",
   "org.seleniumhq.selenium" % "htmlunit-driver" % "4.8.1",
   "com.squareup.okhttp3" % "okhttp" % "4.10.0",
-  "org.eclipse.jetty" % "jetty-http" % "11.0.16"
-  )
+  "org.eclipse.jetty" % "jetty-http" % "11.0.18",
+  "ch.qos.logback" % "logback-classic" % "1.4.12"
+)
 
 routesGenerator := InjectedRoutesGenerator
 
