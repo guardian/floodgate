@@ -20,11 +20,9 @@ libraryDependencies ++= Seq(
   "com.amazonaws"              % "aws-java-sdk-kinesis"  % awsClientVersion,
   "com.amazonaws"              % "aws-java-sdk-dynamodb" % awsClientVersion,
   "com.typesafe.play"          %% "play-json-joda"       % "2.10.3",
-  "com.typesafe.play"          %% "play-specs2"          % "2.8.21",
   "com.gu.play-googleauth"     %% "play-v27"             % "1.0.3",
   "org.scanamo"                %% "scanamo"              % "1.0.0-M11",
   "org.scanamo"                %% "scanamo-joda"         % "1.0.0-M11",
-  "org.scalatest"              %% "scalatest"            % "3.2.15" % "test",
   "org.typelevel"              %% "cats-core"            % "2.9.0",
   "net.logstash.logback" % "logstash-logback-encoder" % "7.3",
   "io.prometheus" % "simpleclient" % prometheusVersion,
@@ -32,10 +30,13 @@ libraryDependencies ++= Seq(
   "io.prometheus" % "simpleclient_common" % prometheusVersion,
 
   "org.apache.pekko" %% "pekko-actor" % PekkoVersion,
-  "org.apache.pekko" %% "pekko-testkit" % PekkoVersion % Test,
 
   //required to make jackson work
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.14.2",
+
+  "com.typesafe.play" %% "play-specs2" % "2.8.21" % Test,
+  "org.scalatest" %% "scalatest" % "3.2.15" % Test,
+  "org.apache.pekko" %% "pekko-testkit" % PekkoVersion % Test
 )
 
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-java8-compat" % VersionScheme.Always
