@@ -109,12 +109,12 @@ class AppComponents(context: Context)
     val clientId = configuration.get[String]("google.clientid")
     val clientSecret = configuration.get[String]("google.clientsecret")
     val redirectUrl = configuration.get[String]("google.oauthcallback")
-    val domain = "guardian.co.uk"
     GoogleAuthConfig(
       clientId,
       clientSecret,
       redirectUrl,
-      domain,
+      domains = List("guardian.co.uk"),
+      maxAuthAge = Some(java.time.Duration.ofDays(90)),
       antiForgeryChecker = AntiForgeryChecker.borrowSettingsFromPlay(httpConfiguration)
     )
   }
