@@ -42,7 +42,6 @@ libraryDependencies ++= Seq(
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-java8-compat" % VersionScheme.Always
 
 dependencyOverrides ++=  Seq(
-  "com.google.oauth-client" % "google-oauth-client" % "1.33.3",
   "org.seleniumhq.selenium" % "htmlunit-driver" % "4.8.1",
   "com.squareup.okhttp3" % "okhttp" % "4.10.0",
   "org.eclipse.jetty" % "jetty-http" % "11.0.18",
