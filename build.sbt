@@ -20,7 +20,7 @@ libraryDependencies ++= Seq(
   "com.amazonaws"              % "aws-java-sdk-kinesis"  % awsClientVersion,
   "com.amazonaws"              % "aws-java-sdk-dynamodb" % awsClientVersion,
   "com.typesafe.play"          %% "play-json-joda"       % "2.10.3",
-  "com.gu.play-googleauth"     %% "play-v28"             % "2.2.8",
+  "com.gu.play-googleauth"     %% "play-v28"             % "2.4.0",
   "org.scanamo"                %% "scanamo"              % "1.0.0-M11",
   "org.scanamo"                %% "scanamo-joda"         % "1.0.0-M11",
   "org.typelevel"              %% "cats-core"            % "2.9.0",
