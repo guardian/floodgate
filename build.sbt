@@ -46,7 +46,7 @@ dependencyOverrides ++=  Seq(
   "org.seleniumhq.selenium" % "htmlunit-driver" % "4.8.1",
   "com.squareup.okhttp3" % "okhttp" % "4.10.0",
   "org.eclipse.jetty" % "jetty-http" % "11.0.18",
-  "ch.qos.logback" % "logback-classic" % "1.4.12"
+  "ch.qos.logback" % "logback-classic" % "1.4.14"
 )
 
 routesGenerator := InjectedRoutesGenerator
