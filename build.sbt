@@ -20,7 +20,7 @@ libraryDependencies ++= Seq(
   "com.amazonaws"              % "aws-java-sdk-kinesis"  % awsClientVersion,
   "com.amazonaws"              % "aws-java-sdk-dynamodb" % awsClientVersion,
   "com.typesafe.play"          %% "play-json-joda"       % "2.10.3",
-  "com.gu.play-googleauth"     %% "play-v27"             % "1.0.3",
+  "com.gu.play-googleauth"     %% "play-v28"             % "2.4.0",
   "org.scanamo"                %% "scanamo"              % "1.0.0-M11",
   "org.scanamo"                %% "scanamo-joda"         % "1.0.0-M11",
   "org.typelevel"              %% "cats-core"            % "2.9.0",
@@ -42,10 +42,6 @@ libraryDependencies ++= Seq(
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-java8-compat" % VersionScheme.Always
 
 dependencyOverrides ++=  Seq(
-  "com.google.oauth-client" % "google-oauth-client" % "1.33.3",
-  "org.seleniumhq.selenium" % "htmlunit-driver" % "4.8.1",
-  "com.squareup.okhttp3" % "okhttp" % "4.10.0",
-  "org.eclipse.jetty" % "jetty-http" % "11.0.18",
   "ch.qos.logback" % "logback-classic" % "1.4.14"
 )
 
