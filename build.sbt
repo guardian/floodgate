@@ -11,7 +11,7 @@ version := "1.0"
 
 resolvers += "Sonatype releases" at "https://oss.sonatype.org/content/repositories/releases"
 
-val awsClientVersion = "1.12.351"
+val awsClientVersion = "1.12.671"
 val prometheusVersion = "0.16.0"
 val PekkoVersion = "1.0.1"
 
