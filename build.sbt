@@ -13,7 +13,7 @@ resolvers += "Sonatype releases" at "https://oss.sonatype.org/content/repositori
 
 val awsClientVersion = "1.12.671"
 val prometheusVersion = "0.16.0"
-val PekkoVersion = "1.0.1"
+val PekkoVersion = "1.0.2"
 
 libraryDependencies ++= Seq(
   ws,
