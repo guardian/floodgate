@@ -13,6 +13,6 @@ jobs:
       DEBUG: true
       ORG: guardian-capi
       SKIP_NODE: false
-      JAVA_VERSION: 8
+      JAVA_VERSION: 11
     secrets:
        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
