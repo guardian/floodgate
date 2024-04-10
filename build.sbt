@@ -1,5 +1,5 @@
 import com.typesafe.sbt.packager.archetypes.systemloader.ServerLoader.Systemd
-enablePlugins(JavaServerAppPackaging, SystemdPlugin, PlayScala, PlayAkkaHttpServer)
+enablePlugins(JavaServerAppPackaging, SystemdPlugin, PlayScala)
 disablePlugins(PlayNettyServer)
 
 name := "content-api-floodgate"
@@ -13,14 +13,14 @@ resolvers += "Sonatype releases" at "https://oss.sonatype.org/content/repositori
 
 val awsClientVersion = "1.12.671"
 val prometheusVersion = "0.16.0"
-val PekkoVersion = "1.0.1"
+val PekkoVersion = "1.0.2"
 
 libraryDependencies ++= Seq(
   ws,
   "com.amazonaws"              % "aws-java-sdk-kinesis"  % awsClientVersion,
   "com.amazonaws"              % "aws-java-sdk-dynamodb" % awsClientVersion,
   "com.typesafe.play"          %% "play-json-joda"       % "2.10.3",
-  "com.gu.play-googleauth"     %% "play-v28"             % "2.4.0",
+  "com.gu.play-googleauth"     %% "play-v30"             % "6.1.0",
   "org.scanamo"                %% "scanamo"              % "1.0.0-M11",
   "org.scanamo"                %% "scanamo-joda"         % "1.0.0-M11",
   "org.typelevel"              %% "cats-core"            % "2.9.0",
@@ -34,15 +34,9 @@ libraryDependencies ++= Seq(
   //required to make jackson work
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.14.2",
 
-  "com.typesafe.play" %% "play-specs2" % "2.8.21" % Test,
+  "org.playframework" %% "play-specs2" % "3.0.2" % Test,
   "org.scalatest" %% "scalatest" % "3.2.15" % Test,
   "org.apache.pekko" %% "pekko-testkit" % PekkoVersion % Test
-)
-
-ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-java8-compat" % VersionScheme.Always
-
-dependencyOverrides ++=  Seq(
-  "ch.qos.logback" % "logback-classic" % "1.4.14"
 )
 
 routesGenerator := InjectedRoutesGenerator
