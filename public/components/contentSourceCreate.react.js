@@ -4,6 +4,7 @@ import { Input, Button, ButtonToolbar, Alert, Col, Glyphicon, Row } from 'react-
 import ContentSourceService from '../services/contentSourceService';
 
 export default class ContentSourceForm extends React.Component {
+    emptyHeader = { key: "", value: ""};
 
     constructor(props) {
         super(props);
@@ -80,16 +81,18 @@ export default class ContentSourceForm extends React.Component {
         this.setState({description: e.target.value});
     }
 
-    handleEnvironmentsChange(id, field, e) {
-        const newState = update(this.state,
-            {
-                environments: {
-                    [id]: {
-                        [field]: {$set: e.target.value}
-                    }
-                }
-            }
-        );
+    handleEnvironmentsChangeEvent = (id, field, e) => {
+        this.handleEnvironmentsChange(id, field, e.target.value)
+    }
+
+    handleEnvironmentsChange(id, field, value) {
+        const newState = update(this.state, {
+            environments: {
+                [id]: {
+                [field]: { $set: value },
+                },
+            },
+        });
         this.setState(newState);
     }
 
@@ -99,6 +102,26 @@ export default class ContentSourceForm extends React.Component {
 
     handleSupportsCancelReindex(e) {
         this.setState({supportsCancelReindex: e.target.checked});
+    }
+
+    getHeadersOrDefault(id) {
+        return this.state.environments[id].headers ?? [this.emptyHeader]
+    }
+
+    handleHeaderChange(value, key, index, id) {
+        const newHeaders = [...this.getHeadersOrDefault(id)];
+        newHeaders[index] = { ...newHeaders[index], [key]: value };
+        this.handleEnvironmentsChange(id, "headers", newHeaders)
+    }
+
+    addHeader(id) {
+        const newHeaders = [...this.getHeadersOrDefault(id), this.emptyHeader];
+        this.handleEnvironmentsChange(id, "headers", newHeaders)
+    }
+
+    removeHeader(index, id) {
+        const newHeaders = this.getHeadersOrDefault(id).filter((_, localIndex) => localIndex !== index);
+        this.handleEnvironmentsChange(id, "headers", newHeaders)
     }
 
     handleSubmit(e) {
@@ -120,7 +143,8 @@ export default class ContentSourceForm extends React.Component {
                     contentSourceSettings: {
                         supportsToFromParams: supportsToFromParams,
                         supportsCancelReindex: supportsCancelReindex
-                    }
+                    },
+                    ...(obj.headers ? { headers: obj.headers } : {})
                 };
             }, this);
 
@@ -143,7 +167,6 @@ export default class ContentSourceForm extends React.Component {
                 <form className="form-horizontal" onSubmit={this.handleSubmit.bind(this)}>
                     <Input type="text" label="Application Name*" labelClassName="col-xs-2" wrapperClassName="col-xs-10" value={this.state.appName} onChange={this.handleAppNameChange.bind(this)} />
                     <Input type="text" label="Description*" labelClassName="col-xs-2" wrapperClassName="col-xs-10" value={this.state.description} onChange={this.handleDescriptionChange.bind(this)} />
-
                     {this.state.environments.map(function(e, id){
                         return (
                             <Row key={id}>
@@ -155,8 +178,8 @@ export default class ContentSourceForm extends React.Component {
                                                 <Col xs={12}>
                                                     <Input label="Endpoint*" labelClassName="col-xs-2" wrapperClassName="wrapper">
                                                         <Col xs={4}>
-                                                            <Input type="select" onChange={this.handleEnvironmentsChange.bind(this, id, "environment")} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select value={e.environment}>
-                                                                <option value="" disabled>Select environment ... </option>
+                                                            <Input type="select" onChange={this.handleEnvironmentsChangeEvent.bind(this, id, "environment")} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select value={e.environment}>
+                                                                <option value="" disabled>Select stage ... </option>
                                                                 <option value="live-code">Code [live]</option>
                                                                 <option value="draft-code">Code [draft]</option>
                                                                 <option value="live-prod">Prod [live]</option>
@@ -164,7 +187,7 @@ export default class ContentSourceForm extends React.Component {
                                                             </Input>
                                                         </Col>
                                                         <Col xs={6}>
-                                                            <input type="text" value={e.reindexEndpoint} onChange={this.handleEnvironmentsChange.bind(this, id, "reindexEndpoint")} placeholder="URL for reindex (include api key parameter if required) ..." wrapperClassName="col-xs-4" className="form-control" />
+                                                            <input type="text" value={e.reindexEndpoint} onChange={this.handleEnvironmentsChangeEvent.bind(this, id, "reindexEndpoint")} placeholder="URL for reindex (include api key parameter if required) ..." wrapperClassName="col-xs-4" className="form-control" />
                                                         </Col>
                                                     </Input>
                                                 </Col>
@@ -174,7 +197,7 @@ export default class ContentSourceForm extends React.Component {
                                                 <Col xs={12}>
                                                     <Input label="Authentication*" labelClassName="col-xs-2" wrapperClassName="wrapper">
                                                         <Col xs={4} className="no-margin-bottom">
-                                                            <Input type="select" onChange={this.handleEnvironmentsChange.bind(this, id, "authType")} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select value={e.authType}>
+                                                            <Input type="select" onChange={this.handleEnvironmentsChangeEvent.bind(this, id, "authType")} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select value={e.authType}>
                                                                 <option value="" disabled>Select authentication type ... </option>
                                                                 <option value="api-key">Api key</option>
                                                                 <option value="vpc-peered">VPC peered</option>
@@ -182,6 +205,35 @@ export default class ContentSourceForm extends React.Component {
                                                         </Col>
                                                         <Col xs={6}>
                                                             <Button className="remove-btn pull-right btn btn-link btn-sm" onClick={this.deleteEnvironmentItem.bind(this, id)}><Glyphicon glyph="glyphicon glyphicon-minus" /> Remove</Button>
+                                                        </Col>
+                                                    </Input>
+                                                </Col>
+                                            </Row>
+
+                                            <Row>
+                                                <Col xs={12}>
+                                                    <Input label="Headers" labelClassName="col-xs-2" wrapperClassName="wrapper">
+                                                        <Col xs={10}>
+                                                            {(e.headers ?? [this.emptyHeader]).map(({ key, value }, index) =>
+                                                                <Row>
+                                                                    <Col xs={4} className="no-margin-bottom">
+                                                                        <input type="text" placeholder="Add a header key" onChange={(e) => this.handleHeaderChange(e.target.value, "key", index, id)} className="form-control" value={key}>
+                                                                        </input>
+                                                                    </Col>
+                                                                    <Col xs={4} className="no-margin-bottom">
+                                                                        <input type="text" placeholder="Add a header value" onChange={(e) => this.handleHeaderChange(e.target.value, "value", index, id)} className="form-control" value={value}>
+                                                                        </input>
+                                                                    </Col>
+                                                                    <Col xs={2}>
+                                                                        <Button className="remove-btn pull-right btn btn-link btn-sm" onClick={this.removeHeader.bind(this, index, id)}><Glyphicon glyph="glyphicon glyphicon-minus" /> Remove header</Button>
+                                                                    </Col>
+                                                                </Row>
+                                                            )}
+                                                            <Row>
+                                                                <Col  xs={12}>
+                                                                    <Button className="remove-btn pull-left btn btn-link btn-sm" onClick={this.addHeader.bind(this, id)}><Glyphicon glyph="glyphicon glyphicon-plus" /> Add another header</Button>
+                                                                </Col>
+                                                            </Row>
                                                         </Col>
                                                     </Input>
                                                 </Col>
