@@ -13,10 +13,10 @@
     "jquery": "^3.6.0",
     "moment": "^2.19.x",
     "ramda": "^0.28.0",
-    "react": "^0.14.7",
+    "react": "15",
     "react-addons-update": "^0.14.7",
     "react-bootstrap": "^0.28.x",
-    "react-dom": "^0.14.6",
+    "react-dom": "15",
     "react-interval": "^1.2.1",
     "react-router": "^1.0.0",
     "reqwest": "^2.0.5",
@@ -26,5 +26,6 @@
   "scripts": {
     "build": "webpack --mode=production --config ./public/build_config/webpack.prod.conf.js",
     "build-dev": "webpack --mode=development --config ./public/build_config/webpack.dev.conf.js --watch"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }
