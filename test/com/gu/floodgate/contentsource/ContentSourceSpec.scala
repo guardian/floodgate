@@ -10,7 +10,8 @@ class ContentSourceSpec extends AnyFlatSpec with Matchers  {
     reindexEndpoint = "http://myurl.com/reindex?api-key=my-key",
     environment = "code-live",
     authType = "api-key",
-    contentSourceSettings = ContentSourceSettings(true, true)
+    contentSourceSettings = ContentSourceSettings(true, true),
+    headers = None
   )
 
   val contentSourceWithoutIdAndEnvironment = ContentWithoutIdAndEnvironment(
@@ -18,7 +19,8 @@ class ContentSourceSpec extends AnyFlatSpec with Matchers  {
     description = "description of my reindexer",
     reindexEndpoint = "http://myurl.com/reindex?api-key=my-key",
     authType = "api-key",
-    contentSourceSettings = ContentSourceSettings(true, true)
+    contentSourceSettings = ContentSourceSettings(true, true),
+    headers = None
   )
 
   it should "add a UUID when a content source is created from a ContentSourceWithoutId" in {
