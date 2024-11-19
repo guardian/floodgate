@@ -2,10 +2,9 @@ import React from 'react';
 import update from 'react-addons-update';
 import { Input, Button, ButtonToolbar, Alert, Col, Glyphicon, Row } from 'react-bootstrap';
 import ContentSourceService from '../services/contentSourceService';
+import {emptyHeader, headerListToHeaderMap, HeadersForm} from "./headersForm";
 
 export default class ContentSourceForm extends React.Component {
-    emptyHeader = { key: "", value: ""};
-
     constructor(props) {
         super(props);
         this.render = this.render.bind(this);
@@ -104,25 +103,6 @@ export default class ContentSourceForm extends React.Component {
         this.setState({supportsCancelReindex: e.target.checked});
     }
 
-    getHeadersOrDefault(id) {
-        return this.state.environments[id].headers ?? [this.emptyHeader]
-    }
-
-    handleHeaderChange(value, key, index, id) {
-        const newHeaders = [...this.getHeadersOrDefault(id)];
-        newHeaders[index] = { ...newHeaders[index], [key]: value };
-        this.handleEnvironmentsChange(id, "headers", newHeaders)
-    }
-
-    addHeader(id) {
-        const newHeaders = [...this.getHeadersOrDefault(id), this.emptyHeader];
-        this.handleEnvironmentsChange(id, "headers", newHeaders)
-    }
-
-    removeHeader(index, id) {
-        const newHeaders = this.getHeadersOrDefault(id).filter((_, localIndex) => localIndex !== index);
-        this.handleEnvironmentsChange(id, "headers", newHeaders)
-    }
 
     handleSubmit(e) {
         e.preventDefault();
@@ -144,7 +124,7 @@ export default class ContentSourceForm extends React.Component {
                         supportsToFromParams: supportsToFromParams,
                         supportsCancelReindex: supportsCancelReindex
                     },
-                    ...(obj.headers ? { headers: obj.headers } : {})
+                    ...(obj.headers ? headerListToHeaderMap(obj.headers) : {})
                 };
             }, this);
 
@@ -209,33 +189,12 @@ export default class ContentSourceForm extends React.Component {
                                                     </Input>
                                                 </Col>
                                             </Row>
-
                                             <Row>
                                                 <Col xs={12}>
-                                                    <Input label="Headers" labelClassName="col-xs-2" wrapperClassName="wrapper">
-                                                        <Col xs={10}>
-                                                            {(e.headers ?? [this.emptyHeader]).map(({ key, value }, index) =>
-                                                                <Row>
-                                                                    <Col xs={4} className="no-margin-bottom">
-                                                                        <input type="text" placeholder="Add a header key" onChange={(e) => this.handleHeaderChange(e.target.value, "key", index, id)} className="form-control" value={key}>
-                                                                        </input>
-                                                                    </Col>
-                                                                    <Col xs={4} className="no-margin-bottom">
-                                                                        <input type="text" placeholder="Add a header value" onChange={(e) => this.handleHeaderChange(e.target.value, "value", index, id)} className="form-control" value={value}>
-                                                                        </input>
-                                                                    </Col>
-                                                                    <Col xs={2}>
-                                                                        <Button className="remove-btn pull-right btn btn-link btn-sm" onClick={this.removeHeader.bind(this, index, id)}><Glyphicon glyph="glyphicon glyphicon-minus" /> Remove header</Button>
-                                                                    </Col>
-                                                                </Row>
-                                                            )}
-                                                            <Row>
-                                                                <Col  xs={12}>
-                                                                    <Button className="remove-btn pull-left btn btn-link btn-sm" onClick={this.addHeader.bind(this, id)}><Glyphicon glyph="glyphicon glyphicon-plus" /> Add another header</Button>
-                                                                </Col>
-                                                            </Row>
-                                                        </Col>
-                                                    </Input>
+                                                    <HeadersForm
+                                                        headers={e.headers}
+                                                        onChange={(headers) => this.handleEnvironmentsChange(id, "headers", headers)}
+                                                    />
                                                 </Col>
                                             </Row>
                                         </div>
