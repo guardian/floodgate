@@ -13,7 +13,7 @@ export default class ContentSourceEdit extends React.Component {
             description: this.props.contentSource.description,
             reindexEndpoint: this.props.contentSource.reindexEndpoint,
             authType: this.props.contentSource.authType,
-            headers: Object.entries(this.props.contentSource.headers).map(([key, value]) => ({ key, value })),
+            headers: Object.entries(this.props.contentSource.headers ?? {}).map(([key, value]) => ({ key, value })),
             supportsToFromParams: this.props.contentSource.contentSourceSettings.supportsToFromParams,
             supportsCancelReindex: this.props.contentSource.contentSourceSettings.supportsCancelReindex,
             alertStyle: 'success',

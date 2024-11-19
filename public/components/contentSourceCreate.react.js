@@ -2,7 +2,7 @@ import React from 'react';
 import update from 'react-addons-update';
 import { Input, Button, ButtonToolbar, Alert, Col, Glyphicon, Row } from 'react-bootstrap';
 import ContentSourceService from '../services/contentSourceService';
-import {emptyHeader, headerListToHeaderMap, HeadersForm} from "./headersForm";
+import {headerListToHeaderMap, HeadersForm} from "./headersForm";
 
 export default class ContentSourceForm extends React.Component {
     constructor(props) {
