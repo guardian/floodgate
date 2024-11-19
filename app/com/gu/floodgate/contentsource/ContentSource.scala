@@ -107,7 +107,6 @@ object ContentSource {
   }
 
   def apply(id: String, environment: String, contentSource: ContentWithoutIdAndEnvironment): ContentSource = {
-    val id = UUID.randomUUID().toString
     ContentSource(
       id,
       contentSource.appName,
