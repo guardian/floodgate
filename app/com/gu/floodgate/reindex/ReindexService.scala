@@ -62,8 +62,13 @@ class ReindexService(
       dateParameters: DateParameters
   )(implicit ec: ExecutionContext): Future[Either[CustomError, RunningJob]] = {
     val reindexUrl: String = contentSource.reindexEndpointWithDateParams(dateParameters)
+    val headers = contentSource
+      .headers
+      .getOrElse(Map.empty)
+      .toList
+
     logger.info(s"Requesting reindex from url: ${reindexUrl}")
-    ws.url(reindexUrl).post("") flatMap { response =>
+    ws.url(reindexUrl).withHttpHeaders(headers: _*).post("").flatMap { response =>
       response.status match {
         case 200 | 201 =>
           val runningJob = RunningJob(contentSource.id, contentSource.environment, dateParameters)
