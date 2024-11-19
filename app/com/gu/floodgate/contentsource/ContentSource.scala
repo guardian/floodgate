@@ -15,7 +15,8 @@ case class ContentSourceWithoutId(
     reindexEndpoint: String,
     environment: String,
     authType: String,
-    contentSourceSettings: ContentSourceSettings
+    contentSourceSettings: ContentSourceSettings,
+    headers: Option[Map[String, String]]
 )
 
 case class ContentSourcesResponse(contentSources: Seq[ContentSource])
@@ -56,7 +57,8 @@ case class ContentSource(
     reindexEndpoint: String,
     environment: String,
     authType: String,
-    contentSourceSettings: ContentSourceSettings
+    contentSourceSettings: ContentSourceSettings,
+    headers: Option[Map[String, String]]
 ) {
 
   def uniqueId: String = s"$id-$environment"
@@ -84,7 +86,8 @@ case class ContentWithoutIdAndEnvironment(
     description: String,
     reindexEndpoint: String,
     authType: String,
-    contentSourceSettings: ContentSourceSettings
+    contentSourceSettings: ContentSourceSettings,
+    headers: Option[Map[String, String]]
 )
 
 object ContentSource {
@@ -102,7 +105,8 @@ object ContentSource {
       contentSourceWithoutId.reindexEndpoint,
       contentSourceWithoutId.environment,
       contentSourceWithoutId.authType,
-      contentSourceWithoutId.contentSourceSettings
+      contentSourceWithoutId.contentSourceSettings,
+      contentSourceWithoutId.headers
     )
   }
 
@@ -114,7 +118,8 @@ object ContentSource {
       contentSource.reindexEndpoint,
       environment,
       contentSource.authType,
-      contentSource.contentSourceSettings
+      contentSource.contentSourceSettings,
+      contentSource.headers
     )
   }
 }

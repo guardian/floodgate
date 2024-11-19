@@ -124,7 +124,7 @@ export default class ContentSourceForm extends React.Component {
                         supportsToFromParams: supportsToFromParams,
                         supportsCancelReindex: supportsCancelReindex
                     },
-                    ...(obj.headers ? headerListToHeaderMap(obj.headers) : {})
+                    ...(obj.headers ? { headers: headerListToHeaderMap(obj.headers) } : {})
                 };
             }, this);
 
