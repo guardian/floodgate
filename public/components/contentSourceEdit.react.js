@@ -2,6 +2,7 @@ import React from 'react';
 import * as R from 'ramda';
 import { Button, ButtonToolbar, Input, Alert, Col } from 'react-bootstrap';
 import ContentSourceService from '../services/contentSourceService';
+import {headerListToHeaderMap, HeadersForm} from "./headersForm";
 
 export default class ContentSourceEdit extends React.Component {
 
@@ -12,6 +13,7 @@ export default class ContentSourceEdit extends React.Component {
             description: this.props.contentSource.description,
             reindexEndpoint: this.props.contentSource.reindexEndpoint,
             authType: this.props.contentSource.authType,
+            headers: Object.entries(this.props.contentSource.headers ?? {}).map(([key, value]) => ({ key, value })),
             supportsToFromParams: this.props.contentSource.contentSourceSettings.supportsToFromParams,
             supportsCancelReindex: this.props.contentSource.contentSourceSettings.supportsCancelReindex,
             alertStyle: 'success',
@@ -65,6 +67,7 @@ export default class ContentSourceEdit extends React.Component {
                  description: description,
                  reindexEndpoint: reindexEndpoint,
                  authType: authType,
+                 ...(this.state.headers ? { headers: headerListToHeaderMap(this.state.headers) } : {}),
                  contentSourceSettings: {
                      supportsToFromParams: supportsToFromParams,
                      supportsCancelReindex: supportsCancelReindex
@@ -96,7 +99,10 @@ export default class ContentSourceEdit extends React.Component {
                         <option value="api-key">Api key</option>
                         <option value="vpc-peered">VPC peered</option>
                     </Input>
-
+                    <HeadersForm
+                        headers={this.state.headers}
+                        onChange={(headers) => this.setState({ "headers": headers })}
+                    />
                     <Input label="Settings" labelClassName="col-xs-2" wrapperClassName="wrapper">
                         <Col xs={4}>
                             <Input type="checkbox" defaultChecked={this.state.supportsToFromParams} onChange={this.handleSupportsToFromParams.bind(this)} label="Supports to/from reindex parameters" />
@@ -105,7 +111,6 @@ export default class ContentSourceEdit extends React.Component {
                             <Input type="checkbox" defaultChecked={this.state.supportsCancelReindex} onChange={this.handleSupportsCancelReindex.bind(this)} label="Supports cancelling of a reindex" />
                         </Col>
                     </Input>
-
                     <ButtonToolbar>
                         <Button bsStyle="success" className="pull-right" type="submit">Submit</Button>
                         <Button bsStyle="danger" className="pull-right" type="button" onClick={this.exitEditMode}>Cancel</Button>

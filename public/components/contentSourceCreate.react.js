@@ -2,9 +2,9 @@ import React from 'react';
 import update from 'react-addons-update';
 import { Input, Button, ButtonToolbar, Alert, Col, Glyphicon, Row } from 'react-bootstrap';
 import ContentSourceService from '../services/contentSourceService';
+import {headerListToHeaderMap, HeadersForm} from "./headersForm";
 
 export default class ContentSourceForm extends React.Component {
-
     constructor(props) {
         super(props);
         this.render = this.render.bind(this);
@@ -80,16 +80,18 @@ export default class ContentSourceForm extends React.Component {
         this.setState({description: e.target.value});
     }
 
-    handleEnvironmentsChange(id, field, e) {
-        const newState = update(this.state,
-            {
-                environments: {
-                    [id]: {
-                        [field]: {$set: e.target.value}
-                    }
-                }
-            }
-        );
+    handleEnvironmentsChangeEvent = (id, field, e) => {
+        this.handleEnvironmentsChange(id, field, e.target.value)
+    }
+
+    handleEnvironmentsChange(id, field, value) {
+        const newState = update(this.state, {
+            environments: {
+                [id]: {
+                [field]: { $set: value },
+                },
+            },
+        });
         this.setState(newState);
     }
 
@@ -100,6 +102,7 @@ export default class ContentSourceForm extends React.Component {
     handleSupportsCancelReindex(e) {
         this.setState({supportsCancelReindex: e.target.checked});
     }
+
 
     handleSubmit(e) {
         e.preventDefault();
@@ -120,7 +123,8 @@ export default class ContentSourceForm extends React.Component {
                     contentSourceSettings: {
                         supportsToFromParams: supportsToFromParams,
                         supportsCancelReindex: supportsCancelReindex
-                    }
+                    },
+                    ...(obj.headers ? { headers: headerListToHeaderMap(obj.headers) } : {})
                 };
             }, this);
 
@@ -143,7 +147,6 @@ export default class ContentSourceForm extends React.Component {
                 <form className="form-horizontal" onSubmit={this.handleSubmit.bind(this)}>
                     <Input type="text" label="Application Name*" labelClassName="col-xs-2" wrapperClassName="col-xs-10" value={this.state.appName} onChange={this.handleAppNameChange.bind(this)} />
                     <Input type="text" label="Description*" labelClassName="col-xs-2" wrapperClassName="col-xs-10" value={this.state.description} onChange={this.handleDescriptionChange.bind(this)} />
-
                     {this.state.environments.map(function(e, id){
                         return (
                             <Row key={id}>
@@ -155,8 +158,8 @@ export default class ContentSourceForm extends React.Component {
                                                 <Col xs={12}>
                                                     <Input label="Endpoint*" labelClassName="col-xs-2" wrapperClassName="wrapper">
                                                         <Col xs={4}>
-                                                            <Input type="select" onChange={this.handleEnvironmentsChange.bind(this, id, "environment")} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select value={e.environment}>
-                                                                <option value="" disabled>Select environment ... </option>
+                                                            <Input type="select" onChange={this.handleEnvironmentsChangeEvent.bind(this, id, "environment")} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select value={e.environment}>
+                                                                <option value="" disabled>Select stage ... </option>
                                                                 <option value="live-code">Code [live]</option>
                                                                 <option value="draft-code">Code [draft]</option>
                                                                 <option value="live-prod">Prod [live]</option>
@@ -164,7 +167,7 @@ export default class ContentSourceForm extends React.Component {
                                                             </Input>
                                                         </Col>
                                                         <Col xs={6}>
-                                                            <input type="text" value={e.reindexEndpoint} onChange={this.handleEnvironmentsChange.bind(this, id, "reindexEndpoint")} placeholder="URL for reindex (include api key parameter if required) ..." wrapperClassName="col-xs-4" className="form-control" />
+                                                            <input type="text" value={e.reindexEndpoint} onChange={this.handleEnvironmentsChangeEvent.bind(this, id, "reindexEndpoint")} placeholder="URL for reindex (include api key parameter if required) ..." wrapperClassName="col-xs-4" className="form-control" />
                                                         </Col>
                                                     </Input>
                                                 </Col>
@@ -174,7 +177,7 @@ export default class ContentSourceForm extends React.Component {
                                                 <Col xs={12}>
                                                     <Input label="Authentication*" labelClassName="col-xs-2" wrapperClassName="wrapper">
                                                         <Col xs={4} className="no-margin-bottom">
-                                                            <Input type="select" onChange={this.handleEnvironmentsChange.bind(this, id, "authType")} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select value={e.authType}>
+                                                            <Input type="select" onChange={this.handleEnvironmentsChangeEvent.bind(this, id, "authType")} labelClassName="col-xs-2" wrapperClassName="col-xs-10" select value={e.authType}>
                                                                 <option value="" disabled>Select authentication type ... </option>
                                                                 <option value="api-key">Api key</option>
                                                                 <option value="vpc-peered">VPC peered</option>
@@ -184,6 +187,14 @@ export default class ContentSourceForm extends React.Component {
                                                             <Button className="remove-btn pull-right btn btn-link btn-sm" onClick={this.deleteEnvironmentItem.bind(this, id)}><Glyphicon glyph="glyphicon glyphicon-minus" /> Remove</Button>
                                                         </Col>
                                                     </Input>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col xs={12}>
+                                                    <HeadersForm
+                                                        headers={e.headers}
+                                                        onChange={(headers) => this.handleEnvironmentsChange(id, "headers", headers)}
+                                                    />
                                                 </Col>
                                             </Row>
                                         </div>
