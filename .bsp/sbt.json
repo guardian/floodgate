@@ -1,0 +1,1 @@
+{"name":"sbt","version":"1.9.2","bspVersion":"2.1.0-M1","languages":["scala"],"argv":["/Users/jonathon_herbert/.asdf/installs/java/temurin-11.0.22+7/bin/java","-Xms100m","-Xmx100m","-classpath","/opt/homebrew/Cellar/sbt/1.10.0/libexec/bin/sbt-launch.jar","-Dsbt.script=/opt/homebrew/Cellar/sbt/1.10.0/libexec/bin/sbt","xsbt.boot.Boot","-bsp"]}
