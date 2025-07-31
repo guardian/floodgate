@@ -5,8 +5,10 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
   "Metadata": {
     "gu:cdk:constructs": [
       "GuParameter",
-      "GuParameter",
       "GuPolicy",
+      "GuVpcParameter",
+      "GuSubnetListParameter",
+      "GuSubnetListParameter",
       "GuEc2App",
       "GuCertificate",
       "GuInstanceRole",
@@ -64,14 +66,20 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
       "Default": "/account/services/capi.gutools/TEST/hostedzoneid",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
-    "SsmParameterValueaccountvpcTESTgenericidC96584B6F00A464EAD1953AFF4B05118Parameter": {
-      "Default": "/account/vpc/TEST-generic/id",
-      "Type": "AWS::SSM::Parameter::Value<String>",
+    "VpcId": {
+      "Default": "/account/vpc/vpc-content-platforms-TEST/id",
+      "Description": "Virtual Private Cloud to run EC2 instances within. Should NOT be the account default VPC.",
+      "Type": "AWS::SSM::Parameter::Value<AWS::EC2::VPC::Id>",
     },
-    "subnets": {
-      "Default": "/account/vpc/TEST-generic/subnets",
-      "Description": "Subnets to deploy into",
-      "Type": "AWS::SSM::Parameter::Value<List<String>>",
+    "contentapifloodgatePrivateSubnets": {
+      "Default": "/account/vpc/vpc-content-platforms-TEST/subnets/public",
+      "Description": "A list of private subnets",
+      "Type": "AWS::SSM::Parameter::Value<List<AWS::EC2::Subnet::Id>>",
+    },
+    "contentapifloodgatePublicSubnets": {
+      "Default": "/account/vpc/vpc-content-platforms-TEST/subnets/public",
+      "Description": "A list of public subnets",
+      "Type": "AWS::SSM::Parameter::Value<List<AWS::EC2::Subnet::Id>>",
     },
   },
   "Resources": {
@@ -142,7 +150,7 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
           },
         ],
         "VPCZoneIdentifier": {
-          "Ref": "subnets",
+          "Ref": "contentapifloodgatePrivateSubnets",
         },
       },
       "Type": "AWS::AutoScaling::AutoScalingGroup",
@@ -397,7 +405,7 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
           },
         ],
         "VpcId": {
-          "Ref": "SsmParameterValueaccountvpcTESTgenericidC96584B6F00A464EAD1953AFF4B05118Parameter",
+          "Ref": "VpcId",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
@@ -625,7 +633,7 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
           },
         ],
         "VpcId": {
-          "Ref": "SsmParameterValueaccountvpcTESTgenericidC96584B6F00A464EAD1953AFF4B05118Parameter",
+          "Ref": "VpcId",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
@@ -797,7 +805,7 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
           },
         ],
         "Subnets": {
-          "Ref": "subnets",
+          "Ref": "contentapifloodgatePublicSubnets",
         },
         "Tags": [
           {
@@ -860,7 +868,7 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
           },
         ],
         "VpcId": {
-          "Ref": "SsmParameterValueaccountvpcTESTgenericidC96584B6F00A464EAD1953AFF4B05118Parameter",
+          "Ref": "VpcId",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
@@ -1100,7 +1108,7 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
         "TargetType": "instance",
         "UnhealthyThresholdCount": 2,
         "VpcId": {
-          "Ref": "SsmParameterValueaccountvpcTESTgenericidC96584B6F00A464EAD1953AFF4B05118Parameter",
+          "Ref": "VpcId",
         },
       },
       "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
