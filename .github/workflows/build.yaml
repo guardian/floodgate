@@ -60,6 +60,10 @@ jobs:
 
       - uses: guardian/actions-riff-raff@v4
         with:
+          # There's only one stage, PROD.
+          # Ideally, we'd only deploy to PROD from main, so don't add the "deploy to <STAGE>" comment.
+          commentingEnabled: false
+
           configPath: riff-raff.yaml
           projectName: Content Platforms::floodgate
           buildNumberOffset: 397
