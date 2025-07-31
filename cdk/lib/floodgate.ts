@@ -101,7 +101,8 @@ export class Floodgate extends GuStack {
       },
       applicationPort: 9000,
       certificateProps: {
-        domainName: this.stage==="CODE" ? "floodgate.capi.code.dev-gutools.co.uk" : "floodgate.capi.gutools.co.uk",
+        // TODO push this to props if/when we add a CODE stage
+        domainName: "floodgate.capi.gutools.co.uk",
         hostedZoneId: dnsZone,
       },
       instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.SMALL),
