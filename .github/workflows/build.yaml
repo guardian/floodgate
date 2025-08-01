@@ -1,6 +1,17 @@
 name: Build and upload
 
-on: [push]
+# Produce a build when...
+on:
+  # ...we raise (or commit to) a pull request
+  pull_request:
+
+  # ...or we push to main, e.g. merge a pull request
+  push:
+    branches:
+      - main
+
+  # ...or we manually invoke the build
+  workflow_dispatch:
 
 jobs:
   floodgate:
@@ -49,6 +60,10 @@ jobs:
 
       - uses: guardian/actions-riff-raff@v4
         with:
+          # There's only one stage, PROD.
+          # Ideally, we'd only deploy to PROD from main, so don't add the "deploy to <STAGE>" comment.
+          commentingEnabled: false
+
           configPath: riff-raff.yaml
           projectName: Content Platforms::floodgate
           buildNumberOffset: 397
