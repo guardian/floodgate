@@ -1333,6 +1333,7 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
           "InstanceType": "t4g.small",
           "MetadataOptions": {
             "HttpTokens": "required",
+            "InstanceMetadataTags": "enabled",
           },
           "SecurityGroupIds": [
             {
