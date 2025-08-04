@@ -332,15 +332,15 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.57.1.tgz#de633db3ec2ef6a3c89e2f19038063e8a122e2c2"
   integrity sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==
 
-"@guardian/cdk@58.1.1":
-  version "58.1.1"
-  resolved "https://registry.yarnpkg.com/@guardian/cdk/-/cdk-58.1.1.tgz#e4a72a33dfe6c5756331cfe235fa0d6928a1531c"
-  integrity sha512-4XdzrAoMQCNPEJMqS9HYrvYaiPqyloWVfLWdmd7mjKbGN0i0vNw20Vv7cfWf1d0GqGV22avYUAj+Ro+KFOOzpw==
+"@guardian/cdk@59.0.0":
+  version "59.0.0"
+  resolved "https://registry.yarnpkg.com/@guardian/cdk/-/cdk-59.0.0.tgz#3e4f14b2d50285130d3f742e20da0d59b5388a3d"
+  integrity sha512-hmejN0jSYxFuyroIhn2y3AmRlAtTQ9XOVvTHrYeNC/+g46+U5WpziLpPgfC6HAy/e6d5pWa7IpjV8tUsFjVljg==
   dependencies:
     "@oclif/core" "3.26.6"
-    aws-sdk "^2.1626.0"
+    aws-sdk "^2.1649.0"
     chalk "^4.1.2"
-    codemaker "^1.98.0"
+    codemaker "^1.101.0"
     git-url-parse "^14.0.0"
     js-yaml "^4.1.0"
     lodash.camelcase "^4.3.0"
@@ -1101,10 +1101,10 @@ available-typed-arrays@^1.0.7:
   dependencies:
     possible-typed-array-names "^1.0.0"
 
-aws-cdk-lib@2.141.0:
-  version "2.141.0"
-  resolved "https://registry.yarnpkg.com/aws-cdk-lib/-/aws-cdk-lib-2.141.0.tgz#022c577b08563c226e7649be7283947d2c49fb0b"
-  integrity sha512-xda56Lfwpdqg9MssnFdXrAKTmeeNjfrfFCaWwqGqToG6cfGY2W+6wyyoObX60/MeZGhhs3Lhdb/K94ulLJ4X/A==
+aws-cdk-lib@2.148.0:
+  version "2.148.0"
+  resolved "https://registry.yarnpkg.com/aws-cdk-lib/-/aws-cdk-lib-2.148.0.tgz#5d41ed56005fdfc928dfd31bcda268cf9acfcb41"
+  integrity sha512-Pa0pyIHlhnsqtMkPJS3tnptYhoOSNDOgoFurNB4Qfa0vnAkjYQ+JKQkR1tNNr8+UtO9jUfXRklQgjEqlFlrgBA==
   dependencies:
     "@aws-cdk/asset-awscli-v1" "^2.2.202"
     "@aws-cdk/asset-kubectl-v20" "^2.1.2"
@@ -1117,18 +1117,18 @@ aws-cdk-lib@2.141.0:
     mime-types "^2.1.35"
     minimatch "^3.1.2"
     punycode "^2.3.1"
-    semver "^7.6.0"
+    semver "^7.6.2"
     table "^6.8.2"
     yaml "1.10.2"
 
-aws-cdk@2.141.0:
-  version "2.141.0"
-  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.141.0.tgz#4f231cc44a99c5b7fa5fa267979c357f1966d38c"
-  integrity sha512-RM9uDiETBEKCHemItaRGVjOLwoZ5iqXnejpyXY7+YF75c2c0Ui7HSZI8QD0stDg3S/2UbLcKv2RA9dBsjrWUGA==
+aws-cdk@2.148.0:
+  version "2.148.0"
+  resolved "https://registry.yarnpkg.com/aws-cdk/-/aws-cdk-2.148.0.tgz#f4302b3bba7f3ed98f2d89ad3f096faad0eb76a3"
+  integrity sha512-nuCWY8I0xkIz7B2LjIL4h/xLHWTFhINL8i2fdA0BPq8t0byhLaNw5wggvztDjWH5xq5I1DM3laiv4/q5S21Xrg==
   optionalDependencies:
     fsevents "2.3.2"
 
-aws-sdk@^2.1626.0:
+aws-sdk@^2.1649.0:
   version "2.1692.0"
   resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.1692.0.tgz#9dac5f7bfcc5ab45825cc8591b12753aa7d2902c"
   integrity sha512-x511uiJ/57FIsbgUe5csJ13k3uzu25uWQE+XqfBis/sB0SFoiElJWXRkgEAUh0U6n40eT3ay5Ue4oPkRMu1LYw==
@@ -1372,7 +1372,7 @@ co@^4.6.0:
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
   integrity sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ==
 
-codemaker@^1.98.0:
+codemaker@^1.101.0:
   version "1.113.0"
   resolved "https://registry.yarnpkg.com/codemaker/-/codemaker-1.113.0.tgz#38777d3024bc6d2d4b53daad06d925827237c442"
   integrity sha512-eMmKlM79z0QfXHHG8GV6YCrCVz14LIX+Jxxthj4dz8aq5iKvXu/p1oikd7oQj6JDSYfGoBoCXsYjjqJOMDohZw==
@@ -3753,7 +3753,7 @@ semver@^7.3.7, semver@^7.5.3, semver@^7.5.4, semver@^7.6.3:
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.6.3.tgz#980f7b5550bc175fb4dc09403085627f9eb33143"
   integrity sha512-oVekP1cKtI+CTDvHWYFUcMtsK/00wmAEfyqKfNdARm8u1wNVhSgaX7A8d4UuIlUI5e84iEwOhs7ZPYRmzU9U6A==
 
-semver@^7.6.0:
+semver@^7.6.2:
   version "7.7.2"
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.7.2.tgz#67d99fdcd35cec21e6f8b87a7fd515a33f982b58"
   integrity sha512-RF0Fw+rO5AMf9MAyaRXI4AV0Ulj5lMHqVxxdSgiVbixSCXoEmmX/jk0CuJw4+3SqroYO9VoUh+HcuJivvtJemA==

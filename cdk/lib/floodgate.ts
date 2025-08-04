@@ -4,7 +4,7 @@ import type {App} from "aws-cdk-lib";
 import {aws_ssm, Stack} from "aws-cdk-lib";
 import {GuEc2App} from "@guardian/cdk";
 import {AccessScope} from "@guardian/cdk/lib/constants";
-import {InstanceClass, InstanceSize, InstanceType, Peer, Port, Vpc} from "aws-cdk-lib/aws-ec2";
+import {InstanceClass, InstanceSize, InstanceType, Peer, Port, UserData, Vpc} from "aws-cdk-lib/aws-ec2";
 import fs from "fs";
 import {GuSecurityGroup, GuVpc} from "@guardian/cdk/lib/constructs/ec2";
 import {GuPolicy} from "@guardian/cdk/lib/constructs/iam";
@@ -41,12 +41,14 @@ export class Floodgate extends GuStack {
     });
 
     const userDataRaw = fs.readFileSync("instance-startup.sh").toString('utf-8');
-    const userData = userDataRaw
+    const userDataProcessed = userDataRaw
         .replace(/\$\{Stage}/g, this.stage)
         .replace(/\$\{Stack}/g, this.stack)
         .replace(/\$\{AWS::Region}/g, Stack.of(this).region)
         .replace(/\$\{PrometheusRemoteWriteUrl}/g, prometheusRemoteWriteUrl.valueAsString)
         .replace(/\$\{BuiltVersion}/g, "1.0");
+
+    const userData = UserData.custom(userDataProcessed)
 
     const app = new GuEc2App(this, {
       access: {
