@@ -92,6 +92,15 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
           },
         },
         "MaxSize": "2",
+        "MetricsCollection": [
+          {
+            "Granularity": "1Minute",
+            "Metrics": [
+              "GroupTotalInstances",
+              "GroupInServiceInstances",
+            ],
+          },
+        ],
         "MinSize": "1",
         "Tags": [
           {
@@ -560,6 +569,24 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
               "Stat": "Sum",
             },
             "ReturnData": false,
+          },
+        ],
+        "Tags": [
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/floodgate",
+          },
+          {
+            "Key": "Stack",
+            "Value": "content-api-floodgate",
+          },
+          {
+            "Key": "Stage",
+            "Value": "TEST",
           },
         ],
         "Threshold": 0,
@@ -1199,6 +1226,24 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
         "Namespace": "AWS/ApplicationELB",
         "Period": 60,
         "Statistic": "Maximum",
+        "Tags": [
+          {
+            "Key": "gu:cdk:version",
+            "Value": "TEST",
+          },
+          {
+            "Key": "gu:repo",
+            "Value": "guardian/floodgate",
+          },
+          {
+            "Key": "Stack",
+            "Value": "content-api-floodgate",
+          },
+          {
+            "Key": "Stage",
+            "Value": "TEST",
+          },
+        ],
         "Threshold": 1,
         "TreatMissingData": "notBreaching",
       },
