@@ -332,15 +332,15 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.57.1.tgz#de633db3ec2ef6a3c89e2f19038063e8a122e2c2"
   integrity sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==
 
-"@guardian/cdk@56.0.3":
-  version "56.0.3"
-  resolved "https://registry.yarnpkg.com/@guardian/cdk/-/cdk-56.0.3.tgz#e384c0c8de3f99da35924c30df94c98ac75aa677"
-  integrity sha512-H7WulqTOZkCwMW4t0io0X+/EJW18CY1gMm5QWPfTMKaDymT1IHZlMV5iLGVrNc0rQ59gwzv6SK4BUQdpq3/7rw==
+"@guardian/cdk@58.1.0":
+  version "58.1.0"
+  resolved "https://registry.yarnpkg.com/@guardian/cdk/-/cdk-58.1.0.tgz#3b261f6b09a49c23781d204f5e5a7f46ff6716b4"
+  integrity sha512-DJno57zF9yEVdZYNcUmOCTellVakhKhwn3PEzeXma7B3QfOdPaEQSA43FwzeFcWsaILK/Wc8YMppESs+spb8dg==
   dependencies:
-    "@oclif/core" "3.26.2"
-    aws-sdk "^2.1596.0"
+    "@oclif/core" "3.26.6"
+    aws-sdk "^2.1616.0"
     chalk "^4.1.2"
-    codemaker "^1.97.0"
+    codemaker "^1.98.0"
     git-url-parse "^14.0.0"
     js-yaml "^4.1.0"
     lodash.camelcase "^4.3.0"
@@ -662,10 +662,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@oclif/core@3.26.2":
-  version "3.26.2"
-  resolved "https://registry.yarnpkg.com/@oclif/core/-/core-3.26.2.tgz#92a92516e1309e5b1241c1b4932ab1d2546e294a"
-  integrity sha512-Gpn21jKjcOx0TecI1wLJrY/65jtgJx5f1GzTc81oKvEpKes1b3Li2SMZygRaWRpcQ3wjN0d7lTPi8WwLsmTBjA==
+"@oclif/core@3.26.6":
+  version "3.26.6"
+  resolved "https://registry.yarnpkg.com/@oclif/core/-/core-3.26.6.tgz#f371868cfa0fe150a6547e6af98b359065d2f971"
+  integrity sha512-+FiTw1IPuJTF9tSAlTsY8bGK4sgthehjz7c2SvYdgQncTkxI2xvUch/8QpjNYGLEmUneNygvYMRBax2KJcLccA==
   dependencies:
     "@types/cli-progress" "^3.11.5"
     ansi-escapes "^4.3.2"
@@ -676,7 +676,7 @@
     cli-progress "^3.12.0"
     color "^4.2.3"
     debug "^4.3.4"
-    ejs "^3.1.9"
+    ejs "^3.1.10"
     get-package-type "^0.1.0"
     globby "^11.1.0"
     hyperlinker "^1.0.0"
@@ -1128,7 +1128,7 @@ aws-cdk@2.136.1:
   optionalDependencies:
     fsevents "2.3.2"
 
-aws-sdk@^2.1596.0:
+aws-sdk@^2.1616.0:
   version "2.1692.0"
   resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.1692.0.tgz#9dac5f7bfcc5ab45825cc8591b12753aa7d2902c"
   integrity sha512-x511uiJ/57FIsbgUe5csJ13k3uzu25uWQE+XqfBis/sB0SFoiElJWXRkgEAUh0U6n40eT3ay5Ue4oPkRMu1LYw==
@@ -1372,7 +1372,7 @@ co@^4.6.0:
   resolved "https://registry.yarnpkg.com/co/-/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
   integrity sha512-QVb0dM5HvG+uaxitm8wONl7jltx8dqhfU33DcqtOZcLSVIKSDDLDi7+0LbAKiyI8hD9u42m2YxXSkMGWThaecQ==
 
-codemaker@^1.97.0:
+codemaker@^1.98.0:
   version "1.113.0"
   resolved "https://registry.yarnpkg.com/codemaker/-/codemaker-1.113.0.tgz#38777d3024bc6d2d4b53daad06d925827237c442"
   integrity sha512-eMmKlM79z0QfXHHG8GV6YCrCVz14LIX+Jxxthj4dz8aq5iKvXu/p1oikd7oQj6JDSYfGoBoCXsYjjqJOMDohZw==
@@ -1578,7 +1578,7 @@ doctrine@^3.0.0:
   dependencies:
     esutils "^2.0.2"
 
-ejs@^3.1.10, ejs@^3.1.9:
+ejs@^3.1.10:
   version "3.1.10"
   resolved "https://registry.yarnpkg.com/ejs/-/ejs-3.1.10.tgz#69ab8358b14e896f80cc39e62087b88500c3ac3b"
   integrity sha512-UeJmFfOrAQS8OJWPZ4qtgHyWExa088/MtK5UEyoJGFH67cDEXkZSviOiKRCZ4Xij0zxI3JECgYs3oKx+AizQBA==
