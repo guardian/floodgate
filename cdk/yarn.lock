@@ -332,13 +332,13 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.57.1.tgz#de633db3ec2ef6a3c89e2f19038063e8a122e2c2"
   integrity sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==
 
-"@guardian/cdk@53.1.1":
-  version "53.1.1"
-  resolved "https://registry.yarnpkg.com/@guardian/cdk/-/cdk-53.1.1.tgz#a79326e60780fdb61d86bb97cbb5c2d0c680cdad"
-  integrity sha512-FaU+BejsCKj4zHj8jE3LnpvI0r7YCxaUD3UapNyVHH2LQvM0+NILuGGOetLuw90Ln1BGXU+qCvYWi8jo0ys7yg==
+"@guardian/cdk@54.0.0":
+  version "54.0.0"
+  resolved "https://registry.yarnpkg.com/@guardian/cdk/-/cdk-54.0.0.tgz#563363e509c3cafd48ad733a97c04e50548c7810"
+  integrity sha512-NwIhb/4YZS3QDi4EWaWNK4Xl2jAVZsA+07KY/AkB6O4L1m9YYaCprjM3dg7vSXGgoov4xdc5exGScKFHm2yjfw==
   dependencies:
     "@oclif/core" "3.19.1"
-    aws-sdk "^2.1553.0"
+    aws-sdk "^2.1557.0"
     chalk "^4.1.2"
     codemaker "^1.94.0"
     git-url-parse "^14.0.0"
@@ -1126,7 +1126,7 @@ aws-cdk@2.127.0:
   optionalDependencies:
     fsevents "2.3.2"
 
-aws-sdk@^2.1553.0:
+aws-sdk@^2.1557.0:
   version "2.1692.0"
   resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.1692.0.tgz#9dac5f7bfcc5ab45825cc8591b12753aa7d2902c"
   integrity sha512-x511uiJ/57FIsbgUe5csJ13k3uzu25uWQE+XqfBis/sB0SFoiElJWXRkgEAUh0U6n40eT3ay5Ue4oPkRMu1LYw==
