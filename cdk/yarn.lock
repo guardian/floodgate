@@ -332,14 +332,14 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.57.1.tgz#de633db3ec2ef6a3c89e2f19038063e8a122e2c2"
   integrity sha512-d9zaMRSTIKDLhctzH12MtXvJKSSUhaHcjV+2Z+GK+EEY7XKpP5yR4x+N3TAcHTcu963nIr+TMcCb4DBCYX1z6Q==
 
-"@guardian/cdk@50.10.14":
-  version "50.10.14"
-  resolved "https://registry.yarnpkg.com/@guardian/cdk/-/cdk-50.10.14.tgz#84c9e1f0eb9399ec7ef261ff44cc32ebb440a119"
-  integrity sha512-oq0Dpw9wvjiibXRCAblVnddMBYxZwRoR0f1eEWByyHRRU+A8nz1qknE9+oa88JwIUVsAkEeR6oO6ux+2/hSkRg==
+"@guardian/cdk@50.11.1":
+  version "50.11.1"
+  resolved "https://registry.yarnpkg.com/@guardian/cdk/-/cdk-50.11.1.tgz#d4aa5ed8e0225e0dd0cac5536deae61cdd567260"
+  integrity sha512-h1CUWAU1AFt3pYrXGEdliK300EoHhk2J9dhIF4TxRggyWeN2rPyKkGCepm2tBG9qjKXwOoh+WiUcaqxAWvHSGA==
   dependencies:
-    "@oclif/core" "2.13.0"
+    "@oclif/core" "2.15.0"
     aws-cdk-lib "2.95.1"
-    aws-sdk "^2.1452.0"
+    aws-sdk "^2.1457.0"
     chalk "^4.1.2"
     codemaker "^1.88.0"
     constructs "10.2.70"
@@ -664,10 +664,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@oclif/core@2.13.0":
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/@oclif/core/-/core-2.13.0.tgz#8af6d62349f42471c91655074726191b75c669b1"
-  integrity sha512-U/AgA/Jcqc04VwmsO/xSc3gJjVKkST8SB3wC3o3kzTAE4UWTOTMkHTtLujYZA5sUvBLhs66+A4dfrjz2sZQBdA==
+"@oclif/core@2.15.0":
+  version "2.15.0"
+  resolved "https://registry.yarnpkg.com/@oclif/core/-/core-2.15.0.tgz#f27797b30a77d13279fba88c1698fc34a0bd0d2a"
+  integrity sha512-fNEMG5DzJHhYmI3MgpByTvltBOMyFcnRIUMxbiz2ai8rhaYgaTHMG3Q38HcosfIvtw9nCjxpcQtC8MN8QtVCcA==
   dependencies:
     "@types/cli-progress" "^3.11.0"
     ansi-escapes "^4.3.2"
@@ -678,7 +678,6 @@
     cli-progress "^3.12.0"
     debug "^4.3.4"
     ejs "^3.1.8"
-    fs-extra "^9.1.0"
     get-package-type "^0.1.0"
     globby "^11.1.0"
     hyperlinker "^1.0.0"
@@ -688,7 +687,6 @@
     natural-orderby "^2.0.3"
     object-treeify "^1.1.33"
     password-prompt "^1.1.2"
-    semver "^7.5.3"
     slice-ansi "^4.0.0"
     string-width "^4.2.3"
     strip-ansi "^6.0.1"
@@ -1098,11 +1096,6 @@ async@^3.2.3:
   resolved "https://registry.yarnpkg.com/async/-/async-3.2.6.tgz#1b0728e14929d51b85b449b7f06e27c1145e38ce"
   integrity sha512-htCUDlxyyCLMgaM3xXg0C0LW2xqfuQ6p05pCEIsXuyQ+a1koYKTuBMzRNwmybfLgvJDMd0r1LTn4+E0Ti6C2AA==
 
-at-least-node@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/at-least-node/-/at-least-node-1.0.0.tgz#602cd4b46e844ad4effc92a8011a3c46e0238dc2"
-  integrity sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==
-
 available-typed-arrays@^1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/available-typed-arrays/-/available-typed-arrays-1.0.7.tgz#a5cc375d6a03c2efc87a553f3e0b1522def14846"
@@ -1136,7 +1129,7 @@ aws-cdk@2.95.1:
   optionalDependencies:
     fsevents "2.3.2"
 
-aws-sdk@^2.1452.0:
+aws-sdk@^2.1457.0:
   version "2.1692.0"
   resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.1692.0.tgz#9dac5f7bfcc5ab45825cc8591b12753aa7d2902c"
   integrity sha512-x511uiJ/57FIsbgUe5csJ13k3uzu25uWQE+XqfBis/sB0SFoiElJWXRkgEAUh0U6n40eT3ay5Ue4oPkRMu1LYw==
@@ -2057,16 +2050,6 @@ fs-extra@^11.1.1:
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-11.2.0.tgz#e70e17dfad64232287d01929399e0ea7c86b0e5b"
   integrity sha512-PmDi3uwK5nFuXh7XDTlVnS17xJS7vW36is2+w3xcv8SVxiB4NyATf4ctkVY5bkSjX0Y4nbvZCq1/EjtEyr9ktw==
   dependencies:
-    graceful-fs "^4.2.0"
-    jsonfile "^6.0.1"
-    universalify "^2.0.0"
-
-fs-extra@^9.1.0:
-  version "9.1.0"
-  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-9.1.0.tgz#5954460c764a8da2094ba3554bf839e6b9a7c86d"
-  integrity sha512-hcg3ZmepS30/7BSFqRvoo3DOMQu7IjqxO5nCDt+zM9XWjb33Wg7ziNT+Qvqbuc3+gWpzO02JubVyk2G4Zvo1OQ==
-  dependencies:
-    at-least-node "^1.0.0"
     graceful-fs "^4.2.0"
     jsonfile "^6.0.1"
     universalify "^2.0.0"
