@@ -754,6 +754,14 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
             "Key": "deletion_protection.enabled",
             "Value": "true",
           },
+          {
+            "Key": "routing.http.x_amzn_tls_version_and_cipher_suite.enabled",
+            "Value": "true",
+          },
+          {
+            "Key": "routing.http.drop_invalid_header_fields.enabled",
+            "Value": "true",
+          },
         ],
         "Scheme": "internet-facing",
         "SecurityGroups": [
@@ -1305,6 +1313,10 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
               "ResourceType": "instance",
               "Tags": [
                 {
+                  "Key": "App",
+                  "Value": "content-api-floodgate",
+                },
+                {
                   "Key": "gu:cdk:version",
                   "Value": "TEST",
                 },
@@ -1329,6 +1341,10 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
             {
               "ResourceType": "volume",
               "Tags": [
+                {
+                  "Key": "App",
+                  "Value": "content-api-floodgate",
+                },
                 {
                   "Key": "gu:cdk:version",
                   "Value": "TEST",
@@ -1443,6 +1459,10 @@ EOF
           {
             "ResourceType": "launch-template",
             "Tags": [
+              {
+                "Key": "App",
+                "Value": "content-api-floodgate",
+              },
               {
                 "Key": "gu:cdk:version",
                 "Value": "TEST",
