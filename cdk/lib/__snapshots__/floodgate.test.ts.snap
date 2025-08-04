@@ -1237,6 +1237,9 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
     "contentapifloodgateTESTcontentapifloodgateE40DDE74": {
+      "DependsOn": [
+        "InstanceRoleContentapifloodgate4A6AA3CB",
+      ],
       "Properties": {
         "LaunchTemplateData": {
           "IamInstanceProfile": {
