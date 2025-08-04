@@ -4,7 +4,7 @@ import type {App} from "aws-cdk-lib";
 import {aws_ssm, Stack} from "aws-cdk-lib";
 import {GuEc2App} from "@guardian/cdk";
 import {AccessScope} from "@guardian/cdk/lib/constants";
-import {InstanceClass, InstanceSize, InstanceType, Peer, Port, UserData, Vpc} from "aws-cdk-lib/aws-ec2";
+import {InstanceClass, InstanceSize, InstanceType, Peer, Port, SecurityGroup, UserData, Vpc} from "aws-cdk-lib/aws-ec2";
 import fs from "fs";
 import {GuSecurityGroup, GuVpc} from "@guardian/cdk/lib/constructs/ec2";
 import {GuPolicy} from "@guardian/cdk/lib/constructs/iam";
@@ -139,6 +139,19 @@ export class Floodgate extends GuStack {
       ],
       vpc,
     }))
+
+    // A temporary security group with a fixed logical ID, replicating the one removed from GuCDK v61.5.0.
+    const tempSecurityGroup = new SecurityGroup(this, "WazuhSecurityGroup", {
+      vpc,
+      // Must keep the same description, else CloudFormation will try to replace the security group
+      // See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-securitygroup.html#cfn-ec2-securitygroup-groupdescription.
+      description: "Allow outbound traffic from wazuh agent to manager",
+    });
+    this.overrideLogicalId(tempSecurityGroup, {
+      logicalId: "WazuhSecurityGroup",
+      reason:
+       "Part one of updating to GuCDK 61.5.0+ whilst using Riff-Raff's ASG deployment type",
+    });
   }
 
   getAccountPath(elementName: string) {

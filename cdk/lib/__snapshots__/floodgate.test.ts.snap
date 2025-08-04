@@ -19,7 +19,6 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
       "GuParameterStoreReadPolicy",
       "GuAmiParameter",
       "GuHttpsEgressSecurityGroup",
-      "GuWazuhAccess",
       "GuAutoScalingGroup",
       "GuApplicationLoadBalancer",
       "GuApplicationTargetGroup",
@@ -907,27 +906,6 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "LoadBalancerContentapifloodgateSecurityGrouptoFloodgateWazuhSecurityGroup84485DA69000F50A12F9": {
-      "Properties": {
-        "Description": "Load balancer to target",
-        "DestinationSecurityGroupId": {
-          "Fn::GetAtt": [
-            "WazuhSecurityGroup",
-            "GroupId",
-          ],
-        },
-        "FromPort": 9000,
-        "GroupId": {
-          "Fn::GetAtt": [
-            "LoadBalancerContentapifloodgateSecurityGroup6BAE37E7",
-            "GroupId",
-          ],
-        },
-        "IpProtocol": "tcp",
-        "ToPort": 9000,
-      },
-      "Type": "AWS::EC2::SecurityGroupEgress",
-    },
     "ParameterStoreReadContentapifloodgate1428C357": {
       "Properties": {
         "PolicyDocument": {
@@ -1251,17 +1229,8 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
         "SecurityGroupEgress": [
           {
             "CidrIp": "0.0.0.0/0",
-            "Description": "Wazuh event logging",
-            "FromPort": 1514,
-            "IpProtocol": "tcp",
-            "ToPort": 1514,
-          },
-          {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Wazuh agent registration",
-            "FromPort": 1515,
-            "IpProtocol": "tcp",
-            "ToPort": 1515,
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
           },
         ],
         "Tags": [
@@ -1287,27 +1256,6 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
-    },
-    "WazuhSecurityGroupfromFloodgateLoadBalancerContentapifloodgateSecurityGroup7ECF569F90004B69AEE7": {
-      "Properties": {
-        "Description": "Load balancer to target",
-        "FromPort": 9000,
-        "GroupId": {
-          "Fn::GetAtt": [
-            "WazuhSecurityGroup",
-            "GroupId",
-          ],
-        },
-        "IpProtocol": "tcp",
-        "SourceSecurityGroupId": {
-          "Fn::GetAtt": [
-            "LoadBalancerContentapifloodgateSecurityGroup6BAE37E7",
-            "GroupId",
-          ],
-        },
-        "ToPort": 9000,
-      },
-      "Type": "AWS::EC2::SecurityGroupIngress",
     },
     "contentapifloodgateTESTcontentapifloodgateE40DDE74": {
       "DependsOn": [
@@ -1335,12 +1283,6 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
             {
               "Fn::GetAtt": [
                 "GuHttpsEgressSecurityGroupContentapifloodgateE68A17B8",
-                "GroupId",
-              ],
-            },
-            {
-              "Fn::GetAtt": [
-                "WazuhSecurityGroup",
                 "GroupId",
               ],
             },
