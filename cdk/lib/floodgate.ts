@@ -124,6 +124,7 @@ export class Floodgate extends GuStack {
       },
       userData: userData,
       vpc,
+      instanceMetricGranularity: "1Minute",
     });
 
     app.autoScalingGroup.connections.addSecurityGroup(new GuSecurityGroup(this, "InstanceOutboundSG", {
