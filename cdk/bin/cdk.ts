@@ -3,5 +3,5 @@ import { App } from "aws-cdk-lib";
 import { Floodgate } from "../lib/floodgate";
 
 const app = new App();
-new Floodgate(app, "Floodgate-PROD", { stack: "content-api-floodgate", stage: "PROD" });
+new Floodgate(app, "Floodgate-PROD", { stack: "content-api-floodgate", stage: "PROD", cloudFormationStackName: "content-api-floodgate-PROD-content-api-floodgate" });
 

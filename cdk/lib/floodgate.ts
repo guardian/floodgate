@@ -4,9 +4,9 @@ import type {App} from "aws-cdk-lib";
 import {aws_ssm, Stack} from "aws-cdk-lib";
 import {GuEc2App} from "@guardian/cdk";
 import {AccessScope} from "@guardian/cdk/lib/constants";
-import {InstanceClass, InstanceSize, InstanceType, Peer, Port, UserData, Vpc} from "aws-cdk-lib/aws-ec2";
+import {InstanceClass, InstanceSize, InstanceType, Peer, Port, UserData} from "aws-cdk-lib/aws-ec2";
 import fs from "fs";
-import {GuSecurityGroup, GuVpc} from "@guardian/cdk/lib/constructs/ec2";
+import {GuSecurityGroup} from "@guardian/cdk/lib/constructs/ec2";
 import {GuPolicy} from "@guardian/cdk/lib/constructs/iam";
 import {Effect, PolicyStatement} from "aws-cdk-lib/aws-iam";
 import {Datastore} from "./datastore";
@@ -15,19 +15,7 @@ export class Floodgate extends GuStack {
   constructor(scope: App, id: string, props: GuStackProps) {
     super(scope, id, props);
 
-    const vpcId = aws_ssm.StringParameter.valueForStringParameter(this, this.getVpcIdPath());
-    const vpc = Vpc.fromVpcAttributes(this, "vpc", {
-      vpcId: vpcId,
-      availabilityZones: ["eu-west-1a","eu-west-1b" ,"eu-west-1c"]
-    });
-
-    const subnetsList = new GuParameter(this, "subnets", {
-      description: "Subnets to deploy into",
-      default: this.getDeploymentSubnetsPath(),
-      fromSSM: true,
-      type: "List<String>"
-    });
-    const deploymentSubnets = GuVpc.subnets(this, subnetsList.valueAsList);
+    const app = "content-api-floodgate";
 
     const datastore = new Datastore(this, "Datastore");
 
@@ -50,11 +38,11 @@ export class Floodgate extends GuStack {
 
     const userData = UserData.custom(userDataProcessed)
 
-    const app = new GuEc2App(this, {
+    const ec2App = new GuEc2App(this, {
       access: {
         scope: AccessScope.PUBLIC,
       },
-      app: "content-api-floodgate",
+      app,
       applicationLogging: {
         enabled: true,
         systemdUnitName: "content-api-floodgate"
@@ -116,19 +104,16 @@ export class Floodgate extends GuStack {
         },
         unhealthyInstancesAlarm: true,
       },
-      privateSubnets: deploymentSubnets,
-      publicSubnets: deploymentSubnets,
       scaling: {
         minimumInstances: 1,
         maximumInstances: 2,
       },
       userData: userData,
-      vpc,
       instanceMetricGranularity: "1Minute",
     });
 
-    app.autoScalingGroup.connections.addSecurityGroup(new GuSecurityGroup(this, "InstanceOutboundSG", {
-      app: "content-api-floodgate",
+    ec2App.autoScalingGroup.connections.addSecurityGroup(new GuSecurityGroup(this, "InstanceOutboundSG", {
+      app,
       allowAllOutbound: false,
       allowAllIpv6Outbound: false,
       egresses: [
@@ -138,20 +123,29 @@ export class Floodgate extends GuStack {
           description: "Outgoing to port 8080 on internal infrastructure"
         }
       ],
-      vpc,
+      vpc: ec2App.vpc,
     }))
-  }
 
-  getAccountPath(elementName: string) {
-    const basePath = "/account/vpc";
-    return `${basePath}/${this.stage}-generic/${elementName}`;
-  }
+    /*
+    These parameters are added to the stack via GuEc2App.
+    By default, the VPC name used is "primary".
+    Customise it to ensure the correct VPC is used for this app.
+     */
+    const maybeVpcId = this.parameters["VpcId"];
+    const maybeVpcPublicSubnets = this.parameters[`${app}PublicSubnets`];
+    const maybeVpcPrivateSubnets = this.parameters[`${app}PrivateSubnets`];
 
-  getVpcIdPath() {
-    return this.getAccountPath("id");
-  }
+    if (!maybeVpcId || !maybeVpcPublicSubnets || !maybeVpcPrivateSubnets) {
+      throw new Error("VPC parameters not found. Unable to synth valid CloudFormation template.");
+    }
 
-  getDeploymentSubnetsPath() {
-    return this.getAccountPath("subnets")
+    const vpcName = `vpc-content-platforms-${this.stage}`;
+
+    maybeVpcId.default = `/account/vpc/${vpcName}/id`;
+    maybeVpcPublicSubnets.default = `/account/vpc/${vpcName}/subnets/public`;
+
+    // We do not yet have any private subnets in this VPC, so use the public subnets for now.
+    // TODO: Update this when private subnets are available.
+    maybeVpcPrivateSubnets.default = `/account/vpc/${vpcName}/subnets/public`;
   }
 }
