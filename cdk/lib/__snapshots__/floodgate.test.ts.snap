@@ -495,6 +495,7 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
             "Expression": "100*(m1+m2)/m3",
             "Id": "expr_1",
             "Label": "% of 5XX responses served for content-api-floodgate (load balancer and instances combined)",
+            "ReturnData": true,
           },
           {
             "Id": "m1",
@@ -1244,6 +1245,9 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
           "MetadataOptions": {
             "HttpTokens": "required",
             "InstanceMetadataTags": "enabled",
+          },
+          "Monitoring": {
+            "Enabled": true,
           },
           "SecurityGroupIds": [
             {
