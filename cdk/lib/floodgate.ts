@@ -144,8 +144,6 @@ export class Floodgate extends GuStack {
     maybeVpcId.default = `/account/vpc/${vpcName}/id`;
     maybeVpcPublicSubnets.default = `/account/vpc/${vpcName}/subnets/public`;
 
-    // We do not yet have any private subnets in this VPC, so use the public subnets for now.
-    // TODO: Update this when private subnets are available.
-    maybeVpcPrivateSubnets.default = `/account/vpc/${vpcName}/subnets/public`;
+    maybeVpcPrivateSubnets.default = `/account/vpc/${vpcName}/subnets/private`;
   }
 }
