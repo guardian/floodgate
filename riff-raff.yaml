@@ -21,7 +21,7 @@ deployments:
         PROD: Floodgate-PROD.template.json
       templateStageParameters:
         PROD:
-          contentapifloodgatePrivateSubnets: /account/vpc/vpc-content-platforms-PROD/subnets/private
+          contentapifloodgatePrivateSubnets: /account/vpc/vpc-content-platforms-PROD/subnets/public
       amiParameter: AMIContentapifloodgate
       amiEncrypted: true
       amiTags:
