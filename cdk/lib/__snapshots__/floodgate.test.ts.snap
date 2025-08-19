@@ -72,7 +72,7 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
       "Type": "AWS::SSM::Parameter::Value<AWS::EC2::VPC::Id>",
     },
     "contentapifloodgatePrivateSubnets": {
-      "Default": "/account/vpc/vpc-content-platforms-TEST/subnets/public",
+      "Default": "/account/vpc/vpc-content-platforms-TEST/subnets/private",
       "Description": "A list of private subnets",
       "Type": "AWS::SSM::Parameter::Value<List<AWS::EC2::Subnet::Id>>",
     },
