@@ -9,10 +9,11 @@ import com.amazonaws.auth.profile.ProfileCredentialsProvider
 import com.amazonaws.auth.{AWSCredentialsProviderChain, InstanceProfileCredentialsProvider}
 import com.amazonaws.regions.{Region, Regions}
 import com.amazonaws.services.dynamodbv2._
-import com.gu.floodgate.contentsource.{ContentSource, ContentSourceApi, ContentSourceService, ContentSourceTable}
-import com.gu.floodgate.jobhistory.{JobHistory, JobHistoryApi, JobHistoryService, JobHistoryTable}
+import com.gu.floodgate.contentsource.{ContentSourceApi, ContentSourceService, ContentSourceTable}
+import com.gu.floodgate.jobhistory.{JobHistoryApi, JobHistoryService, JobHistoryTable}
 import com.gu.floodgate.reindex.{BulkJobActor, ProgressTrackerController, ReindexService}
 import com.gu.floodgate.runningjob.{RunningJobApi, RunningJobService, RunningJobTable}
+import com.gu.floodgate.schedule.ReindexSchedule
 import com.gu.googleauth.{AntiForgeryChecker, AuthAction, GoogleAuthConfig}
 import play.api.ApplicationLoader.Context
 import play.api.libs.ws.ahc.AhcWSComponents
@@ -89,6 +90,9 @@ class AppComponents(context: Context)
   )
   val runningJobController = new RunningJobApi(runningJobService)
   val jobHistoryController = new JobHistoryApi(jobHistoryService)
+
+  val reindexScheduler = new ReindexSchedule(reindexService)
+  reindexScheduler.start()
 
   val bulkActorsMap: Map[String, ActorRef] = {
     if (configEnvironment == "TEST") {

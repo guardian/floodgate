@@ -30,6 +30,7 @@ libraryDependencies ++= Seq(
   "io.prometheus" % "simpleclient_common" % prometheusVersion,
 
   "org.apache.pekko" %% "pekko-actor" % PekkoVersion,
+  "io.github.samueleresca" %% "pekko-quartz-scheduler" % "1.2.2-pekko-1.0.x",
 
   //required to make jackson work
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.14.2",
