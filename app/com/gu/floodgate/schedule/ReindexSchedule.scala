@@ -1,5 +1,6 @@
 package com.gu.floodgate.schedule
 
+import com.gu.floodgate.contentsource.ContentSourceService
 import com.gu.floodgate.reindex.ReindexService
 import com.gu.floodgate.schedule.ReindexSchedule.ScheduledReindexEvent
 import com.typesafe.scalalogging.StrictLogging
@@ -8,7 +9,7 @@ import org.apache.pekko.actor.typed.{ActorSystem, Behavior}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
 import org.apache.pekko.extension.quartz.QuartzSchedulerTypedExtension
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.DurationInt
 
 object ReindexSchedule {
@@ -18,11 +19,11 @@ object ReindexSchedule {
 /**
  * Manages the application's scheduled reindexes.
  */
-class ReindexSchedule(reindexService: ReindexService)(implicit ec: ExecutionContext) extends StrictLogging {
+class ReindexSchedule(contentSourceService: ContentSourceService, reindexService: ReindexService)(implicit ec: ExecutionContext) extends StrictLogging {
   private type Cron = String
-  private val schedules: Map[Cron, ReindexScheduler] = Map(
-    "0 0/5 * ? * * *" -> new TagReindexScheduler(reindexService, "CODE"),
-//    "0 0 1 ? * * *" -> new TagReindexScheduler(reindexService, "PROD")
+  private val schedules: Map[Cron, ScheduleEvent] = Map(
+    "0 0/5 * ? * * *" -> new TagReindexScheduleEvent(contentSourceService, reindexService, "CODE"),
+//    "0 0 1 ? * * *" -> new TagReindexScheduleEvent(contentSourceService, reindexService, "PROD")
   )
 
   private val minBackoff = 30.seconds
@@ -40,26 +41,31 @@ class ReindexSchedule(reindexService: ReindexService)(implicit ec: ExecutionCont
   def start(): Unit = {
     schedules.foreach {
       case (cronExpression, reindexScheduler) =>
-        val actorName = s"${reindexScheduler.id}-${reindexScheduler.environment}"
+        val actorName = getActorName(reindexScheduler.appName, reindexScheduler.environment)
         val reindexBehaviourWithBackoff = Behaviors
           .supervise(reindexScheduler.behavior)
           .onFailure(backoffSupervisorStrategy)
 
         val actor = scheduledReindexer.systemActorOf(reindexBehaviourWithBackoff, actorName)
 
-        logger.info(s"Creating reindex schedule for $actorName with cron '$cronExpression'. If the reindex fails, it will restart with a backoff strategy that operates a minimum of ${minBackoff.toString} and a maximum of ${maxBackoff.toString} after the first attempt.")
-
-        quartz.createTypedJobSchedule(
+        val firstScheduledDate = quartz.createTypedJobSchedule(
           name = actorName,
           receiver = actor,
           msg = ScheduledReindexEvent(),
           description = Some("Scheduled tag reindex"),
           cronExpression = cronExpression
         )
+
+        logger.info(s"Creating reindex schedule for $actorName with cron '$cronExpression', first scheduled for ${firstScheduledDate.toString}. If the reindex fails, it will restart with a backoff strategy that operates a minimum of ${minBackoff.toString} and a maximum of ${maxBackoff.toString} after the first attempt.")
     }
+
+    logger.info("All schedules created")
   }
 
   private def schedulerGuardian(): Behavior[Unit] = Behaviors.setup { context =>
     Behaviors.same
   }
+
+  private val permittedActorChars = "[^A-Za-z-_.*$+:@&=,!~']"
+  private def getActorName(appName: String, environment: String) = s"$appName-$environment".replaceAll(permittedActorChars, "_")
 }
