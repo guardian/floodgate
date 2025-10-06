@@ -12,25 +12,27 @@ import scala.concurrent.duration.DurationInt
 
 class TagReindexScheduleEvent(contentSourceService: ContentSourceService, reindexService: ReindexService, val environment: String)(implicit ec: ExecutionContext) extends ScheduleEvent with StrictLogging {
   val appName = "Tag Manager"
+  val appLogId = s"app name: '$appName', env: '$environment'"
 
   def behavior: Behavior[ReindexMessage] = Behaviors.setup { context =>
+    logger.info(s"Starting actor for $appLogId")
     Behaviors.receiveMessage[ReindexMessage] {
       case ScheduledReindexRequest() =>
         val result = contentSourceService.getContentSourceByName(appName, environment) flatMap {
           case Some(contentSource) =>
             reindexService.reindex(contentSource.id, environment, DateParameters(None, None)).map {
               case Right(runningJob) =>
-                logger.info(s"Running scheduled reindex for service $appName with job number ${runningJob.contentSourceId}")
+                logger.info(s"Running scheduled reindex for service $appLogId with job number ${runningJob.contentSourceId}")
                 Right(())
               case Left(customError) =>
                 logger.warn(
-                  s"Attempted to run scheduled reindex for service '$appName', but received error: ${customError.message}",
+                  s"Attempted to run scheduled reindex for service $appLogId, but received error: ${customError.message}",
                 )
 
                 Left(customError.message)
             }
           case None =>
-            val message = s"Attempted to run scheduled reindex for service '$appName', but could not find a content source for that name and environment '$environment''"
+            val message = s"Attempted to run scheduled reindex for service $appLogId, but could not find a content source for that configuration"
             logger.warn(message)
             Future.successful(Left(message))
         }
