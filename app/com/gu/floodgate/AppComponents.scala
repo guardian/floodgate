@@ -41,6 +41,7 @@ class AppComponents(context: Context)
   )
 
   val configEnvironment = configuration.get[String]("env")
+  val isTest = configEnvironment == "TEST"
   val region = Region getRegion Regions.fromName(configuration.getOptional[String]("aws.region") getOrElse "eu-west-1")
   val clientConfiguration = new ClientConfiguration()
 
@@ -91,11 +92,13 @@ class AppComponents(context: Context)
   val runningJobController = new RunningJobApi(runningJobService)
   val jobHistoryController = new JobHistoryApi(jobHistoryService)
 
-  val reindexScheduler = new ReindexSchedule(reindexService)
-  reindexScheduler.start()
+  if (!isTest) {
+    val reindexScheduler = new ReindexSchedule(reindexService)
+    reindexScheduler.start()
+  }
 
   val bulkActorsMap: Map[String, ActorRef] = {
-    if (configEnvironment == "TEST") {
+    if (isTest) {
       Map()
     } else {
       Map(
