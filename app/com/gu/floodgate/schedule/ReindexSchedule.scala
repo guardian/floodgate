@@ -2,6 +2,7 @@ package com.gu.floodgate.schedule
 
 import com.gu.floodgate.reindex.ReindexService
 import com.gu.floodgate.schedule.ReindexSchedule.ScheduledReindexEvent
+import com.typesafe.scalalogging.StrictLogging
 import org.apache.pekko.actor.typed.SupervisorStrategy
 import org.apache.pekko.actor.typed.{ActorSystem, Behavior}
 import org.apache.pekko.actor.typed.scaladsl.Behaviors
@@ -17,11 +18,20 @@ object ReindexSchedule {
 /**
  * Manages the application's scheduled reindexes.
  */
-class ReindexSchedule(reindexService: ReindexService)(implicit ec: ExecutionContext) {
+class ReindexSchedule(reindexService: ReindexService)(implicit ec: ExecutionContext) extends StrictLogging {
   private type Cron = String
   private val schedules: Map[Cron, ReindexScheduler] = Map(
     "0 0 0 ? * * *" -> new TagReindexScheduler(reindexService, "CODE"),
     "0 0 1 ? * * *" -> new TagReindexScheduler(reindexService, "PROD")
+  )
+
+  private val minBackoff = 30.seconds
+  private val maxBackoff = 5.minutes
+  private val randomFactor = 0.2
+  private val backoffSupervisorStrategy = SupervisorStrategy.restartWithBackoff(
+    minBackoff,
+    maxBackoff,
+    randomFactor
   )
 
   private val scheduledReindexer = ActorSystem[Unit](schedulerGuardian(), "scheduled-reindexer")
@@ -31,8 +41,14 @@ class ReindexSchedule(reindexService: ReindexService)(implicit ec: ExecutionCont
     schedules.foreach {
       case (cronExpression, reindexScheduler) =>
         val actorName = s"${reindexScheduler.id}-${reindexScheduler.environment}"
-        val reindexBehaviourWithBackoff = Behaviors.supervise(reindexScheduler.behavior).onFailure(SupervisorStrategy.restartWithBackoff(minBackoff = 30.seconds, maxBackoff = 5.minutes, randomFactor = 0.2))
+        val reindexBehaviourWithBackoff = Behaviors
+          .supervise(reindexScheduler.behavior)
+          .onFailure(backoffSupervisorStrategy)
+
         val actor = scheduledReindexer.systemActorOf(reindexBehaviourWithBackoff, actorName)
+
+        logger.info(s"Creating reindex schedule for $actorName with cron '$cronExpression'. If the reindex fails, it will restart with a backoff strategy that operates a minimum of ${minBackoff.toString} and a maximum of ${maxBackoff.toString} after the first attempt.")
+
         quartz.createTypedJobSchedule(
           name = actorName,
           receiver = actor,
