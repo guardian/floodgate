@@ -22,8 +22,8 @@ object ReindexSchedule {
 class ReindexSchedule(contentSourceService: ContentSourceService, reindexService: ReindexService)(implicit ec: ExecutionContext) extends StrictLogging {
   private type Cron = String
   private val schedules: Map[Cron, ScheduleEvent] = Map(
-    "0 0 0 ? * * *" -> new TagReindexScheduleEvent(contentSourceService, reindexService, "CODE"),
-    "0 0 1 ? * * *" -> new TagReindexScheduleEvent(contentSourceService, reindexService, "PROD")
+    "0 0 0 ? * * *" -> new TagReindexScheduleEvent(contentSourceService, reindexService, "live-code"),
+    "0 0 1 ? * * *" -> new TagReindexScheduleEvent(contentSourceService, reindexService, "live-prod")
   )
 
   private val minBackoff = 30.seconds
