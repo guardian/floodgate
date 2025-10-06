@@ -20,8 +20,8 @@ object ReindexSchedule {
 class ReindexSchedule(reindexService: ReindexService)(implicit ec: ExecutionContext) {
   private type Cron = String
   private val schedules: Map[Cron, ReindexScheduler] = Map(
-    "0 0 0 ? * * *" -> new TagReindexScheduler(reindexService, "CODE"),
-    "0 0 1 ? * * *" -> new TagReindexScheduler(reindexService, "PROD")
+    "0 0/5 * ? * * *" -> new TagReindexScheduler(reindexService, "CODE"),
+//    "0 0 1 ? * * *" -> new TagReindexScheduler(reindexService, "PROD")
   )
 
   private val scheduledReindexer = ActorSystem[Unit](schedulerGuardian(), "scheduled-reindexer")
