@@ -21,9 +21,9 @@ object ReindexSchedule {
  */
 class ReindexSchedule(contentSourceService: ContentSourceService, reindexService: ReindexService)(implicit ec: ExecutionContext) extends StrictLogging {
   private type Cron = String
-  private val schedules: Map[Cron, ReindexScheduler] = Map(
-    "0 0 0 ? * * *" -> new TagReindexScheduler(contentSourceService, reindexService, "CODE"),
-    "0 0 1 ? * * *" -> new TagReindexScheduler(contentSourceService, reindexService, "PROD")
+  private val schedules: Map[Cron, ScheduleEvent] = Map(
+    "0 0 0 ? * * *" -> new TagReindexScheduleEvent(contentSourceService, reindexService, "CODE"),
+    "0 0 1 ? * * *" -> new TagReindexScheduleEvent(contentSourceService, reindexService, "PROD")
   )
 
   private val minBackoff = 30.seconds
@@ -41,7 +41,7 @@ class ReindexSchedule(contentSourceService: ContentSourceService, reindexService
   def start(): Unit = {
     schedules.foreach {
       case (cronExpression, reindexScheduler) =>
-        val actorName = s"${reindexScheduler.appName}-${reindexScheduler.environment}"
+        val actorName = getActorName(reindexScheduler.appName, reindexScheduler.environment)
         val reindexBehaviourWithBackoff = Behaviors
           .supervise(reindexScheduler.behavior)
           .onFailure(backoffSupervisorStrategy)
@@ -58,9 +58,14 @@ class ReindexSchedule(contentSourceService: ContentSourceService, reindexService
 
         logger.info(s"Creating reindex schedule for $actorName with cron '$cronExpression', first scheduled for ${firstScheduledDate.toString}. If the reindex fails, it will restart with a backoff strategy that operates a minimum of ${minBackoff.toString} and a maximum of ${maxBackoff.toString} after the first attempt.")
     }
+
+    logger.info("All schedules created")
   }
 
   private def schedulerGuardian(): Behavior[Unit] = Behaviors.setup { context =>
     Behaviors.same
   }
+
+  private val permittedActorChars = "[^A-Za-z-_.*$+:@&=,!~']"
+  private def getActorName(appName: String, environment: String) = s"$appName-$environment".replaceAll(permittedActorChars, "_")
 }

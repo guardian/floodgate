@@ -8,7 +8,7 @@ import org.apache.pekko.actor.typed.scaladsl.Behaviors
 
 import scala.concurrent.ExecutionContext
 
-class TagReindexScheduler(contentSourceService: ContentSourceService, reindexService: ReindexService, val environment: String)(implicit ec: ExecutionContext) extends ReindexScheduler with StrictLogging {
+class TagReindexScheduleEvent(contentSourceService: ContentSourceService, reindexService: ReindexService, val environment: String)(implicit ec: ExecutionContext) extends ScheduleEvent with StrictLogging {
     val appName = "Tag Manager"
 
     def behavior: Behavior[ReindexSchedule.ScheduledReindexEvent] = Behaviors.receive { (_, _) =>
