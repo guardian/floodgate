@@ -93,7 +93,7 @@ class AppComponents(context: Context)
   val jobHistoryController = new JobHistoryApi(jobHistoryService)
 
   if (!isTest) {
-    val reindexScheduler = new ReindexSchedule(reindexService)
+    val reindexScheduler = new ReindexSchedule(contentSourceService, reindexService)
     reindexScheduler.start()
   }
 
