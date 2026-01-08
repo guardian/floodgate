@@ -11,9 +11,11 @@ version := "1.0"
 
 resolvers += "Sonatype releases" at "https://oss.sonatype.org/content/repositories/releases"
 
-val awsClientVersion = "1.12.671"
+val awsClientVersion = "1.12.797"
 val prometheusVersion = "0.16.0"
-val PekkoVersion = "1.0.2"
+val pekkoVersion = "1.0.3"
+val jacksonVersion = "2.20.1"
+val jacksonDatabindVersion = "2.20.1"
 
 libraryDependencies ++= Seq(
   ws,
@@ -29,15 +31,24 @@ libraryDependencies ++= Seq(
   "io.prometheus" % "simpleclient_hotspot" % prometheusVersion,
   "io.prometheus" % "simpleclient_common" % prometheusVersion,
 
-  "org.apache.pekko" %% "pekko-actor" % PekkoVersion,
+  "org.apache.pekko" %% "pekko-actor" % pekkoVersion,
 
-  //required to make jackson work
-  "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.14.2",
-
-  "org.playframework" %% "play-specs2" % "3.0.2" % Test,
+  "org.playframework" %% "play-specs2" % "3.0.10" % Test,
   "org.scalatest" %% "scalatest" % "3.2.15" % Test,
-  "org.apache.pekko" %% "pekko-testkit" % PekkoVersion % Test
+  "org.apache.pekko" %% "pekko-testkit" % pekkoVersion % Test
 )
+
+val jacksonDependencyOverrides = Seq(
+  "com.fasterxml.jackson.core" % "jackson-core" % jacksonVersion,
+  "com.fasterxml.jackson.datatype" % "jackson-datatype-jdk8" % jacksonVersion,
+  "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % jacksonVersion,
+  "com.fasterxml.jackson.dataformat" % "jackson-dataformat-cbor" % jacksonVersion,
+  "com.fasterxml.jackson.module" % "jackson-module-parameter-names" % jacksonVersion,
+  "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
+  "com.fasterxml.jackson.core" % "jackson-databind" % jacksonDatabindVersion,
+)
+
+dependencyOverrides ++= jacksonDependencyOverrides
 
 routesGenerator := InjectedRoutesGenerator
 
