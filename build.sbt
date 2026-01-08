@@ -5,7 +5,7 @@ disablePlugins(PlayNettyServer)
 name := "content-api-floodgate"
 organization := "com.gu"
 description := "The Content API reindexing control panel"
-scalaVersion := "2.13.10"
+scalaVersion := "2.13.18"
 scalacOptions ++= Seq("-feature", "-deprecation", "-unchecked", "-release","11")
 version := "1.0"
 
