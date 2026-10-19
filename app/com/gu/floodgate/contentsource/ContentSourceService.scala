@@ -24,6 +24,10 @@ class ContentSourceService(contentSourceTable: DynamoDBTable[ContentSource]) {
     }
   }
 
+  def getContentSourceByName(name: String, environment: String)(implicit ec: ExecutionContext): Future[Option[ContentSource]] = {
+    contentSourceTable.getAll().map { _.find(source => source.appName == name && source.environment == environment) }
+  }
+
   def createContentSource(contentSource: ContentSource) = contentSourceTable.saveItem(contentSource)
   def updateContentSource(id: String, environment: String, contentSource: ContentSource) =
     contentSourceTable.saveItem(contentSource)

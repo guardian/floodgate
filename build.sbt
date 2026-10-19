@@ -13,7 +13,8 @@ resolvers += "Sonatype releases" at "https://oss.sonatype.org/content/repositori
 
 val awsClientVersion = "1.12.797"
 val prometheusVersion = "0.16.0"
-val pekkoVersion = "1.0.3"
+
+val pekkoVersion = "1.1.2"
 val jacksonVersion = "2.20.1"
 val jacksonDatabindVersion = "2.20.1"
 
@@ -31,7 +32,11 @@ libraryDependencies ++= Seq(
   "io.prometheus" % "simpleclient_hotspot" % prometheusVersion,
   "io.prometheus" % "simpleclient_common" % prometheusVersion,
 
-  "org.apache.pekko" %% "pekko-actor" % pekkoVersion,
+  "org.apache.pekko" %% "pekko-actor" % PekkoVersion,
+  "org.apache.pekko" %% "pekko-protobuf-v3" % PekkoVersion,
+  "org.apache.pekko" %% "pekko-serialization-jackson" % PekkoVersion,
+  "org.apache.pekko" %% "pekko-stream" % PekkoVersion,
+  "io.github.samueleresca" %% "pekko-quartz-scheduler" % "1.3.0-pekko-1.1.x",
 
   "org.playframework" %% "play-specs2" % "3.0.10" % Test,
   "org.scalatest" %% "scalatest" % "3.2.15" % Test,
