@@ -5,15 +5,18 @@ disablePlugins(PlayNettyServer)
 name := "content-api-floodgate"
 organization := "com.gu"
 description := "The Content API reindexing control panel"
-scalaVersion := "2.13.10"
+scalaVersion := "2.13.18"
 scalacOptions ++= Seq("-feature", "-deprecation", "-unchecked", "-release","11")
 version := "1.0"
 
 resolvers += "Sonatype releases" at "https://oss.sonatype.org/content/repositories/releases"
 
-val awsClientVersion = "1.12.671"
+val awsClientVersion = "1.12.797"
 val prometheusVersion = "0.16.0"
-val PekkoVersion = "1.1.2"
+
+val pekkoVersion = "1.1.2"
+val jacksonVersion = "2.20.1"
+val jacksonDatabindVersion = "2.20.1"
 
 libraryDependencies ++= Seq(
   ws,
@@ -35,13 +38,22 @@ libraryDependencies ++= Seq(
   "org.apache.pekko" %% "pekko-stream" % PekkoVersion,
   "io.github.samueleresca" %% "pekko-quartz-scheduler" % "1.3.0-pekko-1.1.x",
 
-  //required to make jackson work
-  "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.14.2",
-
-  "org.playframework" %% "play-specs2" % "3.0.2" % Test,
+  "org.playframework" %% "play-specs2" % "3.0.10" % Test,
   "org.scalatest" %% "scalatest" % "3.2.15" % Test,
-  "org.apache.pekko" %% "pekko-testkit" % PekkoVersion % Test
+  "org.apache.pekko" %% "pekko-testkit" % pekkoVersion % Test
 )
+
+val jacksonDependencyOverrides = Seq(
+  "com.fasterxml.jackson.core" % "jackson-core" % jacksonVersion,
+  "com.fasterxml.jackson.datatype" % "jackson-datatype-jdk8" % jacksonVersion,
+  "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % jacksonVersion,
+  "com.fasterxml.jackson.dataformat" % "jackson-dataformat-cbor" % jacksonVersion,
+  "com.fasterxml.jackson.module" % "jackson-module-parameter-names" % jacksonVersion,
+  "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
+  "com.fasterxml.jackson.core" % "jackson-databind" % jacksonDatabindVersion,
+)
+
+dependencyOverrides ++= jacksonDependencyOverrides
 
 routesGenerator := InjectedRoutesGenerator
 
