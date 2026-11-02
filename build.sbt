@@ -14,8 +14,7 @@ resolvers += "Sonatype releases" at "https://oss.sonatype.org/content/repositori
 val awsClientVersion = "1.12.797"
 val prometheusVersion = "0.16.0"
 val pekkoVersion = "1.0.3"
-val jacksonVersion = "2.20.1"
-val jacksonDatabindVersion = "2.20.1"
+val jacksonVersion = "2.21.7"
 
 libraryDependencies ++= Seq(
   ws,
@@ -45,7 +44,7 @@ val jacksonDependencyOverrides = Seq(
   "com.fasterxml.jackson.dataformat" % "jackson-dataformat-cbor" % jacksonVersion,
   "com.fasterxml.jackson.module" % "jackson-module-parameter-names" % jacksonVersion,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jacksonVersion,
-  "com.fasterxml.jackson.core" % "jackson-databind" % jacksonDatabindVersion,
+  "com.fasterxml.jackson.core" % "jackson-databind" % jacksonVersion,
 )
 
 dependencyOverrides ++= jacksonDependencyOverrides
