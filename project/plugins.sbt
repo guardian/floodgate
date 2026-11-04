@@ -3,3 +3,5 @@ addSbtPlugin("org.scalameta"     % "sbt-scalafmt"          % "2.0.0")
 
 addSbtPlugin("com.github.sbt" % "sbt-native-packager" % "1.9.16")
 addDependencyTreePlugin
+
+dependencyOverrides += "com.fasterxml.jackson.core" % "jackson-core" % "2.18.11"
