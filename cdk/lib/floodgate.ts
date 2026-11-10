@@ -1,9 +1,10 @@
 import type {GuStackProps} from "@guardian/cdk/lib/constructs/core";
 import {GuParameter, GuStack} from "@guardian/cdk/lib/constructs/core";
 import type {App} from "aws-cdk-lib";
-import {aws_ssm, Stack} from "aws-cdk-lib";
+import {Duration, Stack} from "aws-cdk-lib";
 import {GuEc2App} from "@guardian/cdk";
 import {AccessScope} from "@guardian/cdk/lib/constants";
+import {GuCname} from "@guardian/cdk/lib/constructs/dns";
 import {InstanceClass, InstanceSize, InstanceType, Peer, Port, UserData} from "aws-cdk-lib/aws-ec2";
 import fs from "fs";
 import {GuSecurityGroup} from "@guardian/cdk/lib/constructs/ec2";
@@ -18,8 +19,6 @@ export class Floodgate extends GuStack {
     const app = "content-api-floodgate";
 
     const datastore = new Datastore(this, "Datastore");
-
-    const dnsZone = aws_ssm.StringParameter.valueForStringParameter(this, `/account/services/capi.gutools/${this.stage}/hostedzoneid`);
 
     const prometheusRemoteWriteUrl = new GuParameter(this, "PromRemoteWrite", {
       description: "SSM path pointing to the parameter which gives an Amazon Managed Prometheus endpoint to push metrics to",
@@ -93,7 +92,6 @@ export class Floodgate extends GuStack {
       certificateProps: {
         // TODO push this to props if/when we add a CODE stage
         domainName: "floodgate.capi.gutools.co.uk",
-        hostedZoneId: dnsZone,
       },
       instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.SMALL),
       monitoringConfiguration: {
@@ -111,6 +109,15 @@ export class Floodgate extends GuStack {
       userData: userData,
       instanceMetricGranularity: "1Minute",
     });
+
+    if (this.stage === "PROD") {
+      new GuCname(this, "DnsRecord", {
+        app,
+        domainName: "floodgate.capi.gutools.co.uk",
+        resourceRecord: `dualstack.${ec2App.loadBalancer.loadBalancerDnsName}`,
+        ttl: Duration.seconds(60),
+      });
+    }
 
     ec2App.autoScalingGroup.connections.addSecurityGroup(new GuSecurityGroup(this, "InstanceOutboundSG", {
       app,

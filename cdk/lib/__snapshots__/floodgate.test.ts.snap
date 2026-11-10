@@ -62,10 +62,6 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
       "Description": "SSM path pointing to the parameter which gives an Amazon Managed Prometheus endpoint to push metrics to",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
-    "SsmParameterValueaccountservicescapigutoolsTESThostedzoneidC96584B6F00A464EAD1953AFF4B05118Parameter": {
-      "Default": "/account/services/capi.gutools/TEST/hostedzoneid",
-      "Type": "AWS::SSM::Parameter::Value<String>",
-    },
     "VpcId": {
       "Default": "/account/vpc/vpc-content-platforms-TEST/id",
       "Description": "Virtual Private Cloud to run EC2 instances within. Should NOT be the account default VPC.",
@@ -159,14 +155,6 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
       "DeletionPolicy": "Retain",
       "Properties": {
         "DomainName": "floodgate.capi.gutools.co.uk",
-        "DomainValidationOptions": [
-          {
-            "DomainName": "floodgate.capi.gutools.co.uk",
-            "HostedZoneId": {
-              "Ref": "SsmParameterValueaccountservicescapigutoolsTESThostedzoneidC96584B6F00A464EAD1953AFF4B05118Parameter",
-            },
-          },
-        ],
         "Tags": [
           {
             "Key": "App",
