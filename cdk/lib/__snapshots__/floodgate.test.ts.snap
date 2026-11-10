@@ -27,6 +27,7 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
       "GuHttpsApplicationListener",
       "GuAlb5xxPercentageAlarm",
       "GuUnhealthyInstancesAlarm",
+      "GuCname",
       "GuSecurityGroup",
     ],
     "gu:cdk:version": "TEST",
@@ -265,6 +266,31 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "DnsRecord": {
+      "Properties": {
+        "Name": "floodgate.capi.gutools.co.uk",
+        "RecordType": "CNAME",
+        "ResourceRecords": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "dualstack.",
+                {
+                  "Fn::GetAtt": [
+                    "LoadBalancerContentapifloodgate340F3FB8",
+                    "DNSName",
+                  ],
+                },
+              ],
+            ],
+          },
+        ],
+        "Stage": "TEST",
+        "TTL": 60,
+      },
+      "Type": "Guardian::DNS::RecordSet",
     },
     "FloodgatePolicyBB34B612": {
       "Properties": {

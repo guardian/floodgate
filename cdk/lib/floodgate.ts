@@ -17,6 +17,7 @@ export class Floodgate extends GuStack {
     super(scope, id, props);
 
     const app = "content-api-floodgate";
+    const domainName = "floodgate.capi.gutools.co.uk";
 
     const datastore = new Datastore(this, "Datastore");
 
@@ -91,7 +92,7 @@ export class Floodgate extends GuStack {
       applicationPort: 9000,
       certificateProps: {
         // TODO push this to props if/when we add a CODE stage
-        domainName: "floodgate.capi.gutools.co.uk",
+        domainName,
       },
       instanceType: InstanceType.of(InstanceClass.T4G, InstanceSize.SMALL),
       monitoringConfiguration: {
@@ -110,14 +111,12 @@ export class Floodgate extends GuStack {
       instanceMetricGranularity: "1Minute",
     });
 
-    if (this.stage === "PROD") {
-      new GuCname(this, "DnsRecord", {
-        app,
-        domainName: "floodgate.capi.gutools.co.uk",
-        resourceRecord: `dualstack.${ec2App.loadBalancer.loadBalancerDnsName}`,
-        ttl: Duration.seconds(60),
-      });
-    }
+    new GuCname(this, "DnsRecord", {
+      app,
+      domainName,
+      resourceRecord: `dualstack.${ec2App.loadBalancer.loadBalancerDnsName}`,
+      ttl: Duration.seconds(60),
+    });
 
     ec2App.autoScalingGroup.connections.addSecurityGroup(new GuSecurityGroup(this, "InstanceOutboundSG", {
       app,
