@@ -114,7 +114,7 @@ export class Floodgate extends GuStack {
     new GuCname(this, "DnsRecord", {
       app,
       domainName,
-      resourceRecord: `dualstack.${ec2App.loadBalancer.loadBalancerDnsName}`,
+      resourceRecord: `dualstack.${ec2App.loadBalancer.loadBalancerDnsName}.`,
       ttl: Duration.seconds(300),
     });
 
