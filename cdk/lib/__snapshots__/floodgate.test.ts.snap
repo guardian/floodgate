@@ -288,7 +288,7 @@ exports[`The Floodgate stack matches the snapshot 1`] = `
           },
         ],
         "Stage": "TEST",
-        "TTL": 60,
+        "TTL": 300,
       },
       "Type": "Guardian::DNS::RecordSet",
     },

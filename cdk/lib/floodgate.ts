@@ -115,7 +115,7 @@ export class Floodgate extends GuStack {
       app,
       domainName,
       resourceRecord: `dualstack.${ec2App.loadBalancer.loadBalancerDnsName}`,
-      ttl: Duration.seconds(60),
+      ttl: Duration.seconds(300),
     });
 
     ec2App.autoScalingGroup.connections.addSecurityGroup(new GuSecurityGroup(this, "InstanceOutboundSG", {
