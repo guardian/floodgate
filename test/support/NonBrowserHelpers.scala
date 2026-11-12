@@ -6,12 +6,7 @@ import play.api.{ApplicationLoader, Play}
 import org.specs2.execute.{AsResult, Result}
 
 // Helpers also mixes in PlayRunners, which eagerly loads Selenium's browser drivers.
-object NonBrowserHelpers
-    extends HeaderNames
-    with HttpVerbs
-    with Status
-    with DefaultAwaitTimeout
-    with ResultExtractors
+object NonBrowserHelpers extends HeaderNames with HttpVerbs with Status with DefaultAwaitTimeout with ResultExtractors
 
 // Preserve the specs2 application lifecycle, without Helpers.running's browser drivers.
 abstract class NonBrowserWithApplicationLoader(loader: ApplicationLoader)
