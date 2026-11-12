@@ -49,6 +49,8 @@ val jacksonDependencyOverrides = Seq(
 
 dependencyOverrides ++= jacksonDependencyOverrides
 
+dependencyOverrides += "com.google.guava" % "guava" % "33.7.2-jre"
+
 routesGenerator := InjectedRoutesGenerator
 
 Universal / packageName := "floodgate"
