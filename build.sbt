@@ -49,6 +49,23 @@ val jacksonDependencyOverrides = Seq(
 
 dependencyOverrides ++= jacksonDependencyOverrides
 
+dependencyOverrides += "com.google.guava" % "guava" % "33.7.2-jre"
+
+dependencyOverrides += "at.yawk.lz4" % "lz4-java" % "1.11.4"
+excludeDependencies += ExclusionRule("org.lz4", "lz4-java")
+
+// Tests use FakeRequest and WithApplicationLoader, not browser helpers. Keep play-test.
+excludeDependencies ++= Seq(
+  ExclusionRule(organization = "io.fluentlenium"),
+  ExclusionRule(organization = "org.seleniumhq.selenium"),
+  ExclusionRule("org.scalatestplus", "selenium-4-12_2.13")
+)
+
+dependencyOverrides ++= Seq(
+  "ch.qos.logback" % "logback-core" % "1.5.34",
+  "ch.qos.logback" % "logback-classic" % "1.5.34"
+)
+
 routesGenerator := InjectedRoutesGenerator
 
 Universal / packageName := "floodgate"
