@@ -26,7 +26,7 @@ import router.Routes
 
 class AppComponents(context: Context)
     extends BuiltInComponentsFromContext(context)
-    with NoHttpFiltersComponents
+    with RequestLoggingComponents
     with AhcWSComponents
     with AssetsComponents {
 
