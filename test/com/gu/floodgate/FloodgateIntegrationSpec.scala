@@ -3,8 +3,9 @@ package controllers
 import com.gu.floodgate.AppLoader
 import com.gu.floodgate.reindex.{Completed, InProgress, Progress}
 import play.api.mvc.Call
-import play.api.test.{FakeRequest, WithApplicationLoader}
-import play.api.test.Helpers._
+import play.api.test.FakeRequest
+import support.{NonBrowserWithApplicationLoader => WithApplicationLoader}
+import support.NonBrowserHelpers._
 import com.gu.floodgate.Formats._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
